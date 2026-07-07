@@ -371,29 +371,25 @@
     <div class="max-w-6xl mx-auto z-10 relative space-y-8">
         
         <!-- HEADER -->
-        <header class="border-b pb-4"
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4"
                 :class="{
-                  'flex flex-col md:flex-row md:items-center justify-between gap-4 border-black border-b-4 pb-6': currentTheme === 'brutalist',
-                  'grid grid-cols-1 md:grid-cols-3 md:items-center gap-4 border-white/10': currentTheme === 'cyberpunk',
-                  'flex flex-col md:flex-row md:items-center justify-between gap-4 border-emerald-500/20': currentTheme === 'terminal',
-                  'flex flex-col md:flex-row md:items-center justify-between gap-4 border-white/10': currentTheme === 'aurora',
-                  'flex flex-col md:flex-row md:items-center justify-between gap-4 border-neutral-200': currentTheme === 'editorial'
+                  'border-black border-b-4 pb-6': currentTheme === 'brutalist',
+                  'border-white/10': currentTheme === 'cyberpunk',
+                  'border-emerald-500/20': currentTheme === 'terminal',
+                  'border-white/10': currentTheme === 'aurora',
+                  'border-neutral-200': currentTheme === 'editorial'
                 }">
-            <!-- Cyberpunk Left Spacer -->
-            <div x-show="currentTheme === 'cyberpunk'" class="hidden md:block"></div>
-
-            <div :class="currentTheme === 'cyberpunk' ? 'text-center' : ''">
+            <div>
                 <!-- Brand Title -->
                 <a href="/" class="text-3xl font-bold hover:opacity-80 transition flex items-center gap-2"
                    :class="{
                      'text-black uppercase font-black': currentTheme === 'brutalist',
-                     'text-cyan-300 font-mono justify-center': currentTheme === 'cyberpunk',
+                     'text-cyan-300 font-mono': currentTheme === 'cyberpunk',
                      'text-emerald-300 font-mono': currentTheme === 'terminal',
                      'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora',
                      'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial'
                    }">
-                    <i class="fas fa-sun" x-show="currentTheme !== 'cyberpunk'"></i>
-                    <span x-text="currentTheme === 'cyberpunk' ? 'WIKDRA.TOP' : 'SolarForecast'"></span>
+                    <i class="fas fa-sun"></i> SolarForecast
                 </a>
                 <p class="text-sm mt-1"
                    :class="{
@@ -411,7 +407,7 @@
             <div class="flex items-center gap-2 text-sm px-4 py-2 border w-fit"
                  :class="{
                    'border-4 border-black bg-white text-black font-bold shadow-[2px_2px_0_#000]': currentTheme === 'brutalist',
-                   'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono justify-self-center md:justify-self-end': currentTheme === 'cyberpunk',
+                   'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono': currentTheme === 'cyberpunk',
                    'border-emerald-500/20 text-emerald-400 font-mono': currentTheme === 'terminal',
                    'border-white/10 bg-white/[0.04] text-slate-300 rounded-full backdrop-blur-md shadow-sm': currentTheme === 'aurora',
                    'border-neutral-200 text-neutral-800 font-serif': currentTheme === 'editorial'
