@@ -243,9 +243,9 @@
              <h1 class="font-bold tracking-tight text-4xl sm:text-5xl lg:text-6xl"
                  :class="{
                    'font-black uppercase leading-none text-black': currentTheme === 'brutalist',
-                   'font-black uppercase text-white': currentTheme === 'cyberpunk',
+                   'font-black uppercase text-white text-center w-full': currentTheme === 'cyberpunk',
                    'text-emerald-300 font-mono': currentTheme === 'terminal',
-                   'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora',
+                   'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent text-center w-full': currentTheme === 'aurora',
                    'font-serif leading-[1.05] text-neutral-900': currentTheme === 'editorial'
                  }"
                  :style="currentTheme === 'cyberpunk' ? 'text-shadow: 0 0 18px rgba(34,211,238,0.6), 0 0 40px rgba(217,70,239,0.4);' : ''">
