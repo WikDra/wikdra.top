@@ -130,9 +130,15 @@
 
             <!-- Cyberpunk Header Stats -->
             <div x-show="currentTheme === 'cyberpunk'" 
-                 class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-                <span class="font-mono text-sm font-bold tracking-[0.2em] text-cyan-300">WIKDRA.TOP</span>
-                <div class="flex gap-6">
+                 class="flex flex-col gap-4 border-b border-white/10 pb-4 sm:flex-row sm:items-center">
+                <!-- Spacer to balance center alignment -->
+                <div class="hidden sm:block w-[324px] shrink-0"></div>
+                
+                <!-- Centered WIKDRA.TOP logo -->
+                <span class="font-mono text-sm font-bold tracking-[0.2em] text-cyan-300 text-center mx-auto whitespace-nowrap">WIKDRA.TOP</span>
+                
+                <!-- Stats container aligned right -->
+                <div class="flex gap-6 w-full max-w-[324px] sm:w-[324px] shrink-0 justify-center sm:justify-end">
                     <!-- CPU -->
                     <div class="min-w-[92px]">
                         <div class="flex justify-between text-[10px] uppercase tracking-widest text-white/50">
