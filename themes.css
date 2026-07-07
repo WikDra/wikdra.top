@@ -24,7 +24,7 @@
     --font-heading: 'Orbitron', sans-serif;
     --font-body: 'Space Mono', monospace;
     
-    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-bg: rgba(13, 8, 30, 0.85);
     --card-border: 1px solid rgba(34, 211, 238, 0.3);
     --card-shadow: 0 0 12px rgba(34, 211, 238, 0.1);
     --card-shadow-hover: 0 0 20px rgba(217, 70, 239, 0.4);
@@ -119,6 +119,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .theme-cyberpunk .panel-card {
     border-radius: 0px !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .theme-terminal .panel-card {
