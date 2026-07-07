@@ -398,3 +398,242 @@ h1, h2, h3, h4, h5, h6 {
 .theme-editorial ::-webkit-scrollbar { width: 5px; height: 5px; }
 .theme-editorial ::-webkit-scrollbar-track { background: #ffffff; }
 .theme-editorial ::-webkit-scrollbar-thumb { background: #d4d4d4; }
+
+/* --- 9. DARK & LIGHT MODE THEME OVERRIDES --- */
+
+/* Brutalist - Dark Mode Override */
+.theme-brutalist.mode-dark {
+    --bg-main: #18181b; /* zinc-900 */
+    --text-main: #ffffff;
+    --card-bg: #27272a; /* zinc-800 */
+    --card-border: 4px solid #ffffff;
+    --card-shadow: 6px 6px 0px #ffffff;
+    --card-shadow-hover: 10px 10px 0px #ffffff;
+    --accent: #eab308;
+    --accent-hover: #bef264;
+}
+.theme-brutalist.mode-dark .stat-label { color: #ffffff; opacity: 0.75; }
+.theme-brutalist.mode-dark .stat-value { color: #ffffff; }
+.theme-brutalist.mode-dark table th {
+    background-color: #ffffff;
+    color: #000000;
+    border-bottom: 2px solid #ffffff;
+}
+.theme-brutalist.mode-dark table td {
+    color: #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+.theme-brutalist.mode-dark table tr:last-child td {
+    border-bottom: none;
+}
+.theme-brutalist.mode-dark ::-webkit-scrollbar-track { background: #18181b; border-left: 2px solid #fff; }
+.theme-brutalist.mode-dark ::-webkit-scrollbar-thumb { background: #fff; border: 1px solid #18181b; }
+
+/* Cyberpunk - Light Mode Override */
+.theme-cyberpunk.mode-light {
+    --bg-main: #f0f9ff; /* sky-50 */
+    --text-main: #0f172a; /* slate-900 */
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: 1px solid rgba(14, 165, 233, 0.4);
+    --card-shadow: 0 0 12px rgba(14, 165, 233, 0.1);
+    --card-shadow-hover: 0 0 20px rgba(217, 70, 239, 0.2);
+    --accent: #0ea5e9;
+    --accent-glow: 0 0 10px rgba(14, 165, 233, 0.3);
+    --accent-hover: #d946ef;
+}
+.theme-cyberpunk.mode-light .stat-label { color: rgba(15, 23, 42, 0.6); }
+.theme-cyberpunk.mode-light .stat-value { color: #0ea5e9; text-shadow: none; }
+.theme-cyberpunk.mode-light table th {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: #0ea5e9;
+    border-bottom: 1px solid rgba(14, 165, 233, 0.3);
+}
+.theme-cyberpunk.mode-light table td {
+    color: #0f172a;
+    border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+}
+.theme-cyberpunk.mode-light ::-webkit-scrollbar-track { background: #f0f9ff; }
+.theme-cyberpunk.mode-light ::-webkit-scrollbar-thumb { background: #0ea5e9; box-shadow: none; }
+
+/* Terminal - Light Mode Override */
+.theme-terminal.mode-light {
+    --bg-main: #f4faf4;
+    --text-main: #065f46;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-border: 1px solid rgba(6, 95, 70, 0.3);
+    --card-shadow: none;
+    --card-shadow-hover: 0 0 10px rgba(6, 95, 70, 0.15);
+    --accent: #059669;
+    --accent-hover: #047857;
+}
+.theme-terminal.mode-light .stat-label { color: rgba(6, 95, 70, 0.6); }
+.theme-terminal.mode-light .stat-value { color: #065f46; }
+.theme-terminal.mode-light table th {
+    color: rgba(6, 95, 70, 0.6);
+    border-bottom: 1px solid rgba(6, 95, 70, 0.2);
+}
+.theme-terminal.mode-light table td {
+    color: #065f46;
+    border-bottom: 1px solid rgba(6, 95, 70, 0.1);
+}
+.theme-terminal.mode-light ::-webkit-scrollbar-track { background: #f4faf4; }
+.theme-terminal.mode-light ::-webkit-scrollbar-thumb { background: #059669; }
+
+/* Aurora (Glassmorphism) - Light Mode Override (Original Glass) */
+.theme-aurora.mode-light {
+    --bg-main: #f8fafc; /* slate-50 */
+    --text-main: #0f172a;
+    --card-bg: rgba(255, 255, 255, 0.5);
+    --card-border: 1px solid rgba(255, 255, 255, 0.6);
+    --card-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.08);
+    --card-shadow-hover: 0 8px 32px 0 rgba(99, 102, 241, 0.18), 0 0 15px rgba(99, 102, 241, 0.05);
+    --accent: #6366f1;
+    --accent-glow: 0 0 15px rgba(99, 102, 241, 0.2);
+    --accent-hover: #818cf8;
+}
+.theme-aurora.mode-light .stat-label { color: rgba(15, 23, 42, 0.6); }
+.theme-aurora.mode-light .stat-value { color: #0f172a; }
+.theme-aurora.mode-light table th {
+    background-color: rgba(99, 102, 241, 0.05);
+    color: rgba(15, 23, 42, 0.7);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+.theme-aurora.mode-light table td {
+    color: rgba(15, 23, 42, 0.85);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+.theme-aurora.mode-light ::-webkit-scrollbar-track { background: rgba(0,0,0,0.01); }
+.theme-aurora.mode-light ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 10px; }
+
+/* Editorial - Dark Mode Override */
+.theme-editorial.mode-dark {
+    --bg-main: #121212;
+    --text-main: #e4e4e7; /* zinc-200 */
+    --card-bg: transparent;
+    --card-border: 1px solid #27272a;
+    --card-shadow: none;
+    --card-shadow-hover: none;
+    --accent: #e4e4e7;
+    --accent-hover: #a1a1aa;
+}
+.theme-editorial.mode-dark .stat-label { color: #a1a1aa; }
+.theme-editorial.mode-dark .stat-value { color: #e4e4e7; }
+.theme-editorial.mode-dark table th {
+    background-color: #1c1c1f;
+    color: #e4e4e7;
+    border-bottom: 1px solid #27272a;
+}
+.theme-editorial.mode-dark table td {
+    color: #d4d4d8;
+    border-bottom: 1px solid #1c1c1f;
+}
+.theme-editorial.mode-dark ::-webkit-scrollbar-track { background: #121212; }
+.theme-editorial.mode-dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+
+/* --- 10. INPUT & BUTTON MODE OVERRIDES --- */
+
+/* Brutalist Dark Mode Inputs & Buttons */
+.theme-brutalist.mode-dark .theme-input {
+    background-color: #1e1e1e;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+}
+.theme-brutalist.mode-dark .theme-input:focus {
+    background-color: #bef264;
+    color: #000000;
+}
+.theme-brutalist.mode-dark .theme-btn {
+    background-color: #bef264;
+    color: #000000;
+    border: 3px solid #ffffff;
+    box-shadow: 3px 3px 0px #ffffff;
+}
+.theme-brutalist.mode-dark .theme-btn:hover:not(:disabled) {
+    background-color: #eab308;
+    box-shadow: 5px 5px 0px #ffffff;
+}
+.theme-brutalist.mode-dark .theme-btn:active:not(:disabled) {
+    box-shadow: 1px 1px 0px #ffffff;
+}
+
+/* Cyberpunk Light Mode Inputs & Buttons */
+.theme-cyberpunk.mode-light .theme-input {
+    background-color: #ffffff;
+    border: 1px solid rgba(14, 165, 233, 0.5);
+    color: #0ea5e9;
+}
+.theme-cyberpunk.mode-light .theme-input:focus {
+    border-color: #d946ef;
+    box-shadow: 0 0 8px rgba(217, 70, 239, 0.4);
+}
+.theme-cyberpunk.mode-light .theme-btn {
+    background-color: #0ea5e9;
+    color: #ffffff;
+    border: 1px solid #0ea5e9;
+    text-shadow: none;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+}
+.theme-cyberpunk.mode-light .theme-btn:hover:not(:disabled) {
+    background-color: #d946ef;
+    border-color: #d946ef;
+    box-shadow: 0 0 15px rgba(217, 70, 239, 0.4);
+}
+
+/* Terminal Light Mode Inputs & Buttons */
+.theme-terminal.mode-light .theme-input {
+    background-color: #ffffff;
+    border: 1px solid rgba(6, 95, 70, 0.4);
+    color: #065f46;
+}
+.theme-terminal.mode-light .theme-input:focus {
+    border-color: #059669;
+    background-color: rgba(6, 95, 70, 0.05);
+}
+.theme-terminal.mode-light .theme-btn {
+    background-color: #059669;
+    color: #ffffff;
+    border: 1px solid #059669;
+}
+.theme-terminal.mode-light .theme-btn:hover:not(:disabled) {
+    background-color: #047857;
+    border-color: #047857;
+}
+
+/* Aurora Light Mode Inputs & Buttons */
+.theme-aurora.mode-light .theme-input {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    color: #0f172a;
+}
+.theme-aurora.mode-light .theme-input:focus {
+    border-color: #6366f1;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+.theme-aurora.mode-light .theme-btn {
+    background-color: #6366f1;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+.theme-aurora.mode-light .theme-btn:hover:not(:disabled) {
+    background-color: #818cf8;
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+/* Editorial Dark Mode Inputs & Buttons */
+.theme-editorial.mode-dark .theme-input {
+    background-color: #1c1c1f;
+    border: 1px solid #27272a;
+    color: #e4e4e7;
+}
+.theme-editorial.mode-dark .theme-input:focus {
+    border-color: #e4e4e7;
+    background-color: #121212;
+}
+.theme-editorial.mode-dark .theme-btn {
+    background-color: #e4e4e7;
+    color: #121212;
+}
+.theme-editorial.mode-dark .theme-btn:hover:not(:disabled) {
+    background-color: #a1a1aa;
+}
