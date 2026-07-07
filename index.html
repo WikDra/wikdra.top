@@ -47,15 +47,26 @@
     <!-- Alpine.js CDN -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Anti-FOUC Script -->
+    <!-- Theme Helper & Anti-FOUC Script -->
     <script>
-        (function() {
-            const theme = localStorage.getItem('global_theme') || 'brutalist';
-            document.documentElement.className = 'theme-' + theme;
-        })();
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        function getGlobalTheme() {
+            return getCookie('global_theme') || localStorage.getItem('global_theme') || 'brutalist';
+        }
+        function setGlobalTheme(val) {
+            localStorage.setItem('global_theme', val);
+            document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+            document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+        }
+        document.documentElement.className = 'theme-' + getGlobalTheme();
     </script>
 </head>
-<body x-data="{ currentTheme: localStorage.getItem('global_theme') || 'brutalist', cpu: 0, ram: 0, dsk: 0 }" 
+<body x-data="{ currentTheme: getGlobalTheme(), cpu: 0, ram: 0, dsk: 0 }" 
       :class="'theme-' + currentTheme" 
       class="min-h-full flex flex-col items-center px-4 py-8 sm:py-16 transition-colors duration-300 relative"
       x-init="
@@ -75,7 +86,7 @@
         
         $watch('currentTheme', val => {
             document.documentElement.className = 'theme-' + val;
-            localStorage.setItem('global_theme', val);
+            setGlobalTheme(val);
         });
       ">
 
