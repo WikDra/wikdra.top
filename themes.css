@@ -399,7 +399,31 @@ h1, h2, h3, h4, h5, h6 {
 .theme-editorial ::-webkit-scrollbar-track { background: #ffffff; }
 .theme-editorial ::-webkit-scrollbar-thumb { background: #d4d4d4; }
 
-/* --- 9. DARK & LIGHT MODE THEME OVERRIDES --- */
+/* --- 9. BACKGROUND DECORATORS (CSS-controlled, no JS timing issues) --- */
+
+/* Aurora blobs: hidden by default, shown only for aurora theme */
+.aurora-bg                { display: none; }
+.aurora-bg-dark           { display: none; }
+.aurora-bg-light          { display: none; }
+
+.theme-aurora .aurora-bg              { display: block; }
+.theme-aurora.mode-dark  .aurora-bg-dark  { display: block; }
+.theme-aurora.mode-light .aurora-bg-light { display: block; }
+
+/* Cyberpunk grid: hidden by default, shown only for cyberpunk theme */
+.cyberpunk-bg             { display: none; }
+.cyberpunk-grid-dark      { display: none; }
+.cyberpunk-grid-light     { display: none; }
+.cyberpunk-glow-dark      { display: none; }
+.cyberpunk-glow-light     { display: none; }
+
+.theme-cyberpunk .cyberpunk-bg               { display: block; }
+.theme-cyberpunk.mode-dark  .cyberpunk-grid-dark  { display: block; }
+.theme-cyberpunk.mode-light .cyberpunk-grid-light { display: block; }
+.theme-cyberpunk.mode-dark  .cyberpunk-glow-dark  { display: block; }
+.theme-cyberpunk.mode-light .cyberpunk-glow-light { display: block; }
+
+/* --- 10. DARK & LIGHT MODE THEME OVERRIDES --- */
 
 /* Brutalist - Dark Mode Override */
 .theme-brutalist.mode-dark {

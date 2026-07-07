@@ -466,37 +466,29 @@
           currentTheme === 'editorial' && currentMode === 'dark'  ? '#e4e4e7' : '#000000'
       }">
     
-    <!-- Aurora background blobs -->
-    <template x-if="currentTheme === 'aurora'">
-        <div class="pointer-events-none absolute inset-0 overflow-hidden z-0">
-            <!-- Dark Mode Blobs -->
-            <template x-if="currentMode === 'dark'">
-                <div class="absolute inset-0 pointer-events-none">
-                    <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
-                    <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-                    <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-                </div>
-            </template>
-            <!-- Light Mode Blobs -->
-            <template x-if="currentMode === 'light'">
-                <div class="absolute inset-0 pointer-events-none">
-                    <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
-                    <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-                    <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-                </div>
-            </template>
+    <!-- Aurora background blobs (shown via CSS only when theme-aurora active) -->
+    <div class="aurora-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <!-- Dark Mode Blobs -->
+        <div class="aurora-bg-dark absolute inset-0 pointer-events-none">
+            <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
+            <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
+            <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
         </div>
-    </template>
+        <!-- Light Mode Blobs -->
+        <div class="aurora-bg-light absolute inset-0 pointer-events-none">
+            <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
+            <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
+            <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+    </div>
 
-    <!-- Cyberpunk grid/glow -->
-    <template x-if="currentTheme === 'cyberpunk'">
-        <div class="pointer-events-none absolute inset-0 overflow-hidden z-0"
-             :style="currentMode === 'dark' ?
-                     'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' :
-                     'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
-            <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b" :class="currentMode === 'dark' ? 'from-fuchsia-600/10 to-transparent' : 'from-sky-500/10 to-transparent'"></div>
-        </div>
-    </template>
+    <!-- Cyberpunk grid/glow (shown via CSS only when theme-cyberpunk active) -->
+    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;"></div>
+        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
+        <div class="cyberpunk-glow-dark absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
+        <div class="cyberpunk-glow-light absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-sky-500/10 to-transparent"></div>
+    </div>
 
     <!-- MAIN CONTAINER -->
     <div class="max-w-6xl mx-auto z-10 relative space-y-8">
@@ -783,11 +775,7 @@
                 <!-- STATS CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Energy Card -->
-                    <div class="panel-card p-6" 
-                         :class="{
-                           'border-l-[8px] border-l-black': currentTheme === 'brutalist' && currentMode === 'light',
-                           'border-l-[8px] border-l-white': currentTheme === 'brutalist' && currentMode === 'dark'
-                         }">
+                    <div class="panel-card p-6">
                         <p class="stat-label mb-1">Energia całkowita</p>
                         <div class="flex items-baseline gap-1">
                             <span class="stat-value" x-text="history[selectedDate]?.energy || 0"></span>
@@ -1026,14 +1014,12 @@
                  <button @click="setMode('light')"
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
-                           'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-white text-black rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'dark',
+                           'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist',
                            'bg-cyan-400 text-black font-bold': currentMode === 'light' && currentTheme === 'cyberpunk',
-                            'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'dark',
-                            'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'light',
+                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'dark',
+                           'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'light' && currentTheme === 'terminal',
                            'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'light' && currentTheme === 'aurora',
-                           'bg-neutral-900 text-white': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'dark',
+                           'bg-neutral-900 text-white': currentMode === 'light' && currentTheme === 'editorial',
                            'opacity-50 hover:opacity-100': currentMode !== 'light'
                          }">
                      Jasny
@@ -1041,15 +1027,11 @@
                  <button @click="setMode('dark')"
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
-                           'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
+                           'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist',
                            'bg-cyan-400 text-black font-bold': currentMode === 'dark' && currentTheme === 'cyberpunk',
-                            'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'dark',
-                            'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'light',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'dark',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'light',
-                           'bg-neutral-900 text-white': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'dark',
+                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal',
+                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora',
+                           'bg-neutral-900 text-white': currentMode === 'dark' && currentTheme === 'editorial',
                            'opacity-50 hover:opacity-100': currentMode !== 'dark'
                          }">
                      Ciemny
