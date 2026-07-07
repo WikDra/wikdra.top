@@ -13,7 +13,7 @@ if (isset($_GET['api'])) {
             echo json_encode(['success' => true]);
         } else {
             http_response_code(403);
-            echo json_encode(['success' => false, 'error' => 'Błędne hasło']);
+            echo json_encode(['success' => false, 'error' => 'BĹ‚Ä™dne hasĹ‚o']);
         }
         exit;
     }
@@ -38,7 +38,7 @@ if (isset($_GET['api'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Shared themes CSS -->
-    <link rel="stylesheet" href="/themes.css?v=4">
+    <link rel="stylesheet" href="/themes-v5.css">
     
     <style>
         [x-cloak] { display: none !important; }
@@ -176,7 +176,7 @@ if (isset($_GET['api'])) {
                    'border-neutral-200 text-neutral-800 font-serif hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
                    'border-neutral-800 bg-[#1c1c1f] text-neutral-200 font-serif hover:bg-neutral-900': currentTheme === 'editorial' && currentMode === 'dark'
                  }">
-                <i class="fas fa-arrow-left"></i> Powrót
+                <i class="fas fa-arrow-left"></i> PowrĂłt
             </a>
         </header>
 
@@ -201,7 +201,7 @@ if (isset($_GET['api'])) {
 
                 <div class="prose max-w-none whitespace-pre-wrap text-base leading-relaxed" 
                      :class="currentTheme === 'editorial' ? 'font-serif' : (currentTheme === 'terminal' || currentTheme === 'cyberpunk' ? 'font-mono' : 'font-sans')"
-                     x-text="content || 'Brak treści...'"></div>
+                     x-text="content || 'Brak treĹ›ci...'"></div>
                      
                 <button @click="openEditor()" 
                         class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 theme-btn px-4 py-2 text-xs">
@@ -228,11 +228,11 @@ if (isset($_GET['api'])) {
                  </template>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">Hasło edycji</label>
-                    <input type="password" x-model="password" placeholder="Wpisz hasło..." class="theme-input py-2 px-3 text-sm">
+                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">HasĹ‚o edycji</label>
+                    <input type="password" x-model="password" placeholder="Wpisz hasĹ‚o..." class="theme-input py-2 px-3 text-sm">
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">Treść strony</label>
+                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">TreĹ›Ä‡ strony</label>
                     <textarea x-model="tempContent" rows="12" class="theme-input py-3 px-4 resize-none font-mono text-sm"></textarea>
                 </div>
                 <div class="flex gap-4">
@@ -488,7 +488,7 @@ if (isset($_GET['api'])) {
 
                 async save() {
                     if (!this.password) {
-                        alert('Podaj hasło!');
+                        alert('Podaj hasĹ‚o!');
                         return;
                     }
                     this.saving = true;
@@ -507,10 +507,10 @@ if (isset($_GET['api'])) {
                             this.password = '';
                         } else {
                             const data = await res.json();
-                            alert('Błąd: ' + data.error);
+                            alert('BĹ‚Ä…d: ' + data.error);
                         }
                     } catch (e) {
-                        alert('Wystąpił błąd połączenia.');
+                        alert('WystÄ…piĹ‚ bĹ‚Ä…d poĹ‚Ä…czenia.');
                     } finally {
                         this.saving = false;
                     }
