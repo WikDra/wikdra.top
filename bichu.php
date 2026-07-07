@@ -265,11 +265,12 @@ if (isset($_GET['api'])) {
         <!-- Button -->
         <button @click="open = !open" 
                 :class="{
-                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist',
+                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
+                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#bef264] hover:shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                   'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'border border-sky-400 bg-white text-sky-600 shadow-[0_0_10px_rgba(14,165,233,0.15)] hover:border-fuchsia-500 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border border-emerald-600 bg-white text-emerald-600 hover:bg-emerald-50/50': currentTheme === 'terminal' && currentMode === 'light',
+                  'border border-emerald-600 bg-[#d1fae5] text-[#047857] hover:bg-emerald-100': currentTheme === 'terminal' && currentMode === 'light',
                   'bg-white/5 border border-white/10 text-white shadow-lg backdrop-blur-md hover:bg-white/10': currentTheme === 'aurora' && currentMode === 'dark',
                   'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora' && currentMode === 'light',
                   'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
@@ -307,45 +308,75 @@ if (isset($_GET['api'])) {
                   Styl strony:
              </div>
              
-             <!-- Brutalist -->
-             <button @click="currentTheme = 'brutalist'; open = false"
-                     :class="currentTheme === 'brutalist' ? 'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000]' : (currentTheme === 'cyberpunk' || currentTheme === 'terminal' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'hover:bg-white/5 text-neutral-300' : 'hover:bg-neutral-100 text-neutral-700')"
-                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
-                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-black bg-[#fdf6e3]"></span>
-                     Neo-Brutalizm
-             </button>
-             
-             <!-- Cyberpunk -->
-             <button @click="currentTheme = 'cyberpunk'; open = false"
-                     :class="currentTheme === 'cyberpunk' ? 'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold' : (currentTheme === 'cyberpunk' || currentTheme === 'terminal' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'hover:bg-white/5 text-neutral-300' : 'hover:bg-neutral-100 text-slate-700')"
-                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
-                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-cyan-400 bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
-                     Cyber Dashboard
-             </button>
-             
-             <!-- Terminal -->
-             <button @click="currentTheme = 'terminal'; open = false"
-                     :class="currentTheme === 'terminal' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold' : (currentTheme === 'cyberpunk' || currentTheme === 'terminal' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'hover:bg-white/5 text-neutral-400' : 'hover:bg-neutral-100 text-slate-700')"
-                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
-                     <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-400"></span>
-                     Dev Terminal
-             </button>
-             
-             <!-- Aurora -->
-             <button @click="currentTheme = 'aurora'; open = false"
-                     :class="currentTheme === 'aurora' ? 'bg-indigo-600 text-white font-bold' : (currentTheme === 'cyberpunk' || currentTheme === 'terminal' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'hover:bg-white/5 text-neutral-300' : 'hover:bg-slate-100 text-slate-700')"
-                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
-                     <span class="inline-block w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 shadow"></span>
-                     Glassmorphism
-             </button>
-             
-             <!-- Editorial -->
-             <button @click="currentTheme = 'editorial'; open = false"
-                     :class="currentTheme === 'editorial' ? 'bg-neutral-900 text-white font-bold' : (currentTheme === 'cyberpunk' || currentTheme === 'terminal' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'hover:bg-white/5 text-neutral-300' : 'hover:bg-neutral-100 text-neutral-700')"
-                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
-                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-neutral-300 bg-white shadow-sm"></span>
-                     Editorial
-             </button>
+              <!-- Brutalist -->
+              <button @click="currentTheme = 'brutalist'; open = false"
+                      :class="{
+                        'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
+                        'bg-[#bef264] text-black border-2 border-white font-bold shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'brutalist' && currentMode === 'dark',
+                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme !== 'terminal',
+                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme === 'terminal'
+                      }"
+                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
+                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-black bg-[#fdf6e3]"></span>
+                      Neo-Brutalizm
+              </button>
+              
+              <!-- Cyberpunk -->
+              <button @click="currentTheme = 'cyberpunk'; open = false"
+                      :class="{
+                        'bg-fuchsia-600 text-white border border-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.4)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
+                        'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
+                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'cyberpunk' && currentMode === 'dark',
+                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme !== 'terminal',
+                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme === 'terminal'
+                      }"
+                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
+                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-cyan-400 bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
+                      Cyber Dashboard
+              </button>
+              
+              <!-- Terminal -->
+              <button @click="currentTheme = 'terminal'; open = false"
+                      :class="{
+                        'bg-[#047857]/20 text-[#047857] border border-[#047857] font-bold rounded': currentTheme === 'terminal' && currentMode === 'light',
+                        'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold rounded': currentTheme === 'terminal' && currentMode === 'dark',
+                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'terminal' && currentMode === 'dark',
+                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme !== 'terminal',
+                        'hover:bg-[#047857]/10 text-[#047857] rounded': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme === 'terminal'
+                      }"
+                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
+                      <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-400"></span>
+                      Dev Terminal
+              </button>
+              
+              <!-- Aurora -->
+              <button @click="currentTheme = 'aurora'; open = false"
+                      :class="{
+                        'bg-indigo-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
+                        'bg-purple-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
+                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'aurora' && currentMode === 'dark',
+                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme !== 'terminal',
+                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme === 'terminal'
+                      }"
+                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
+                      <span class="inline-block w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 shadow"></span>
+                      Glassmorphism
+              </button>
+              
+              <!-- Editorial -->
+              <button @click="currentTheme = 'editorial'; open = false"
+                      :class="{
+                        'bg-neutral-900 text-white font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'light',
+                        'bg-[#e4e4e7] text-black font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'dark',
+                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'editorial' && currentMode === 'dark',
+                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme !== 'terminal',
+                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme === 'terminal'
+                      }"
+                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
+                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-neutral-300 bg-white shadow-sm"></span>
+                      Editorial
+              </button>
 
              <!-- Separator line -->
              <div class="border-t my-1"
@@ -365,24 +396,25 @@ if (isset($_GET['api'])) {
              
              <div class="flex p-0.5"
                   :class="{
-                    'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                    'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                    'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
-                    'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                    'border border-emerald-600/30 bg-white text-emerald-600 rounded': currentTheme === 'terminal' && currentMode === 'light',
-                    'border border-white/10 bg-white/[0.04] text-white rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                    'border border-white/15 bg-white/70 text-slate-700 rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                    'border border-neutral-200 bg-neutral-50 rounded-sm': currentTheme === 'editorial' && currentMode === 'light',
-                    'border border-neutral-800 bg-[#121212] text-white rounded-sm': currentTheme === 'editorial' && currentMode === 'dark'
-                  }">
+                   'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
+                   'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                   'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
+                   'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
+                   'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
+                   'border border-emerald-600/30 bg-[#d1fae5] text-[#047857] rounded': currentTheme === 'terminal' && currentMode === 'light',
+                   'border border-white/10 bg-white/[0.04] text-white rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
+                   'border border-white/15 bg-white/70 text-slate-700 rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
+                   'border border-neutral-200 bg-neutral-50 rounded-sm': currentTheme === 'editorial' && currentMode === 'light',
+                   'border border-neutral-800 bg-[#121212] text-white rounded-sm': currentTheme === 'editorial' && currentMode === 'dark'
+                 }">
                  <button @click="currentMode = 'light'"
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
                            'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'light',
                            'bg-white text-black rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'dark',
                            'bg-cyan-400 text-black font-bold': currentMode === 'light' && currentTheme === 'cyberpunk',
-                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal',
+                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'dark',
+                           'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'light',
                            'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'light' && currentTheme === 'aurora',
                            'bg-neutral-900 text-white': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'light',
                            'bg-white text-black': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'dark',
@@ -396,7 +428,8 @@ if (isset($_GET['api'])) {
                            'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
                            'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
                            'bg-cyan-400 text-black font-bold': currentMode === 'dark' && currentTheme === 'cyberpunk',
-                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal',
+                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'dark',
+                           'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'light',
                            'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'dark',
                            'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'light',
                            'bg-neutral-900 text-white': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'light',
