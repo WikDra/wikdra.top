@@ -481,7 +481,7 @@
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4"
                 :class="{
                   'border-black border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-white border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'border-[#bef264] border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
                   'border-white/10': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'border-sky-200': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'border-emerald-500/20': currentTheme === 'terminal' && currentMode === 'dark',
@@ -529,7 +529,7 @@
             <div class="flex items-center gap-2 text-sm px-4 py-2 border w-fit"
                  :class="{
                    'border-4 border-black bg-white text-black font-bold shadow-[2px_2px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                   'border-4 border-white bg-[#27272a] text-white font-bold shadow-[2px_2px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
+                   'border-4 border-[#bef264] bg-[#27272a] text-white font-bold shadow-[2px_2px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                    'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono': currentTheme === 'cyberpunk' && currentMode === 'dark',
                    'border-cyan-400/40 bg-white text-sky-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
                    'border-emerald-500/20 text-emerald-400 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
@@ -630,7 +630,7 @@
                 <div class="panel-card p-6">
                     <h2 class="text-lg font-bold mb-4 flex items-center gap-2"
                         :class="currentTheme === 'editorial' ? 'font-serif' : ''">
-                        <i class="fas fa-history" :class="currentTheme === 'terminal' ? 'text-emerald-400' : 'text-slate-400'"></i> Historia Dni
+                        <i class="fas fa-history" :class="currentTheme === 'terminal' ? (currentMode === 'dark' ? 'text-emerald-400' : 'text-[#065f46]') : 'text-slate-400'"></i> Historia Dni
                     </h2>
                     
                     <div class="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 select-none">
@@ -638,9 +638,9 @@
                             <button @click="selectDate(date)" 
                                     :class="{
                                       'bg-lime-300 border-2 border-black text-black font-black shadow-[2px_2px_0_#000] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'light',
-                                      'bg-lime-300 border-2 border-white text-black font-black shadow-[2px_2px_0_#fff] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'dark',
+                                      'bg-[#bef264] border-2 border-[#bef264] text-black font-black shadow-[2px_2px_0_#bef264] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'dark',
                                       'bg-white border-2 border-black text-black hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'light',
-                                      'bg-zinc-800 border-2 border-white text-white hover:bg-zinc-700 rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'dark',
+                                      'bg-zinc-800 border-2 border-[#bef264] text-white hover:bg-[#bef264] hover:text-black rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'dark',
                                       
                                       'bg-fuchsia-500/20 border-fuchsia-400/60 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk' && currentMode === 'dark',
                                       'bg-fuchsia-500 text-white border border-fuchsia-400 text-shadow-none shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk' && currentMode === 'light',
@@ -694,7 +694,7 @@
                     <div class="flex p-1 w-fit"
                          :class="{
                            'border-4 border-black bg-white shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                           'border-4 border-white bg-zinc-900 shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border-4 border-[#bef264] bg-zinc-900 shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                            'border border-cyan-400/30 bg-black/60 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
                            'border border-cyan-400/40 bg-white rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                            'border border-emerald-500/20 bg-transparent rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -742,7 +742,7 @@
                     <div class="text-sm font-semibold px-4 py-2 border w-fit"
                          :class="{
                            'border-4 border-black bg-yellow-300 text-black font-black shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                           'border-4 border-white bg-zinc-800 text-white font-black shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border-4 border-[#bef264] bg-yellow-300 text-black font-black shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                            'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
                            'border-cyan-400/40 bg-white text-sky-600 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                            'border-emerald-500/20 text-emerald-400 font-mono rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -792,7 +792,7 @@
                         <div x-show="stats.peakPower >= params.limit" 
                              :class="{
                                'bg-red-500 text-white border-2 border-black font-black': currentTheme === 'brutalist' && currentMode === 'light',
-                               'bg-red-500 text-white border-2 border-white font-black': currentTheme === 'brutalist' && currentMode === 'dark',
+                               'bg-red-500 text-white border-2 border-[#bef264] font-black': currentTheme === 'brutalist' && currentMode === 'dark',
                                'bg-red-500/20 text-red-500 border border-red-500/30': currentTheme !== 'brutalist'
                              }"
                              class="absolute -right-7 -bottom-2 text-[8px] font-bold py-1 px-8 rotate-[-15deg] uppercase">
@@ -881,7 +881,7 @@
              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
              :class="{
                'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-white bg-[#18181b] text-white shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
+               'border-4 border-[#bef264] bg-[#18181b] text-white shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
                'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
@@ -942,7 +942,7 @@
              <div class="border-t my-1"
                   :class="{
                     'border-black border-t-2': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-white border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
+                    'border-[#bef264] border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border-white/10': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
                     'border-emerald-500/20': currentTheme === 'terminal',
                     'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
@@ -957,7 +957,7 @@
              <div class="flex p-0.5"
                   :class="{
                     'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                    'border-2 border-[#bef264] bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
                     'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
                     'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -985,7 +985,7 @@
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
                            'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-white text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
+                           'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
                            'bg-cyan-400 text-black font-bold': currentMode === 'dark' && currentTheme === 'cyberpunk',
                            'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal',
                            'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'dark',

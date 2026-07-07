@@ -406,28 +406,28 @@ h1, h2, h3, h4, h5, h6 {
     --bg-main: #18181b; /* zinc-900 */
     --text-main: #ffffff;
     --card-bg: #27272a; /* zinc-800 */
-    --card-border: 4px solid #ffffff;
-    --card-shadow: 6px 6px 0px #ffffff;
-    --card-shadow-hover: 10px 10px 0px #ffffff;
-    --accent: #eab308;
-    --accent-hover: #bef264;
+    --card-border: 4px solid #bef264;
+    --card-shadow: 6px 6px 0px #bef264;
+    --card-shadow-hover: 10px 10px 0px #bef264;
+    --accent: #bef264;
+    --accent-hover: #eab308;
 }
-.theme-brutalist.mode-dark .stat-label { color: #ffffff; opacity: 0.75; }
+.theme-brutalist.mode-dark .stat-label { color: #bef264; opacity: 0.85; }
 .theme-brutalist.mode-dark .stat-value { color: #ffffff; }
 .theme-brutalist.mode-dark table th {
-    background-color: #ffffff;
+    background-color: #bef264;
     color: #000000;
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 2px solid #bef264;
 }
 .theme-brutalist.mode-dark table td {
     color: #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 2px solid #bef264;
 }
 .theme-brutalist.mode-dark table tr:last-child td {
     border-bottom: none;
 }
-.theme-brutalist.mode-dark ::-webkit-scrollbar-track { background: #18181b; border-left: 2px solid #fff; }
-.theme-brutalist.mode-dark ::-webkit-scrollbar-thumb { background: #fff; border: 1px solid #18181b; }
+.theme-brutalist.mode-dark ::-webkit-scrollbar-track { background: #18181b; border-left: 2px solid #bef264; }
+.theme-brutalist.mode-dark ::-webkit-scrollbar-thumb { background: #bef264; border: 1px solid #18181b; }
 
 /* Cyberpunk - Light Mode Override */
 .theme-cyberpunk.mode-light {
@@ -534,26 +534,29 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Brutalist Dark Mode Inputs & Buttons */
 .theme-brutalist.mode-dark .theme-input {
-    background-color: #1e1e1e;
-    border: 2px solid #ffffff;
+    background-color: #1c1c1f;
+    border: 2px solid #bef264;
     color: #ffffff;
 }
 .theme-brutalist.mode-dark .theme-input:focus {
     background-color: #bef264;
     color: #000000;
+    border-color: #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn {
     background-color: #bef264;
     color: #000000;
-    border: 3px solid #ffffff;
-    box-shadow: 3px 3px 0px #ffffff;
+    border: 3px solid #bef264;
+    box-shadow: 3px 3px 0px #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn:hover:not(:disabled) {
-    background-color: #eab308;
-    box-shadow: 5px 5px 0px #ffffff;
+    background-color: transparent;
+    color: #bef264;
+    box-shadow: 5px 5px 0px #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn:active:not(:disabled) {
-    box-shadow: 1px 1px 0px #ffffff;
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #bef264;
 }
 
 /* Cyberpunk Light Mode Inputs & Buttons */
