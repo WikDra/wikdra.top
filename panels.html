@@ -16,7 +16,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw-v4.js')
                     .then(reg => console.log('PWA: Nowy ServiceWorker v4 zarejestrowany!'))
-                    .catch(err => console.log('PWA: Błąd ServiceWorkera:', err));
+                    .catch(err => console.log('PWA: BĹ‚Ä…d ServiceWorkera:', err));
             });
         }
     </script>
@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Shared themes CSS -->
-    <link rel="stylesheet" href="/themes.css?v=4">
+    <link rel="stylesheet" href="/themes-v5.css">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -116,7 +116,7 @@
                 hourlyData: {},
 
                 applyTheme(theme, mode) {
-                    // single source of truth — call this for ALL theme/mode changes
+                    // single source of truth â€” call this for ALL theme/mode changes
                     this.currentTheme = theme;
                     this.currentMode = mode;
                     setGlobalTheme(theme);
@@ -187,8 +187,8 @@
                             alert('Nie znaleziono adresu');
                         }
                     } catch (error) {
-                        console.error('Błąd wyszukiwania adresu:', error);
-                        alert('Błąd wyszukiwania adresu');
+                        console.error('BĹ‚Ä…d wyszukiwania adresu:', error);
+                        alert('BĹ‚Ä…d wyszukiwania adresu');
                     } finally {
                         this.loading = false;
                     }
@@ -207,7 +207,7 @@
                         this.stats.lastUpdate = new Date().toLocaleString('pl-PL');
                         this.saveToStorage();
                     } catch (error) {
-                        console.error('Błąd pobierania danych:', error);
+                        console.error('BĹ‚Ä…d pobierania danych:', error);
                         if (Object.keys(this.history).length > 0) {
                             console.log('Using cached data.');
                         }
@@ -537,7 +537,7 @@
                      'text-neutral-500': currentTheme === 'editorial' && currentMode === 'light',
                      'text-neutral-400': currentTheme === 'editorial' && currentMode === 'dark'
                    }">
-                    <span x-show="currentTheme === 'terminal'"># </span>Pełna analiza Twojej produkcji słonecznej
+                    <span x-show="currentTheme === 'terminal'"># </span>PeĹ‚na analiza Twojej produkcji sĹ‚onecznej
                 </p>
             </div>
             
@@ -600,12 +600,12 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="text-[10px] uppercase font-bold tracking-wider" 
-                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Szerokość (Lat)</label>
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">SzerokoĹ›Ä‡ (Lat)</label>
                                 <input type="number" x-model="params.lat" step="0.001" class="theme-input mt-1">
                             </div>
                             <div>
                                 <label class="text-[10px] uppercase font-bold tracking-wider" 
-                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Długość (Lon)</label>
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">DĹ‚ugoĹ›Ä‡ (Lon)</label>
                                 <input type="number" x-model="params.lon" step="0.001" class="theme-input mt-1">
                             </div>
                         </div>
@@ -637,7 +637,7 @@
                         </div>
                         
                         <button @click="fetchData" :disabled="loading" class="theme-btn w-full py-3 mt-2 text-sm flex items-center justify-center gap-2">
-                            <i class="fas fa-sync" :class="loading && 'animate-spin'"></i> <span>WYŚLIJ ZAPYTANIE</span>
+                            <i class="fas fa-sync" :class="loading && 'animate-spin'"></i> <span>WYĹšLIJ ZAPYTANIE</span>
                         </button>
                     </div>
                 </div>
@@ -681,7 +681,7 @@
                                     class="w-full flex justify-between items-center text-sm p-3 border transition-all text-left group">
                                 <div class="flex flex-col">
                                     <span class="font-medium" x-text="date"></span>
-                                    <span class="text-[10px] opacity-60">Produkcja całkowita</span>
+                                    <span class="text-[10px] opacity-60">Produkcja caĹ‚kowita</span>
                                 </div>
                                 <span class="font-bold" x-text="history[date].energy + ' kWh'"
                                       :class="
@@ -768,7 +768,7 @@
                            'border-neutral-200 text-neutral-800 font-serif rounded-none': currentTheme === 'editorial' && currentMode === 'light',
                            'border-neutral-800 bg-[#1c1c1f] text-neutral-200 font-serif rounded-none': currentTheme === 'editorial' && currentMode === 'dark'
                          }">
-                        Podgląd dla: <span x-text="selectedDate" class="font-bold"></span>
+                        PodglÄ…d dla: <span x-text="selectedDate" class="font-bold"></span>
                     </div>
                 </div>
 
@@ -776,7 +776,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Energy Card -->
                     <div class="panel-card p-6">
-                        <p class="stat-label mb-1">Energia całkowita</p>
+                        <p class="stat-label mb-1">Energia caĹ‚kowita</p>
                         <div class="flex items-baseline gap-1">
                             <span class="stat-value" x-text="history[selectedDate]?.energy || 0"></span>
                             <span class="text-xs opacity-60 uppercase font-bold">kWh</span>
