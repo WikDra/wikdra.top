@@ -304,7 +304,7 @@ if (isset($_GET['api'])) {
              class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
              
              <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' || currentTheme === 'aurora' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'text-white/50' : 'text-neutral-500'">
+                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
                   Styl strony:
              </div>
              
@@ -390,7 +390,7 @@ if (isset($_GET['api'])) {
                   }"></div>
 
              <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' || currentTheme === 'aurora' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'text-white/50' : 'text-neutral-500'">
+                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
                   Tryb:
              </div>
              

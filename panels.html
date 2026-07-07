@@ -887,7 +887,7 @@
                'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
                'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
-                'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
+               'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
                'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
                'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
                'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
@@ -896,12 +896,12 @@
              class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
              
              <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' || currentTheme === 'aurora' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'text-white/50' : 'text-neutral-500'">
+                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
                   Styl strony:
              </div>
              
              <!-- Brutalist -->
-             <button @click="currentTheme = 'brutalist'; open = false"
+             <button @click="setTheme('brutalist'); open = false"
                      :class="{
                        'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
                        'bg-[#bef264] text-black border-2 border-white font-bold shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
@@ -915,7 +915,7 @@
              </button>
              
              <!-- Cyberpunk -->
-             <button @click="currentTheme = 'cyberpunk'; open = false"
+             <button @click="setTheme('cyberpunk'); open = false"
                      :class="{
                        'bg-fuchsia-600 text-white border border-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.4)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                        'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
@@ -929,7 +929,7 @@
              </button>
              
              <!-- Terminal -->
-             <button @click="currentTheme = 'terminal'; open = false"
+             <button @click="setTheme('terminal'); open = false"
                      :class="{
                        'bg-[#047857]/20 text-[#047857] border border-[#047857] font-bold rounded': currentTheme === 'terminal' && currentMode === 'light',
                        'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -943,7 +943,7 @@
              </button>
              
              <!-- Aurora -->
-             <button @click="currentTheme = 'aurora'; open = false"
+             <button @click="setTheme('aurora'); open = false"
                      :class="{
                        'bg-indigo-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
                        'bg-purple-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
@@ -957,7 +957,7 @@
              </button>
              
              <!-- Editorial -->
-             <button @click="currentTheme = 'editorial'; open = false"
+             <button @click="setTheme('editorial'); open = false"
                      :class="{
                        'bg-neutral-900 text-white font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'light',
                        'bg-[#e4e4e7] text-black font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'dark',
@@ -982,7 +982,7 @@
                   }"></div>
 
              <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' || currentTheme === 'aurora' || (currentTheme === 'editorial' && currentMode === 'dark') || (currentTheme === 'brutalist' && currentMode === 'dark') ? 'text-white/50' : 'text-neutral-500'">
+                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
                   Tryb:
              </div>
              
@@ -999,7 +999,7 @@
                     'border border-neutral-200 bg-neutral-50 rounded-sm': currentTheme === 'editorial' && currentMode === 'light',
                     'border border-neutral-800 bg-[#121212] text-white rounded-sm': currentTheme === 'editorial' && currentMode === 'dark'
                   }">
-                 <button @click="currentMode = 'light'"
+                 <button @click="setMode('light')"
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
                            'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'light',
@@ -1014,7 +1014,7 @@
                          }">
                      Jasny
                  </button>
-                 <button @click="currentMode = 'dark'"
+                 <button @click="setMode('dark')"
                          class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
                          :class="{
                            'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
