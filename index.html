@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wikdra - Oficjalna Strona i Projekty</title>
-    <meta name="description" content="Oficjalna strona twĂłrcy Wikdra. Dashboard paneli sĹ‚onecznych, eksperymentalne edycje EPP 8K, testy telefonĂłw i projekty programistyczne.">
+    <meta name="description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
     <link rel="canonical" href="https://wikdra.top/">
     <link rel="icon" href="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj" type="image/x-icon">
     <link rel="manifest" href="/manifest.json">
@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://wikdra.top/">
     <meta property="og:title" content="Wikdra - Oficjalna Strona i Projekty">
-    <meta property="og:description" content="Oficjalna strona twĂłrcy Wikdra. Dashboard paneli sĹ‚onecznych, eksperymentalne edycje EPP 8K, testy telefonĂłw i projekty programistyczne.">
+    <meta property="og:description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
     <meta property="og:image" content="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj">
 
     <!-- JSON-LD Structured Data -->
@@ -31,7 +31,7 @@
         "https://www.youtube.com/@wikdra651",
         "https://github.com/WikDra"
       ],
-      "description": "TwĂłrca wideo, programista i entuzjasta technologii. Znany z eksperymentalnych edycji EPP w 8K oraz legendarnych testĂłw wytrzymaĹ‚oĹ›ci telefonĂłw."
+      "description": "Twórca wideo, programista i entuzjasta technologii. Znany z eksperymentalnych edycji EPP w 8K oraz legendarnych testów wytrzymałości telefonów."
     }
     </script>
 
@@ -237,17 +237,17 @@
             <div x-show="currentTheme === 'terminal'" class="space-y-1 text-xs" :class="currentMode === 'dark' ? 'text-emerald-500/70' : 'text-[#047857]/70'">
                 <div class="flex items-center gap-2">
                     <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">CPU</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + 'â–'.repeat(Math.min(20, Math.round(cpu / 5))) + 'â–‘'.repeat(Math.max(0, 20 - Math.round(cpu / 5))) + ']'"></span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(cpu / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(cpu / 5))) + ']'"></span>
                     <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="cpu">--</span>%</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">RAM</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + 'â–'.repeat(Math.min(20, Math.round(ram / 5))) + 'â–‘'.repeat(Math.max(0, 20 - Math.round(ram / 5))) + ']'"></span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(ram / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(ram / 5))) + ']'"></span>
                     <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="ram">--</span>%</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">DSK</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + 'â–'.repeat(Math.min(20, Math.round(dsk / 5))) + 'â–‘'.repeat(Math.max(0, 20 - Math.round(dsk / 5))) + ']'"></span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(dsk / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(dsk / 5))) + ']'"></span>
                     <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="dsk">--</span>%</span>
                 </div>
             </div>
@@ -279,7 +279,7 @@
                  :class="currentMode === 'dark' ? 'border-neutral-800' : 'border-neutral-200'">
                 <span class="font-serif text-lg italic tracking-tight" :class="currentMode === 'dark' ? 'text-neutral-200' : 'text-neutral-900'">Wikdra.top</span>
                 <span class="font-mono text-[11px] tracking-widest" :class="currentMode === 'dark' ? 'text-neutral-500' : 'text-neutral-400'">
-                    CPU <span x-text="cpu">--</span>% Â· RAM <span x-text="ram">--</span>% Â· DSK <span x-text="dsk">--</span>%
+                    CPU <span x-text="cpu">--</span>% · RAM <span x-text="ram">--</span>% · DSK <span x-text="dsk">--</span>%
                 </span>
             </div>
         </header>
@@ -336,7 +336,7 @@
                   'max-w-md text-base text-neutral-500': currentTheme === 'editorial' && currentMode === 'light',
                   'max-w-md text-base text-neutral-400': currentTheme === 'editorial' && currentMode === 'dark'
                 }">
-                <span x-show="currentTheme === 'terminal'"># </span>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzÄ™dzia w jednym miejscu.
+                <span x-show="currentTheme === 'terminal'"># </span>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.
              </p>
         </div>
 
@@ -356,7 +356,7 @@
                   wikdra@server:~$ <span :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#059669]'">ls ./projekty --long</span>
              </p>
 
-             <!-- PROJECT 1: PANELE SĹONECZNE -->
+             <!-- PROJECT 1: PANELE SŁONECZNE -->
              <a href="https://panele.wikdra.top" 
                 :class="{
                   'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
@@ -412,7 +412,7 @@
                        'mt-4 text-lg font-semibold text-white': currentTheme === 'aurora' && currentMode === 'dark',
                        'mt-4 text-lg font-semibold text-slate-900': currentTheme === 'aurora' && currentMode === 'light'
                      }">
-                        Panele SĹ‚oneczne
+                        Panele Słoneczne
                     </h3>
                     
                     <p :class="{
@@ -423,7 +423,7 @@
                        'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
                        'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
                      }">
-                        Monitorowanie produkcji energii sĹ‚onecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
+                        Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
                     </p>
                 </div>
 
@@ -433,14 +433,14 @@
                     <div>
                         <div class="flex flex-wrap items-center gap-2">
                             <span :class="currentMode === 'dark' ? 'text-emerald-500/50' : 'text-[#047857]/50'">01.</span>
-                            <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">Panele SĹ‚oneczne</span>
+                            <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">Panele Słoneczne</span>
                             <span class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-bold"
                                   :class="currentMode === 'dark' ? 'border-emerald-400/40 text-emerald-300' : 'border-emerald-600/40 text-[#047857] bg-emerald-100/50'">
                                 Aktywne
                             </span>
                         </div>
                         <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                            Monitorowanie produkcji energii sĹ‚onecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
+                            Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
                         </p>
                     </div>
                 </div>
@@ -453,13 +453,13 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-sun text-neutral-500 text-sm"></i>
-                            <h3 class="font-serif text-2xl tracking-tight">Panele SĹ‚oneczne</h3>
+                            <h3 class="font-serif text-2xl tracking-tight">Panele Słoneczne</h3>
                             <span class="rounded-full border border-neutral-300 px-2 py-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
                                 Aktywne
                             </span>
                         </div>
                         <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Monitorowanie produkcji energii sĹ‚onecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
+                            Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
                         </p>
                     </div>
                 </div>
@@ -476,7 +476,7 @@
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
                 }">
-                    Zobacz Dashboard <span x-text="currentTheme === 'brutalist' ? 'â†’' : (currentTheme === 'cyberpunk' ? 'Â»' : (currentTheme === 'aurora' ? 'â†—' : 'â†’'))"></span>
+                    Zobacz Dashboard <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
                 </span>
              </a>
 
@@ -537,7 +537,7 @@
                        'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
                        'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
                      }">
-                        Eksperymentalne edycje EPP w 8K, latajÄ…ce buty i legendarne testy wytrzymaĹ‚oĹ›ci telefonĂłw (z uĹĽyciem kibla). Czysty klimat internetu.
+                        Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
                     </p>
                 </div>
 
@@ -550,7 +550,7 @@
                             <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">YouTube</span>
                         </div>
                         <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                            Eksperymentalne edycje EPP w 8K, latajÄ…ce buty i legendarne testy wytrzymaĹ‚oĹ›ci telefonĂłw (z uĹĽyciem kibla). Czysty klimat internetu.
+                            Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
                         </p>
                     </div>
                 </div>
@@ -566,7 +566,7 @@
                             <h3 class="font-serif text-2xl tracking-tight">YouTube</h3>
                         </div>
                         <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Eksperymentalne edycje EPP w 8K, latajÄ…ce buty i legendarne testy wytrzymaĹ‚oĹ›ci telefonĂłw (z uĹĽyciem kibla). Czysty klimat internetu.
+                            Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
                         </p>
                     </div>
                 </div>
@@ -583,7 +583,7 @@
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
                 }">
-                    OdwiedĹş KanaĹ‚ <span x-text="currentTheme === 'brutalist' ? 'â†’' : (currentTheme === 'cyberpunk' ? 'Â»' : (currentTheme === 'aurora' ? 'â†—' : 'â†’'))"></span>
+                    Odwiedź Kanał <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
                 </span>
              </a>
 
@@ -625,13 +625,13 @@
                         </div>
                         
                          <span x-show="currentTheme === 'brutalist'" class="border-2 px-2 py-1 text-[11px] font-black uppercase" :class="currentMode === 'dark' ? 'border-white bg-yellow-300 text-black' : 'border-black bg-yellow-300 text-black'">
-                             8 repo Â· 13 â…
+                             8 repo · 13 ★
                          </span>
                          <span x-show="currentTheme === 'cyberpunk'" class="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider" :class="currentMode === 'dark' ? 'border-lime-400/50 text-lime-300' : 'border-lime-600/50 text-lime-700 bg-lime-50'">
-                             8 repo Â· 13 â…
+                             8 repo · 13 ★
                          </span>
                          <span x-show="currentTheme === 'aurora'" class="rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm" :class="currentMode === 'dark' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-emerald-200 bg-emerald-50 text-emerald-700'">
-                             8 repo Â· 13 â…
+                             8 repo · 13 ★
                          </span>
                     </div>
                     
@@ -654,7 +654,7 @@
                        'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
                        'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
                      }">
-                            Moje repozytoria i projekty open-source. SprawdĹş nad czym aktualnie pracujÄ™ i przejrzyj kod moich aplikacji.
+                            Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
                     </p>
                 </div>
 
@@ -667,11 +667,11 @@
                              <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">GitHub</span>
                              <span class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-bold"
                                    :class="currentMode === 'dark' ? 'border-emerald-400/40 text-emerald-300' : 'border-emerald-600/40 text-[#047857] bg-emerald-100/50'">
-                                 8 repo Â· 13 â…
+                                 8 repo · 13 ★
                              </span>
                          </div>
                          <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                             Moje repozytoria i projekty open-source. SprawdĹş nad czym aktualnie pracujÄ™ i przejrzyj kod moich aplikacji.
+                             Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
                          </p>
                      </div>
                  </div>
@@ -686,11 +686,11 @@
                             <i class="fab fa-github text-neutral-500 text-sm"></i>
                             <h3 class="font-serif text-2xl tracking-tight">GitHub</h3>
                             <span class="rounded-full border border-neutral-300 px-2 py-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
-                                8 repo Â· 13 â…
+                                8 repo · 13 ★
                             </span>
                         </div>
                         <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Moje repozytoria i projekty open-source. SprawdĹş nad czym aktualnie pracujÄ™ i przejrzyj kod moich aplikacji.
+                            Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
                         </p>
                     </div>
                 </div>
@@ -707,7 +707,7 @@
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
                   'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
                 }">
-                    OdwiedĹş Profil <span x-text="currentTheme === 'brutalist' ? 'â†’' : (currentTheme === 'cyberpunk' ? 'Â»' : (currentTheme === 'aurora' ? 'â†—' : 'â†’'))"></span>
+                    Odwiedź Profil <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
                 </span>
              </a>
         </main>
@@ -728,9 +728,9 @@
                 <template x-if="currentTheme === 'brutalist'">
                     <div class="flex flex-wrap items-center justify-between w-full font-mono text-xs">
                         <a href="https://wikdra.top/bichu" class="underline decoration-2 text-white hover:text-lime-300">Bichu</a>
-                        <span>Â© 2026 Wikdra.top. Wszystkie prawa zastrzeĹĽone.</span>
+                        <span>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</span>
                         <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="flex items-center gap-1.5 underline decoration-2 text-white hover:text-lime-300">
-                            <i class="fas fa-music text-[10px]"></i> GĂłwno Ĺ›wiÄ™ta (Suno)
+                            <i class="fas fa-music text-[10px]"></i> Gówno święta (Suno)
                         </a>
                     </div>
                 </template>
@@ -739,10 +739,10 @@
                 <template x-if="currentTheme === 'cyberpunk'">
                     <div class="space-y-1">
                         <a href="https://wikdra.top/bichu" class="hover:text-fuchsia-300 font-bold">[ BICHU ]</a>
-                        <p>Â© 2026 WIKDRA.TOP. WSZYSTKIE PRAWA ZASTRZEĹ»ONE.</p>
+                        <p>© 2026 WIKDRA.TOP. WSZYSTKIE PRAWA ZASTRZEŻONE.</p>
                         <p class="flex items-center justify-center gap-1.5 normal-case tracking-normal">
-                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posĹ‚uchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="text-cyan-300 hover:text-fuchsia-300 underline">GĂłwno Ĺ›wiÄ™ta (Suno)</a>
+                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posłuchaj: 
+                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="text-cyan-300 hover:text-fuchsia-300 underline">Gówno święta (Suno)</a>
                         </p>
                     </div>
                 </template>
@@ -751,10 +751,10 @@
                 <template x-if="currentTheme === 'terminal'">
                     <div class="space-y-1">
                         <p>// <a href="https://wikdra.top/bichu" class="underline hover:text-emerald-300">Bichu</a></p>
-                        <p>Â© 2026 Wikdra.top. Wszystkie prawa zastrzeĹĽone.</p>
+                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
                         <p class="flex items-center gap-1.5">
-                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posĹ‚uchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="underline hover:text-emerald-300">GĂłwno Ĺ›wiÄ™ta (Suno)</a>
+                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posłuchaj: 
+                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="underline hover:text-emerald-300">Gówno święta (Suno)</a>
                         </p>
                     </div>
                 </template>
@@ -763,10 +763,10 @@
                 <template x-if="currentTheme === 'aurora'">
                     <div class="space-y-1">
                         <a href="https://wikdra.top/bichu" class="font-medium text-slate-400 hover:text-purple-400">Bichu</a>
-                        <p>Â© 2026 Wikdra.top. Wszystkie prawa zastrzeĹĽone.</p>
+                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
                         <p class="flex items-center justify-center gap-1.5">
-                            <i class="fas fa-music text-[10px] text-slate-400"></i> W wolnej chwili posĹ‚uchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="font-medium text-purple-400 hover:underline">GĂłwno Ĺ›wiÄ™ta (Suno)</a>
+                            <i class="fas fa-music text-[10px] text-slate-400"></i> W wolnej chwili posłuchaj: 
+                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="font-medium text-purple-400 hover:underline">Gówno święta (Suno)</a>
                         </p>
                     </div>
                 </template>
@@ -775,10 +775,10 @@
                 <template x-if="currentTheme === 'editorial'">
                     <div class="space-y-1">
                         <a href="https://wikdra.top/bichu" class="font-medium text-neutral-500 hover:text-neutral-900">Bichu</a>
-                        <p>Â© 2026 Wikdra.top. Wszystkie prawa zastrzeĹĽone.</p>
+                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
                         <p class="flex items-center justify-center gap-1.5">
-                            <i class="fas fa-music text-[10px] text-neutral-400"></i> W wolnej chwili posĹ‚uchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="italic text-neutral-600 hover:text-neutral-900 underline">GĂłwno Ĺ›wiÄ™ta (Suno)</a>
+                            <i class="fas fa-music text-[10px] text-neutral-400"></i> W wolnej chwili posłuchaj: 
+                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="italic text-neutral-600 hover:text-neutral-900 underline">Gówno święta (Suno)</a>
                         </p>
                     </div>
                 </template>
