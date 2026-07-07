@@ -103,7 +103,7 @@
       ">
     
     <!-- Aurora background blobs -->
-    <div x-show="currentTheme === 'aurora'" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
         <!-- Dark Blobs -->
         <template x-if="currentMode === 'dark'">
             <div class="absolute inset-0 pointer-events-none">
@@ -121,7 +121,7 @@
     </div>
 
     <!-- Cyberpunk grid/glow -->
-    <div x-show="currentTheme === 'cyberpunk'" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
          :style="currentMode === 'dark' ? 
                  'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' : 
                  'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">

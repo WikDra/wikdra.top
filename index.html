@@ -131,15 +131,10 @@
         };
         getStats();
         setInterval(getStats, 60000);
-        
-        $watch('currentTheme', val => {
-            document.documentElement.className = 'theme-' + val;
-            setGlobalTheme(val);
-        });
       ">
 
     <!-- Aurora Background Blobs -->
-    <div x-show="currentTheme === 'aurora'" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
         <!-- Dark Mode Blobs -->
         <template x-if="currentMode === 'dark'">
             <div class="absolute inset-0 pointer-events-none">
@@ -159,7 +154,7 @@
     </div>
 
     <!-- Cyberpunk Background Grid -->
-    <div x-show="currentTheme === 'cyberpunk'" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
          :style="currentMode === 'dark' ? 
                  'background-image: linear-gradient(rgba(217,70,239,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px); background-size: 34px 34px;' : 
                  'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
@@ -173,7 +168,11 @@
         <header class="w-full">
             <!-- Brutalist Header Stats -->
             <div x-show="currentTheme === 'brutalist'" 
-                 class="flex flex-wrap items-center justify-between gap-3 border-4 border-black bg-lime-300 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wide text-black shadow-[6px_6px_0_#000]">
+                 :class="{
+                   'border-black bg-lime-300 text-black shadow-[6px_6px_0_#000]': currentMode === 'light',
+                   'border-white bg-zinc-800 text-white shadow-[6px_6px_0_#fff]': currentMode === 'dark'
+                 }"
+                 class="flex flex-wrap items-center justify-between gap-3 border-4 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wide">
                 <span>WIKDRA.TOP</span>
                 <div class="flex gap-4">
                     <span>CPU <span x-text="cpu">--</span>%</span>
@@ -182,38 +181,39 @@
                 </div>
             </div>
 
-            <!-- Cyberpunk Header Stats -->
+            <!-- Cyberpunk Header            <!-- Cyberpunk Header Stats -->
             <div x-show="currentTheme === 'cyberpunk'" 
-                 class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
-                <span class="font-mono text-sm font-bold tracking-[0.2em] text-cyan-300">WIKDRA.TOP</span>
+                 class="flex flex-wrap items-center justify-between gap-4 border-b pb-4"
+                 :class="currentMode === 'dark' ? 'border-white/10' : 'border-sky-200'">
+                <span class="font-mono text-sm font-bold tracking-[0.2em]" :class="currentMode === 'dark' ? 'text-cyan-300' : 'text-sky-600'">WIKDRA.TOP</span>
                 <div class="flex gap-6">
                     <!-- CPU -->
                     <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest text-white/50">
+                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
                             <span>CPU</span>
-                            <span class="text-cyan-300"><span x-text="cpu">--</span>%</span>
+                            <span :class="currentMode === 'dark' ? 'text-cyan-300' : 'text-sky-600'"><span x-text="cpu">--</span>%</span>
                         </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
                             <div class="h-full rounded-full bg-cyan-400 transition-all duration-500 shadow-[0_0_8px_#22d3ee]" :style="'width: ' + cpu + '%'"></div>
                         </div>
                     </div>
                     <!-- RAM -->
                     <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest text-white/50">
+                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
                             <span>RAM</span>
-                            <span class="text-fuchsia-400"><span x-text="ram">--</span>%</span>
+                            <span :class="currentMode === 'dark' ? 'text-fuchsia-400' : 'text-fuchsia-600'"><span x-text="ram">--</span>%</span>
                         </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
                             <div class="h-full rounded-full bg-fuchsia-400 transition-all duration-500 shadow-[0_0_8px_#e879f9]" :style="'width: ' + ram + '%'"></div>
                         </div>
                     </div>
                     <!-- DSK -->
                     <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest text-white/50">
+                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
                             <span>DSK</span>
-                            <span class="text-lime-400"><span x-text="dsk">--</span>%</span>
+                            <span :class="currentMode === 'dark' ? 'text-lime-400' : 'text-emerald-600'"><span x-text="dsk">--</span>%</span>
                         </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
                             <div class="h-full rounded-full bg-lime-400 transition-all duration-500 shadow-[0_0_8px_#a3e635]" :style="'width: ' + dsk + '%'"></div>
                         </div>
                     </div>
@@ -221,21 +221,21 @@
             </div>
 
             <!-- Terminal Header Stats -->
-            <div x-show="currentTheme === 'terminal'" class="space-y-1 text-xs text-emerald-500/70">
+            <div x-show="currentTheme === 'terminal'" class="space-y-1 text-xs" :class="currentMode === 'dark' ? 'text-emerald-500/70' : 'text-[#065f46]/70'">
                 <div class="flex items-center gap-2">
-                    <span class="text-emerald-400/70">CPU</span>
-                    <span class="text-emerald-500 font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(cpu / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(cpu / 5))) + ']'"></span>
-                    <span class="w-10 text-right text-emerald-300"><span x-text="cpu">--</span>%</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#065f46]/70'">CPU</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(cpu / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(cpu / 5))) + ']'"></span>
+                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#065f46]'"><span x-text="cpu">--</span>%</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-emerald-400/70">RAM</span>
-                    <span class="text-emerald-500 font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(ram / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(ram / 5))) + ']'"></span>
-                    <span class="w-10 text-right text-emerald-300"><span x-text="ram">--</span>%</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#065f46]/70'">RAM</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(ram / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(ram / 5))) + ']'"></span>
+                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#065f46]'"><span x-text="ram">--</span>%</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="text-emerald-400/70">DSK</span>
-                    <span class="text-emerald-500 font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(dsk / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(dsk / 5))) + ']'"></span>
-                    <span class="w-10 text-right text-emerald-300"><span x-text="dsk">--</span>%</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#065f46]/70'">DSK</span>
+                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(dsk / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(dsk / 5))) + ']'"></span>
+                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#065f46]'"><span x-text="dsk">--</span>%</span>
                 </div>
             </div>
 
@@ -262,9 +262,10 @@
             </div>
 
             <!-- Editorial Header Stats -->
-            <div x-show="currentTheme === 'editorial'" class="flex items-baseline justify-between border-b border-neutral-200 pb-5">
-                <span class="font-serif text-lg italic tracking-tight">Wikdra.top</span>
-                <span class="font-mono text-[11px] tracking-widest text-neutral-400">
+            <div x-show="currentTheme === 'editorial'" class="flex items-baseline justify-between border-b pb-5"
+                 :class="currentMode === 'dark' ? 'border-neutral-800' : 'border-neutral-200'">
+                <span class="font-serif text-lg italic tracking-tight" :class="currentMode === 'dark' ? 'text-neutral-200' : 'text-neutral-900'">Wikdra.top</span>
+                <span class="font-mono text-[11px] tracking-widest" :class="currentMode === 'dark' ? 'text-neutral-500' : 'text-neutral-400'">
                     CPU <span x-text="cpu">--</span>% · RAM <span x-text="ram">--</span>% · DSK <span x-text="dsk">--</span>%
                 </span>
             </div>
@@ -310,11 +311,16 @@
              
              <p class="mt-4 leading-relaxed"
                 :class="{
-                  'max-w-xl text-lg font-bold text-black': currentTheme === 'brutalist',
-                  'mx-auto max-w-lg font-mono text-sm text-white/60 text-center': currentTheme === 'cyberpunk',
-                  'max-w-xl font-mono text-sm text-emerald-400/80': currentTheme === 'terminal',
-                  'mx-auto max-w-lg text-base text-slate-200/80 text-center': currentTheme === 'aurora',
-                  'max-w-md text-base text-neutral-500': currentTheme === 'editorial'
+                  'max-w-xl text-lg font-bold text-black': currentTheme === 'brutalist' && currentMode === 'light',
+                  'max-w-xl text-lg font-bold text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'mx-auto max-w-lg font-mono text-sm text-white/60 text-center': currentTheme === 'cyberpunk' && currentMode === 'dark',
+                  'mx-auto max-w-lg font-mono text-sm text-slate-600 text-center': currentTheme === 'cyberpunk' && currentMode === 'light',
+                  'max-w-xl font-mono text-sm text-emerald-400/80': currentTheme === 'terminal' && currentMode === 'dark',
+                  'max-w-xl font-mono text-sm text-[#065f46]/80': currentTheme === 'terminal' && currentMode === 'light',
+                  'mx-auto max-w-lg text-base text-slate-200/80 text-center': currentTheme === 'aurora' && currentMode === 'dark',
+                  'mx-auto max-w-lg text-base text-slate-600 text-center': currentTheme === 'aurora' && currentMode === 'light',
+                  'max-w-md text-base text-neutral-500': currentTheme === 'editorial' && currentMode === 'light',
+                  'max-w-md text-base text-neutral-400': currentTheme === 'editorial' && currentMode === 'dark'
                 }">
                 <span x-show="currentTheme === 'terminal'"># </span>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.
              </p>

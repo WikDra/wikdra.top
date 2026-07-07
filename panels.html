@@ -434,7 +434,7 @@
 <body x-data="solarApp" :class="'theme-' + currentTheme + ' mode-' + currentMode" class="min-h-screen p-4 md:p-8 transition-colors duration-300 relative">
     
     <!-- Aurora background blobs -->
-    <div x-show="currentTheme === 'aurora'" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
         <!-- Dark Mode Blobs -->
         <template x-if="currentMode === 'dark'">
             <div class="absolute inset-0 pointer-events-none">
@@ -454,7 +454,7 @@
     </div>
 
     <!-- Cyberpunk grid/glow -->
-    <div x-show="currentTheme === 'cyberpunk'" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
          :style="currentMode === 'dark' ? 
                  'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' : 
                  'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
@@ -624,20 +624,30 @@
                         <template x-for="date in getSortedHistoryDates()" :key="date">
                             <button @click="selectDate(date)" 
                                     :class="{
-                                      'bg-lime-300 border-2 border-black text-black font-black shadow-[2px_2px_0_#000] rounded-none': selectedDate === date && currentTheme === 'brutalist',
-                                      'bg-white border-2 border-black text-black hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'brutalist',
+                                      'bg-lime-300 border-2 border-black text-black font-black shadow-[2px_2px_0_#000] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'light',
+                                      'bg-lime-300 border-2 border-white text-black font-black shadow-[2px_2px_0_#fff] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'dark',
+                                      'bg-white border-2 border-black text-black hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'light',
+                                      'bg-zinc-800 border-2 border-white text-white hover:bg-zinc-700 rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'dark',
                                       
-                                      'bg-fuchsia-500/20 border-fuchsia-400/60 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk',
-                                      'bg-white/[0.02] border-cyan-400/20 text-white/70 hover:bg-white/[0.05] rounded-none': selectedDate !== date && currentTheme === 'cyberpunk',
+                                      'bg-fuchsia-500/20 border-fuchsia-400/60 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk' && currentMode === 'dark',
+                                      'bg-fuchsia-500 text-white border border-fuchsia-400 text-shadow-none shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk' && currentMode === 'light',
+                                      'bg-white/[0.02] border-cyan-400/20 text-white/70 hover:bg-white/[0.05] rounded-none': selectedDate !== date && currentTheme === 'cyberpunk' && currentMode === 'dark',
+                                      'bg-white border border-sky-400/30 text-sky-600 hover:bg-sky-50 rounded-none': selectedDate !== date && currentTheme === 'cyberpunk' && currentMode === 'light',
                                       
-                                      'bg-emerald-500/20 border-emerald-400 text-emerald-300 rounded': selectedDate === date && currentTheme === 'terminal',
-                                      'bg-transparent border-emerald-500/10 text-emerald-500/50 hover:bg-emerald-500/5 rounded': selectedDate !== date && currentTheme === 'terminal',
+                                      'bg-emerald-500/20 border-emerald-400 text-emerald-300 rounded': selectedDate === date && currentTheme === 'terminal' && currentMode === 'dark',
+                                      'bg-emerald-600 text-white border border-emerald-500 rounded': selectedDate === date && currentTheme === 'terminal' && currentMode === 'light',
+                                      'bg-transparent border-emerald-500/10 text-emerald-500/50 hover:bg-emerald-500/5 rounded': selectedDate !== date && currentTheme === 'terminal' && currentMode === 'dark',
+                                      'bg-white border border-emerald-600/20 text-emerald-600 hover:bg-emerald-50 rounded': selectedDate !== date && currentTheme === 'terminal' && currentMode === 'light',
                                       
-                                      'bg-purple-600 text-white shadow-md rounded-xl border-transparent': selectedDate === date && currentTheme === 'aurora',
-                                      'bg-white/[0.02] border-white/10 text-slate-300 hover:bg-white/[0.05] rounded-xl': selectedDate !== date && currentTheme === 'aurora',
+                                      'bg-purple-600 text-white shadow-md rounded-xl border-transparent': selectedDate === date && currentTheme === 'aurora' && currentMode === 'dark',
+                                      'bg-indigo-600 text-white shadow-md rounded-xl border-transparent': selectedDate === date && currentTheme === 'aurora' && currentMode === 'light',
+                                      'bg-white/[0.02] border-white/10 text-slate-300 hover:bg-white/[0.05] rounded-xl': selectedDate !== date && currentTheme === 'aurora' && currentMode === 'dark',
+                                      'bg-white/70 border-indigo-100 text-slate-700 hover:bg-white rounded-xl': selectedDate !== date && currentTheme === 'aurora' && currentMode === 'light',
                                       
-                                      'bg-neutral-900 text-white border-transparent rounded-none': selectedDate === date && currentTheme === 'editorial',
-                                      'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'editorial'
+                                      'bg-[#e4e4e7] text-black border-transparent rounded-none': selectedDate === date && currentTheme === 'editorial' && currentMode === 'dark',
+                                      'bg-neutral-900 text-white border-transparent rounded-none': selectedDate === date && currentTheme === 'editorial' && currentMode === 'light',
+                                      'bg-[#1c1c1f] border-neutral-800 text-neutral-400 hover:bg-neutral-800 rounded-none': selectedDate !== date && currentTheme === 'editorial' && currentMode === 'dark',
+                                      'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'editorial' && currentMode === 'light'
                                     }"
                                     class="w-full flex justify-between items-center text-sm p-3 border transition-all text-left group">
                                 <div class="flex flex-col">
@@ -645,7 +655,17 @@
                                     <span class="text-[10px] opacity-60">Produkcja całkowita</span>
                                 </div>
                                 <span class="font-bold" x-text="history[date].energy + ' kWh'"
-                                      :class="currentTheme === 'brutalist' ? 'text-black' : (currentTheme === 'cyberpunk' ? 'text-cyan-300' : (currentTheme === 'terminal' ? 'text-emerald-300' : (currentTheme === 'aurora' ? 'text-purple-400' : 'text-neutral-900')))"></span>
+                                      :class="
+                                          currentTheme === 'brutalist' && currentMode === 'light' ? 'text-black' : (
+                                          currentTheme === 'brutalist' && currentMode === 'dark' ? 'text-white' : (
+                                          currentTheme === 'cyberpunk' && currentMode === 'dark' ? 'text-cyan-300' : (
+                                          currentTheme === 'cyberpunk' && currentMode === 'light' ? 'text-sky-600' : (
+                                          currentTheme === 'terminal' && currentMode === 'dark' ? 'text-emerald-300' : (
+                                          currentTheme === 'terminal' && currentMode === 'light' ? 'text-[#065f46]' : (
+                                          currentTheme === 'aurora' && currentMode === 'dark' ? 'text-purple-400' : (
+                                          currentTheme === 'aurora' && currentMode === 'light' ? 'text-indigo-600' : (
+                                          currentTheme === 'editorial' && currentMode === 'dark' ? 'text-zinc-200' : 'text-neutral-900'
+                                      )))))))))"></span>
                             </button>
                         </template>
                     </div>
@@ -660,29 +680,44 @@
                     <!-- Day Switcher tabs -->
                     <div class="flex p-1 w-fit"
                          :class="{
-                           'border-4 border-black bg-white shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist',
-                           'border border-cyan-400/30 bg-black/60 rounded-none': currentTheme === 'cyberpunk',
-                           'border border-emerald-500/20 bg-transparent rounded': currentTheme === 'terminal',
-                           'border border-white/10 bg-white/[0.04] rounded-2xl backdrop-blur-md shadow-sm': currentTheme === 'aurora',
-                           'border border-neutral-200 bg-neutral-50 rounded-none': currentTheme === 'editorial'
+                           'border-4 border-black bg-white shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
+                           'border-4 border-white bg-zinc-900 shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border border-cyan-400/30 bg-black/60 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
+                           'border border-cyan-400/40 bg-white rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
+                           'border border-emerald-500/20 bg-transparent rounded': currentTheme === 'terminal' && currentMode === 'dark',
+                           'border border-emerald-600/20 bg-white rounded': currentTheme === 'terminal' && currentMode === 'light',
+                           'border border-white/10 bg-white/[0.04] rounded-2xl backdrop-blur-md shadow-sm': currentTheme === 'aurora' && currentMode === 'dark',
+                           'border border-indigo-100 bg-white/70 rounded-2xl backdrop-blur-md shadow-sm': currentTheme === 'aurora' && currentMode === 'light',
+                           'border border-neutral-200 bg-neutral-50 rounded-none': currentTheme === 'editorial' && currentMode === 'light',
+                           'border border-neutral-800 bg-[#1c1c1f] rounded-none': currentTheme === 'editorial' && currentMode === 'dark'
                          }">
                         <template x-for="dayType in ['today', 'tomorrow']">
                             <button @click="selectDateByDayType(dayType)"
                                     :class="{
-                                      'bg-black text-white font-bold rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'brutalist',
-                                      'bg-transparent text-black font-medium hover:bg-neutral-100 rounded-none px-6 py-2': !isDateSelected(dayType) && currentTheme === 'brutalist',
-                                      
-                                      'bg-fuchsia-500 text-white font-mono rounded-none px-6 py-2 shadow-[0_0_8px_rgba(217,70,239,0.5)]': isDateSelected(dayType) && currentTheme === 'cyberpunk',
-                                      'bg-transparent text-white/50 font-mono rounded-none px-6 py-2 hover:text-white': !isDateSelected(dayType) && currentTheme === 'cyberpunk',
-                                      
-                                      'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded px-6 py-2': isDateSelected(dayType) && currentTheme === 'terminal',
-                                      'bg-transparent text-emerald-500/50 rounded px-6 py-2 hover:text-emerald-400': !isDateSelected(dayType) && currentTheme === 'terminal',
-                                      
-                                      'bg-purple-600 text-white rounded-xl px-6 py-2 shadow-sm': isDateSelected(dayType) && currentTheme === 'aurora',
-                                      'bg-transparent text-slate-300 rounded-xl px-6 py-2 hover:bg-white/[0.05]': !isDateSelected(dayType) && currentTheme === 'aurora',
-                                      
-                                      'bg-neutral-900 text-white rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'editorial',
-                                      'bg-transparent text-neutral-400 rounded-none px-6 py-2 hover:text-neutral-900': !isDateSelected(dayType) && currentTheme === 'editorial'
+                                       'bg-black text-white font-bold rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'brutalist' && currentMode === 'light',
+                                       'bg-white text-black font-bold rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'brutalist' && currentMode === 'dark',
+                                       'bg-transparent text-black font-medium hover:bg-neutral-100 rounded-none px-6 py-2': !isDateSelected(dayType) && currentTheme === 'brutalist' && currentMode === 'light',
+                                       'bg-transparent text-white font-medium hover:bg-neutral-800 rounded-none px-6 py-2': !isDateSelected(dayType) && currentTheme === 'brutalist' && currentMode === 'dark',
+                                       
+                                       'bg-fuchsia-500 text-white font-mono rounded-none px-6 py-2 shadow-[0_0_8px_rgba(217,70,239,0.5)]': isDateSelected(dayType) && currentTheme === 'cyberpunk' && currentMode === 'dark',
+                                       'bg-fuchsia-600 text-white font-mono rounded-none px-6 py-2 shadow-[0_0_8px_rgba(217,70,239,0.2)]': isDateSelected(dayType) && currentTheme === 'cyberpunk' && currentMode === 'light',
+                                       'bg-transparent text-white/50 font-mono rounded-none px-6 py-2 hover:text-white': !isDateSelected(dayType) && currentTheme === 'cyberpunk' && currentMode === 'dark',
+                                       'bg-transparent text-slate-500 font-mono rounded-none px-6 py-2 hover:text-sky-600': !isDateSelected(dayType) && currentTheme === 'cyberpunk' && currentMode === 'light',
+                                       
+                                       'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded px-6 py-2': isDateSelected(dayType) && currentTheme === 'terminal' && currentMode === 'dark',
+                                       'bg-emerald-600 text-white border border-emerald-500 rounded px-6 py-2': isDateSelected(dayType) && currentTheme === 'terminal' && currentMode === 'light',
+                                       'bg-transparent text-emerald-500/50 rounded px-6 py-2 hover:text-emerald-400': !isDateSelected(dayType) && currentTheme === 'terminal' && currentMode === 'dark',
+                                       'bg-transparent text-[#065f46]/50 rounded px-6 py-2 hover:text-[#065f46]': !isDateSelected(dayType) && currentTheme === 'terminal' && currentMode === 'light',
+                                       
+                                       'bg-purple-600 text-white rounded-xl px-6 py-2 shadow-sm': isDateSelected(dayType) && currentTheme === 'aurora' && currentMode === 'dark',
+                                       'bg-indigo-600 text-white rounded-xl px-6 py-2 shadow-sm': isDateSelected(dayType) && currentTheme === 'aurora' && currentMode === 'light',
+                                       'bg-transparent text-slate-300 rounded-xl px-6 py-2 hover:bg-white/[0.05]': !isDateSelected(dayType) && currentTheme === 'aurora' && currentMode === 'dark',
+                                       'bg-transparent text-slate-500 rounded-xl px-6 py-2 hover:bg-white': !isDateSelected(dayType) && currentTheme === 'aurora' && currentMode === 'light',
+                                       
+                                       'bg-neutral-900 text-white rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'editorial' && currentMode === 'light',
+                                       'bg-[#e4e4e7] text-black rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'editorial' && currentMode === 'dark',
+                                       'bg-transparent text-neutral-400 rounded-none px-6 py-2 hover:text-neutral-900': !isDateSelected(dayType) && currentTheme === 'editorial' && currentMode === 'light',
+                                       'bg-transparent text-neutral-500 rounded-none px-6 py-2 hover:text-neutral-200': !isDateSelected(dayType) && currentTheme === 'editorial' && currentMode === 'dark'
                                     }"
                                     class="text-sm font-bold transition-all"
                                     x-text="dayType === 'today' ? 'Dzisiaj' : 'Jutro'">
@@ -693,11 +728,16 @@
                     <!-- Date indicator -->
                     <div class="text-sm font-semibold px-4 py-2 border w-fit"
                          :class="{
-                           'border-4 border-black bg-yellow-300 text-black font-black shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist',
-                           'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono rounded-none': currentTheme === 'cyberpunk',
-                           'border-emerald-500/20 text-emerald-400 font-mono rounded': currentTheme === 'terminal',
-                           'border-white/10 bg-white/[0.04] text-slate-300 rounded-xl shadow-sm': currentTheme === 'aurora',
-                           'border-neutral-200 text-neutral-800 font-serif rounded-none': currentTheme === 'editorial'
+                           'border-4 border-black bg-yellow-300 text-black font-black shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
+                           'border-4 border-white bg-zinc-800 text-white font-black shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
+                           'border-cyan-400/40 bg-white text-sky-600 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
+                           'border-emerald-500/20 text-emerald-400 font-mono rounded': currentTheme === 'terminal' && currentMode === 'dark',
+                           'border-emerald-600/20 bg-white text-[#065f46] font-mono rounded': currentTheme === 'terminal' && currentMode === 'light',
+                           'border-white/10 bg-white/[0.04] text-slate-300 rounded-xl shadow-sm': currentTheme === 'aurora' && currentMode === 'dark',
+                           'border-indigo-100 bg-white/60 text-slate-700 rounded-xl shadow-sm': currentTheme === 'aurora' && currentMode === 'light',
+                           'border-neutral-200 text-neutral-800 font-serif rounded-none': currentTheme === 'editorial' && currentMode === 'light',
+                           'border-neutral-800 bg-[#1c1c1f] text-neutral-200 font-serif rounded-none': currentTheme === 'editorial' && currentMode === 'dark'
                          }">
                         Podgląd dla: <span x-text="selectedDate" class="font-bold"></span>
                     </div>
@@ -706,7 +746,11 @@
                 <!-- STATS CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Energy Card -->
-                    <div class="panel-card p-6" :class="currentTheme === 'brutalist' ? 'border-l-[8px] border-l-black' : ''">
+                    <div class="panel-card p-6" 
+                         :class="{
+                           'border-l-[8px] border-l-black': currentTheme === 'brutalist' && currentMode === 'light',
+                           'border-l-[8px] border-l-white': currentTheme === 'brutalist' && currentMode === 'dark'
+                         }">
                         <p class="stat-label mb-1">Energia całkowita</p>
                         <div class="flex items-baseline gap-1">
                             <span class="stat-value" x-text="history[selectedDate]?.energy || 0"></span>
@@ -734,7 +778,8 @@
                         <!-- Limit hit badge -->
                         <div x-show="stats.peakPower >= params.limit" 
                              :class="{
-                               'bg-red-500 text-white border-2 border-black font-black': currentTheme === 'brutalist',
+                               'bg-red-500 text-white border-2 border-black font-black': currentTheme === 'brutalist' && currentMode === 'light',
+                               'bg-red-500 text-white border-2 border-white font-black': currentTheme === 'brutalist' && currentMode === 'dark',
                                'bg-red-500/20 text-red-500 border border-red-500/30': currentTheme !== 'brutalist'
                              }"
                              class="absolute -right-7 -bottom-2 text-[8px] font-bold py-1 px-8 rotate-[-15deg] uppercase">
