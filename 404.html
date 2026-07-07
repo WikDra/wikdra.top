@@ -18,12 +18,23 @@
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Anti-FOUC Script -->
+    <!-- Theme Helper & Anti-FOUC Script -->
     <script>
-        (function() {
-            const theme = localStorage.getItem('global_theme') || 'brutalist';
-            document.documentElement.className = 'theme-' + theme;
-        })();
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        function getGlobalTheme() {
+            return getCookie('global_theme') || localStorage.getItem('global_theme') || 'brutalist';
+        }
+        function setGlobalTheme(val) {
+            localStorage.setItem('global_theme', val);
+            document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+            document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+        }
+        document.documentElement.className = 'theme-' + getGlobalTheme();
     </script>
 
     <style>
@@ -40,13 +51,13 @@
         }
     </style>
 </head>
-<body x-data="{ currentTheme: localStorage.getItem('global_theme') || 'brutalist' }" 
+<body x-data="{ currentTheme: getGlobalTheme() }" 
       :class="'theme-' + currentTheme" 
       class="h-full flex items-center justify-center p-4 transition-colors duration-300 relative text-center"
       x-init="
         $watch('currentTheme', val => {
             document.documentElement.className = 'theme-' + val;
-            localStorage.setItem('global_theme', val);
+            setGlobalTheme(val);
         });
       ">
     
