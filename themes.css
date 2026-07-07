@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@500;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Lexend+Mega:wght@800;900&family=Public+Sans:wght@400;500;600;700;800&family=Orbitron:wght@500;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@700;800&display=swap');
 
 /* --- 1. THEME VARIABLES --- */
 
@@ -84,7 +84,7 @@
 
 /* --- 2. GLOBAL ELEMENTS --- */
 
-body {
+html, body {
     background-color: var(--bg-main);
     color: var(--text-main);
     font-family: var(--font-body);
