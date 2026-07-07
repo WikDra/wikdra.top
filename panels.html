@@ -39,9 +39,12 @@
     <!-- Theme Helper & Anti-FOUC Script -->
     <script>
         function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i].trim();
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
             return null;
         }
         function getGlobalTheme() {
@@ -49,8 +52,14 @@
         }
         function setGlobalTheme(val) {
             localStorage.setItem('global_theme', val);
-            document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
-            document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+            if (window.location.hostname.endsWith('wikdra.top')) {
+                // Delete host-specific cookie to prevent shadowing
+                document.cookie = "global_theme=;path=/;max-age=0;SameSite=Lax";
+                // Set wildcard cookie for subdomain sharing
+                document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+            } else {
+                document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+            }
         }
         document.documentElement.className = 'theme-' + getGlobalTheme();
     </script>
