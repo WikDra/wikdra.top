@@ -72,8 +72,8 @@
     
     <!-- Aurora background blobs -->
     <div x-show="currentTheme === 'aurora'" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div class="absolute top-1/4 left-1/4 h-80 w-80 rounded-full bg-violet-300/40 blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-sky-300/40 blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
+        <div class="absolute top-1/4 left-1/4 h-80 w-80 rounded-full bg-violet-600/15 blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-indigo-500/15 blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
     </div>
 
     <!-- Cyberpunk grid/glow -->
@@ -101,7 +101,7 @@
                 'text-black border-4 border-black bg-orange-400 p-2 shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist',
                 'text-fuchsia-400 border border-fuchsia-400/50 bg-fuchsia-500/10 p-2 rounded-md shadow-[0_0_10px_rgba(217,70,239,0.5)]': currentTheme === 'cyberpunk',
                 'text-emerald-400': currentTheme === 'terminal',
-                'text-white bg-gradient-to-br from-indigo-500 to-pink-500 shadow-md rounded-2xl': currentTheme === 'aurora',
+                'text-white border border-white/10 bg-white/[0.08] backdrop-blur-md shadow-md rounded-2xl p-2': currentTheme === 'aurora',
                 'text-neutral-400': currentTheme === 'editorial'
               }">
              <i class="fas fa-shoe-prints"></i>
@@ -113,7 +113,7 @@
                 'text-black uppercase': currentTheme === 'brutalist',
                 'text-cyan-300 font-mono shadow-cyan-300': currentTheme === 'cyberpunk',
                 'text-emerald-300 font-mono': currentTheme === 'terminal',
-                'bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent': currentTheme === 'aurora',
+                'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora',
                 'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial'
               }"
               :style="currentTheme === 'cyberpunk' ? 'text-shadow: 0 0 15px rgba(34,211,238,0.6);' : ''">404</div>
@@ -130,7 +130,7 @@
                'text-black font-black uppercase': currentTheme === 'brutalist',
                'text-white font-mono uppercase': currentTheme === 'cyberpunk',
                'text-emerald-300 font-mono': currentTheme === 'terminal',
-               'text-slate-900': currentTheme === 'aurora',
+               'text-white': currentTheme === 'aurora',
                'text-neutral-900 font-serif italic': currentTheme === 'editorial'
              }">
              Ups! But odleciał za daleko.
@@ -162,7 +162,7 @@
                   'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist',
                   'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk',
                   'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal',
-                  'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora',
+                  'bg-white/5 border border-white/10 text-white shadow-lg backdrop-blur-md hover:bg-white/10': currentTheme === 'aurora',
                   'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial'
                 }"
                 class="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 focus:outline-none">
@@ -182,13 +182,13 @@
                'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist',
                'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal',
-               'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora',
+               'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora',
                'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial'
              }"
              class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
              
              <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' ? 'text-white/50' : 'text-neutral-500'">
+                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' || currentTheme === 'aurora' ? 'text-white/50' : 'text-neutral-500'">
                   Styl strony:
              </div>
              

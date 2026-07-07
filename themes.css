@@ -51,19 +51,19 @@
 }
 
 .theme-aurora {
-    --bg-main: #f8fafc; /* slate-50 */
-    --text-main: #0f172a; /* slate-900 */
+    --bg-main: #0f0728; /* Deep premium purple-indigo dark background */
+    --text-main: #f8fafc;
     --font-heading: 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
     
-    --card-bg: rgba(255, 255, 255, 0.55);
-    --card-border: 1px solid rgba(255, 255, 255, 0.7);
-    --card-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.05), 0 8px 10px -6px rgba(99, 102, 241, 0.05);
-    --card-shadow-hover: 0 20px 25px -5px rgba(124, 58, 237, 0.1), 0 10px 10px -6px rgba(124, 58, 237, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: 1px solid rgba(255, 255, 255, 0.12);
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 8px 32px 0 rgba(0, 0, 0, 0.45), 0 0 15px rgba(255, 255, 255, 0.05);
     
-    --accent: #6366f1; /* indigo-500 */
-    --accent-glow: transparent;
-    --accent-hover: #4f46e5;
+    --accent: #a855f7;
+    --accent-glow: 0 0 15px rgba(168, 85, 247, 0.3);
+    --accent-hover: #c084fc;
 }
 
 .theme-editorial {
@@ -182,16 +182,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .theme-aurora .theme-input {
-    background-color: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    color: #0f172a;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
     border-radius: 0.75rem;
     padding: 0.45rem 0.75rem;
 }
 .theme-aurora .theme-input:focus {
-    border-color: #6366f1;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    border-color: #a855f7;
+    background-color: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
 }
 
 .theme-editorial .theme-input {
@@ -262,15 +262,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .theme-aurora .theme-btn {
-    background-color: #6366f1;
+    background-color: #a855f7;
     color: #ffffff;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2), 0 2px 4px -1px rgba(99, 102, 241, 0.1);
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);
 }
 .theme-aurora .theme-btn:hover:not(:disabled) {
-    background-color: #4f46e5;
+    background-color: #c084fc;
     transform: translateY(-1px);
-    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4);
 }
 
 .theme-editorial .theme-btn {
@@ -294,7 +294,7 @@ h1, h2, h3, h4, h5, h6 {
 .theme-brutalist .stat-label { color: #000000; opacity: 0.75; }
 .theme-cyberpunk .stat-label { color: rgba(255, 255, 255, 0.5); }
 .theme-terminal .stat-label { color: rgba(52, 211, 153, 0.5); }
-.theme-aurora .stat-label { color: #64748b; }
+.theme-aurora .stat-label { color: rgba(255, 255, 255, 0.5); }
 .theme-editorial .stat-label { color: #737373; }
 
 .stat-value {
@@ -306,7 +306,7 @@ h1, h2, h3, h4, h5, h6 {
 .theme-brutalist .stat-value { color: #000000; font-weight: 900; }
 .theme-cyberpunk .stat-value { color: #22d3ee; text-shadow: 0 0 8px rgba(34, 211, 238, 0.5); }
 .theme-terminal .stat-value { color: #34d399; }
-.theme-aurora .stat-value { color: #0f172a; }
+.theme-aurora .stat-value { color: #f8fafc; }
 .theme-editorial .stat-value { color: #171717; font-family: 'Playfair Display', serif; }
 
 /* --- 7. TABLES --- */
@@ -347,13 +347,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .theme-aurora table th {
-    background-color: rgba(255, 255, 255, 0.5);
-    color: #475569;
-    border-bottom: 1px solid #f1f5f9;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .theme-aurora table td {
-    color: #334155;
-    border-bottom: 1px solid #f1f5f9;
+    color: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .theme-editorial table th {
@@ -392,8 +392,8 @@ h1, h2, h3, h4, h5, h6 {
 .theme-terminal ::-webkit-scrollbar-thumb { background: #10b981; }
 
 .theme-aurora ::-webkit-scrollbar { width: 6px; height: 6px; }
-.theme-aurora ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
-.theme-aurora ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 10px; }
+.theme-aurora ::-webkit-scrollbar-track { background: rgba(255,255,255,0.01); }
+.theme-aurora ::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 10px; }
 
 .theme-editorial ::-webkit-scrollbar { width: 5px; height: 5px; }
 .theme-editorial ::-webkit-scrollbar-track { background: #ffffff; }
