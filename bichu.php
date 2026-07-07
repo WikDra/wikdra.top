@@ -55,8 +55,17 @@ if (isset($_GET['api'])) {
             }
             return null;
         }
+        function getSystemPreferredThemeAndMode() {
+            const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            return {
+                theme: isDark ? 'terminal' : 'brutalist',
+                mode: isDark ? 'dark' : 'light'
+            };
+        }
         function getGlobalTheme() {
-            return getCookie('global_theme') || localStorage.getItem('global_theme') || 'brutalist';
+            let theme = getCookie('global_theme') || localStorage.getItem('global_theme');
+            if (theme) return theme;
+            return getSystemPreferredThemeAndMode().theme;
         }
         function setGlobalTheme(val) {
             localStorage.setItem('global_theme', val);
@@ -72,8 +81,12 @@ if (isset($_GET['api'])) {
         function getGlobalMode() {
             let mode = getCookie('global_mode') || localStorage.getItem('global_mode');
             if (mode) return mode;
-            let theme = getGlobalTheme();
-            return (theme === 'brutalist' || theme === 'editorial') ? 'light' : 'dark';
+            let hasThemeCookie = getCookie('global_theme') || localStorage.getItem('global_theme');
+            if (hasThemeCookie) {
+                let theme = getGlobalTheme();
+                return (theme === 'brutalist' || theme === 'editorial') ? 'light' : 'dark';
+            }
+            return getSystemPreferredThemeAndMode().mode;
         }
         function setGlobalMode(val) {
             localStorage.setItem('global_mode', val);
