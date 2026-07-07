@@ -115,32 +115,30 @@
                 history: {}, 
                 hourlyData: {},
 
-                setTheme(val) {
-                    this.currentTheme = val;
-                    this.currentMode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
-                    setGlobalTheme(val);
-                    setGlobalMode(this.currentMode);
-                    this.updateRootClasses();
-                    this.destroyAndRefreshChart();
-                },
-
-                setMode(val) {
-                    this.currentMode = val;
-                    setGlobalMode(val);
-                    this.updateRootClasses();
-                    this.destroyAndRefreshChart();
-                },
-
-                updateRootClasses() {
-                    document.documentElement.className = 'theme-' + this.currentTheme + ' mode-' + this.currentMode;
-                },
-
-                destroyAndRefreshChart() {
+                applyTheme(theme, mode) {
+                    // single source of truth — call this for ALL theme/mode changes
+                    this.currentTheme = theme;
+                    this.currentMode = mode;
+                    setGlobalTheme(theme);
+                    setGlobalMode(mode);
+                    document.documentElement.className = 'theme-' + theme + ' mode-' + mode;
                     if (window.solarChart) {
                         window.solarChart.destroy();
                         window.solarChart = null;
                     }
                     this.refreshView();
+                },
+
+                setTheme(theme) {
+                    // keep current mode when switching theme unless theme forces it
+                    const newMode = (theme === 'brutalist' || theme === 'editorial') ? 'light'
+                                  : (theme === 'terminal' || theme === 'cyberpunk') ? 'dark'
+                                  : this.currentMode;
+                    this.applyTheme(theme, newMode);
+                },
+
+                setMode(mode) {
+                    this.applyTheme(this.currentTheme, mode);
                 },
 
                 async init() {
@@ -150,10 +148,8 @@
                     
                     await this.fetchData();
 
-                    this.updateRootClasses();
-
-                    this.$watch('currentTheme', val => this.setTheme(val));
-                    this.$watch('currentMode', val => this.setMode(val));
+                    // sync <html> class once after init (no watchers to avoid loops)
+                    document.documentElement.className = 'theme-' + this.currentTheme + ' mode-' + this.currentMode;
                 },
 
                 loadFromStorage() {
@@ -444,7 +440,31 @@
         });
     </script>
 </head>
-<body x-data="solarApp" :class="'theme-' + currentTheme + ' mode-' + currentMode" class="min-h-screen p-4 md:p-8 transition-colors duration-300 relative">
+<body x-data="solarApp"
+      class="min-h-screen p-4 md:p-8 relative"
+      :style="{
+        'background-color':
+          currentTheme === 'brutalist' && currentMode === 'light' ? '#fdf6e3' :
+          currentTheme === 'brutalist' && currentMode === 'dark'  ? '#18181b' :
+          currentTheme === 'cyberpunk' && currentMode === 'dark'  ? '#05010f' :
+          currentTheme === 'cyberpunk' && currentMode === 'light' ? '#f0f9ff' :
+          currentTheme === 'terminal'  && currentMode === 'dark'  ? '#000000' :
+          currentTheme === 'terminal'  && currentMode === 'light' ? '#ecfdf5' :
+          currentTheme === 'aurora'    && currentMode === 'dark'  ? '#0f0728' :
+          currentTheme === 'aurora'    && currentMode === 'light' ? '#f8fafc' :
+          currentTheme === 'editorial' && currentMode === 'light' ? '#ffffff' :
+          currentTheme === 'editorial' && currentMode === 'dark'  ? '#121212' : '#ffffff',
+        'color':
+          currentTheme === 'brutalist' && currentMode === 'light' ? '#000000' :
+          currentTheme === 'brutalist' && currentMode === 'dark'  ? '#ffffff' :
+          currentTheme === 'cyberpunk' && currentMode === 'dark'  ? '#ffffff' :
+          currentTheme === 'cyberpunk' && currentMode === 'light' ? '#0f172a' :
+          currentTheme === 'terminal'  && currentMode === 'dark'  ? '#34d399' :
+          currentTheme === 'terminal'  && currentMode === 'light' ? '#047857' :
+          currentTheme === 'aurora'    ? '#f8fafc' :
+          currentTheme === 'editorial' && currentMode === 'light' ? '#171717' :
+          currentTheme === 'editorial' && currentMode === 'dark'  ? '#e4e4e7' : '#000000'
+      }">
     
     <!-- Aurora background blobs -->
     <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
