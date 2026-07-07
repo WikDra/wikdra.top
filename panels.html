@@ -10,6 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- Service Worker registration -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -20,28 +21,33 @@
         }
     </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Shared themes CSS -->
+    <link rel="stylesheet" href="/themes.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        [x-cloak] { display: none !important; }
-        .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-    </style>
+
+    <!-- Anti-FOUC Script -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('global_theme') || 'brutalist';
+            document.documentElement.className = 'theme-' + theme;
+        })();
+    </script>
+
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('solarApp', () => ({
+                currentTheme: localStorage.getItem('global_theme') || 'brutalist',
                 loading: false,
                 selectedDate: '',
                 params: {
@@ -66,6 +72,17 @@
                     if (!this.selectedDate) this.selectedDate = today;
                     
                     await this.fetchData();
+
+                    // Watch for theme changes and update HTML class and chart
+                    this.$watch('currentTheme', val => {
+                        document.documentElement.className = 'theme-' + val;
+                        localStorage.setItem('global_theme', val);
+                        if (window.solarChart) {
+                            window.solarChart.destroy();
+                            window.solarChart = null;
+                        }
+                        this.refreshView();
+                    });
                 },
 
                 loadFromStorage() {
@@ -112,7 +129,6 @@
 
                 async fetchData() {
                     this.loading = true;
-                    // API format: lat/lon/dec/az/kwp
                     const url = `https://api.forecast.solar/estimate/${this.params.lat}/${this.params.lon}/${this.params.dec}/${this.params.az}/${this.params.kwp}`;
                     
                     try {
@@ -191,10 +207,56 @@
                     const labels = Object.keys(watts).map(t => t.split(' ')[1].substring(0, 5));
                     const data = Object.values(watts);
 
+                    // Setup theme-based colors for Chart.js
+                    const theme = this.currentTheme;
+                    let borderColor = '#eab308';
+                    let backgroundColor = 'rgba(234, 179, 8, 0.08)';
+                    let gridColor = 'rgba(255, 255, 255, 0.05)';
+                    let tickColor = '#64748b';
+                    let pointColor = '#eab308';
+
+                    if (theme === 'brutalist') {
+                        borderColor = '#000000';
+                        backgroundColor = 'rgba(190, 242, 100, 0.2)'; // lime-300
+                        gridColor = 'rgba(0, 0, 0, 0.15)';
+                        tickColor = '#000000';
+                        pointColor = '#000000';
+                    } else if (theme === 'cyberpunk') {
+                        borderColor = '#22d3ee'; // cyan
+                        backgroundColor = 'rgba(34, 211, 238, 0.05)';
+                        gridColor = 'rgba(34, 211, 238, 0.1)';
+                        tickColor = '#22d3ee';
+                        pointColor = '#22d3ee';
+                    } else if (theme === 'terminal') {
+                        borderColor = '#34d399'; // emerald-400
+                        backgroundColor = 'rgba(52, 211, 153, 0.03)';
+                        gridColor = 'rgba(52, 211, 153, 0.08)';
+                        tickColor = '#34d399';
+                        pointColor = '#34d399';
+                    } else if (theme === 'aurora') {
+                        borderColor = '#6366f1'; // indigo-500
+                        backgroundColor = 'rgba(99, 102, 241, 0.05)';
+                        gridColor = 'rgba(0, 0, 0, 0.05)';
+                        tickColor = '#475569';
+                        pointColor = '#6366f1';
+                    } else if (theme === 'editorial') {
+                        borderColor = '#171717'; // neutral-900
+                        backgroundColor = 'rgba(23, 23, 23, 0.02)';
+                        gridColor = 'rgba(0, 0, 0, 0.06)';
+                        tickColor = '#737373';
+                        pointColor = '#171717';
+                    }
+
                     if (window.solarChart) {
                         window.solarChart.data.labels = labels;
                         window.solarChart.data.datasets[0].data = data;
+                        window.solarChart.data.datasets[0].borderColor = borderColor;
+                        window.solarChart.data.datasets[0].backgroundColor = backgroundColor;
+                        window.solarChart.data.datasets[0].pointBackgroundColor = pointColor;
                         window.solarChart.options.scales.y.suggestedMax = this.params.limit * 1.1;
+                        window.solarChart.options.scales.y.grid.color = gridColor;
+                        window.solarChart.options.scales.y.ticks.color = tickColor;
+                        window.solarChart.options.scales.x.ticks.color = tickColor;
                         window.solarChart.update();
                     } else {
                         window.solarChart = new Chart(ctx, {
@@ -204,8 +266,9 @@
                                 datasets: [{
                                     label: 'Moc (W)',
                                     data: data,
-                                    borderColor: '#eab308',
-                                    backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                                    borderColor: borderColor,
+                                    backgroundColor: backgroundColor,
+                                    pointBackgroundColor: pointColor,
                                     fill: true,
                                     tension: 0.4,
                                     borderWidth: 3,
@@ -221,19 +284,23 @@
                                     tooltip: {
                                         mode: 'index',
                                         intersect: false,
-                                        backgroundColor: '#1e293b'
+                                        backgroundColor: theme === 'cyberpunk' ? '#05010f' : (theme === 'terminal' ? '#000000' : '#1e293b'),
+                                        titleColor: theme === 'terminal' ? '#34d399' : '#ffffff',
+                                        bodyColor: theme === 'terminal' ? '#34d399' : '#ffffff',
+                                        borderColor: theme === 'cyberpunk' ? '#22d3ee' : (theme === 'terminal' ? '#34d399' : '#1e293b'),
+                                        borderWidth: 1
                                     }
                                 },
                                 scales: {
                                     y: {
-                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                                        ticks: { color: '#64748b' },
+                                        grid: { color: gridColor },
+                                        ticks: { color: tickColor },
                                         suggestedMax: this.params.limit * 1.1,
                                         beginAtZero: true
                                     },
                                     x: {
                                         grid: { display: false },
-                                        ticks: { color: '#64748b' }
+                                        ticks: { color: tickColor }
                                     }
                                 }
                             }
@@ -246,6 +313,18 @@
                     this.refreshView();
                 },
 
+                selectDateByDayType(dayType) {
+                    const d = new Date();
+                    if (dayType === 'tomorrow') d.setDate(d.getDate() + 1);
+                    this.selectDate(d.toISOString().split('T')[0]);
+                },
+
+                isDateSelected(dayType) {
+                    const d = new Date();
+                    if (dayType === 'tomorrow') d.setDate(d.getDate() + 1);
+                    return this.selectedDate === d.toISOString().split('T')[0];
+                },
+
                 getSortedHistoryDates() {
                     return Object.keys(this.history).sort().reverse();
                 }
@@ -253,168 +332,310 @@
         });
     </script>
 </head>
-<body x-data="solarApp">
-    <div class="min-h-screen p-4 md:p-8">
-        <!-- Header -->
-        <header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<body x-data="solarApp" :class="'theme-' + currentTheme" class="min-h-screen p-4 md:p-8 transition-colors duration-300 relative">
+    
+    <!-- Aurora background blobs -->
+    <div x-show="currentTheme === 'aurora'" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-violet-300/30 blur-3xl animate-pulse"></div>
+        <div class="absolute top-1/3 -right-20 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-pink-200/40 blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+
+    <!-- Cyberpunk grid/glow -->
+    <div x-show="currentTheme === 'cyberpunk'" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+         style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;">
+        <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-6xl mx-auto z-10 relative space-y-8">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4"
+                :class="{
+                  'border-black border-b-4 pb-6': currentTheme === 'brutalist',
+                  'border-white/10': currentTheme === 'cyberpunk',
+                  'border-emerald-500/20': currentTheme === 'terminal',
+                  'border-white/60': currentTheme === 'aurora',
+                  'border-neutral-200': currentTheme === 'editorial'
+                }">
             <div>
-                <h1 class="text-3xl font-bold text-yellow-500">
-                    <i class="fas fa-sun mr-2"></i>SolarForecast
-                </h1>
-                <p class="text-slate-400 text-sm">Pełna analiza Twojej produkcji słonecznej</p>
+                <!-- Brand Title -->
+                <a href="/" class="text-3xl font-bold hover:opacity-80 transition flex items-center gap-2"
+                   :class="{
+                     'text-black uppercase font-black': currentTheme === 'brutalist',
+                     'text-cyan-300 font-mono': currentTheme === 'cyberpunk',
+                     'text-emerald-300 font-mono': currentTheme === 'terminal',
+                     'bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent': currentTheme === 'aurora',
+                     'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial'
+                   }">
+                    <i class="fas fa-sun"></i> SolarForecast
+                </a>
+                <p class="text-sm mt-1"
+                   :class="{
+                     'text-black font-semibold': currentTheme === 'brutalist',
+                     'text-white/50 font-mono': currentTheme === 'cyberpunk',
+                     'text-emerald-500/60 font-mono': currentTheme === 'terminal',
+                     'text-slate-500': currentTheme === 'aurora',
+                     'text-neutral-500': currentTheme === 'editorial'
+                   }">
+                    <span x-show="currentTheme === 'terminal'"># </span>Pełna analiza Twojej produkcji słonecznej
+                </p>
             </div>
-            <div class="flex items-center gap-2 text-sm text-slate-400 glass px-4 py-2 rounded-full">
-                <span class="w-2 h-2 rounded-full" :class="loading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'"></span>
+            
+            <!-- Loading and update pill -->
+            <div class="flex items-center gap-2 text-sm px-4 py-2 border w-fit"
+                 :class="{
+                   'border-4 border-black bg-white text-black font-bold shadow-[2px_2px_0_#000]': currentTheme === 'brutalist',
+                   'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono': currentTheme === 'cyberpunk',
+                   'border-emerald-500/20 text-emerald-400 font-mono': currentTheme === 'terminal',
+                   'border-white/60 bg-white/40 text-slate-700 rounded-full backdrop-blur-md shadow-sm': currentTheme === 'aurora',
+                   'border-neutral-200 text-neutral-800 font-serif': currentTheme === 'editorial'
+                 }">
+                <span class="w-2 h-2 rounded-full" 
+                      :class="{
+                        'bg-red-500 animate-ping': loading && currentTheme === 'brutalist',
+                        'bg-yellow-500 animate-pulse': loading && currentTheme !== 'brutalist',
+                        'bg-green-500': !loading && (currentTheme === 'aurora' || currentTheme === 'editorial'),
+                        'bg-lime-400': !loading && currentTheme === 'brutalist',
+                        'bg-cyan-400 shadow-[0_0_5px_#22d3ee]': !loading && currentTheme === 'cyberpunk',
+                        'bg-emerald-400': !loading && currentTheme === 'terminal'
+                      }"></span>
                 <span x-text="loading ? 'Pobieranie danych...' : 'Aktualizacja: ' + stats.lastUpdate"></span>
             </div>
         </header>
 
-        <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Sidebar -->
+        <!-- DASHBOARD GRID -->
+        <main class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- SIDEBAR -->
             <aside class="lg:col-span-1 space-y-6">
-                <!-- Params -->
-                <div class="glass p-6 rounded-2xl">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-yellow-500">
-                        <i class="fas fa-sliders-h"></i> Parametry API
+                
+                <!-- API PARAMETERS CARD -->
+                <div class="panel-card p-6">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2"
+                        :class="currentTheme === 'editorial' ? 'font-serif' : ''">
+                        <i class="fas fa-sliders-h" :class="currentTheme === 'terminal' ? 'text-emerald-400' : 'text-yellow-500'"></i> Parametry API
                     </h2>
+                    
                     <div class="space-y-3">
                         <!-- Address Lookup -->
                         <div>
-                            <label class="text-[10px] uppercase text-slate-500 font-bold">Wyszukaj adres</label>
-                            <div class="flex gap-2">
-                                <input type="text" x-model="address" @keydown.enter="lookupAddress" placeholder="Miasto, ulica..." class="flex-1 bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
-                                <button @click="lookupAddress" class="bg-slate-700 hover:bg-slate-600 px-3 rounded-lg transition-colors">
+                            <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                   :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Wyszukaj adres</label>
+                            <div class="flex gap-2 mt-1">
+                                <input type="text" x-model="address" @keydown.enter="lookupAddress" placeholder="Miasto, ulica..." class="theme-input">
+                                <button @click="lookupAddress" class="theme-btn px-3">
                                     <i class="fas fa-search text-xs"></i>
                                 </button>
                             </div>
                         </div>
+                        
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[10px] uppercase text-slate-500 font-bold">Szerokość (Lat)</label>
-                                <input type="number" x-model="params.lat" step="0.001" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Szerokość (Lat)</label>
+                                <input type="number" x-model="params.lat" step="0.001" class="theme-input mt-1">
                             </div>
                             <div>
-                                <label class="text-[10px] uppercase text-slate-500 font-bold">Długość (Lon)</label>
-                                <input type="number" x-model="params.lon" step="0.001" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Długość (Lon)</label>
+                                <input type="number" x-model="params.lon" step="0.001" class="theme-input mt-1">
                             </div>
                         </div>
+                        
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[10px] uppercase text-slate-500 font-bold">Nachylenie (Dec)</label>
-                                <input type="number" x-model="params.dec" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Nachylenie (Dec)</label>
+                                <input type="number" x-model="params.dec" class="theme-input mt-1">
                             </div>
                             <div>
-                                <label class="text-[10px] uppercase text-slate-500 font-bold">Azymut (Az)</label>
-                                <input type="number" x-model="params.az" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Azymut (Az)</label>
+                                <input type="number" x-model="params.az" class="theme-input mt-1">
                             </div>
                         </div>
+                        
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="text-[10px] uppercase text-slate-500 font-bold">Moc Paneli (kWp)</label>
-                                <input type="number" x-model="params.kwp" step="0.1" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Moc Paneli (kWp)</label>
+                                <input type="number" x-model="params.kwp" step="0.1" class="theme-input mt-1">
                             </div>
                             <div>
-                                <label class="text-[10px] uppercase text-yellow-500 font-bold">Limit (W)</label>
-                                <input type="number" x-model="params.limit" @input="refreshView()" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <label class="text-[10px] uppercase font-bold tracking-wider" 
+                                       :class="currentTheme === 'terminal' ? 'text-emerald-500/60 font-mono' : 'text-slate-500'">Limit (W)</label>
+                                <input type="number" x-model="params.limit" @input="refreshView()" class="theme-input mt-1">
                             </div>
                         </div>
-                        <button @click="fetchData" :disabled="loading" class="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-black py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20">
-                            <i class="fas fa-sync" :class="loading && 'animate-spin'"></i> WYŚLIJ ZAPYTANIE
+                        
+                        <button @click="fetchData" :disabled="loading" class="theme-btn w-full py-3 mt-2 text-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-sync" :class="loading && 'animate-spin'"></i> <span>WYŚLIJ ZAPYTANIE</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- History -->
-                <div class="glass p-6 rounded-2xl">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                        <i class="fas fa-history text-slate-400"></i> Historia Dni
+                <!-- HISTORY CARD -->
+                <div class="panel-card p-6">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2"
+                        :class="currentTheme === 'editorial' ? 'font-serif' : ''">
+                        <i class="fas fa-history" :class="currentTheme === 'terminal' ? 'text-emerald-400' : 'text-slate-400'"></i> Historia Dni
                     </h2>
-                    <div class="space-y-1 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                    
+                    <div class="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 select-none">
                         <template x-for="date in getSortedHistoryDates()" :key="date">
                             <button @click="selectDate(date)" 
-                                    :class="selectedDate === date ? 'bg-yellow-500/20 border-yellow-500/50' : 'hover:bg-white/5 border-transparent'"
-                                    class="w-full flex justify-between items-center text-sm p-3 rounded-xl border transition-all text-left group">
+                                    :class="{
+                                      'bg-lime-300 border-2 border-black text-black font-black shadow-[2px_2px_0_#000] rounded-none': selectedDate === date && currentTheme === 'brutalist',
+                                      'bg-white border-2 border-black text-black hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'brutalist',
+                                      
+                                      'bg-fuchsia-500/20 border-fuchsia-400/60 text-fuchsia-300 shadow-[0_0_10px_rgba(217,70,239,0.2)] rounded-none': selectedDate === date && currentTheme === 'cyberpunk',
+                                      'bg-white/[0.02] border-cyan-400/20 text-white/70 hover:bg-white/[0.05] rounded-none': selectedDate !== date && currentTheme === 'cyberpunk',
+                                      
+                                      'bg-emerald-500/20 border-emerald-400 text-emerald-300 rounded': selectedDate === date && currentTheme === 'terminal',
+                                      'bg-transparent border-emerald-500/10 text-emerald-500/50 hover:bg-emerald-500/5 rounded': selectedDate !== date && currentTheme === 'terminal',
+                                      
+                                      'bg-indigo-600 text-white shadow-md rounded-xl border-transparent': selectedDate === date && currentTheme === 'aurora',
+                                      'bg-white/30 border-white/40 text-slate-700 hover:bg-white/60 rounded-xl': selectedDate !== date && currentTheme === 'aurora',
+                                      
+                                      'bg-neutral-900 text-white border-transparent rounded-none': selectedDate === date && currentTheme === 'editorial',
+                                      'bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'editorial'
+                                    }"
+                                    class="w-full flex justify-between items-center text-sm p-3 border transition-all text-left group">
                                 <div class="flex flex-col">
                                     <span class="font-medium" x-text="date"></span>
-                                    <span class="text-[10px] text-slate-500 group-hover:text-slate-300">Produkcja całkowita</span>
+                                    <span class="text-[10px] opacity-60">Produkcja całkowita</span>
                                 </div>
-                                <span class="text-yellow-500 font-bold" x-text="history[date].energy + ' kWh'"></span>
+                                <span class="font-bold" x-text="history[date].energy + ' kWh'"
+                                      :class="currentTheme === 'brutalist' ? 'text-black' : (currentTheme === 'cyberpunk' ? 'text-cyan-300' : (currentTheme === 'terminal' ? 'text-emerald-300' : (currentTheme === 'aurora' ? 'text-indigo-600' : 'text-neutral-900')))"></span>
                             </button>
                         </template>
                     </div>
                 </div>
             </aside>
 
-            <!-- Main -->
+            <!-- MAIN CONTENT AREA -->
             <section class="lg:col-span-3 space-y-6">
-                <!-- Day Selector -->
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex p-1 bg-slate-800/50 rounded-xl w-fit">
+                
+                <!-- TOP BAR: DAY SWITCHER & ACTIVE DATE -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
+                    <!-- Day Switcher tabs -->
+                    <div class="flex p-1 w-fit"
+                         :class="{
+                           'border-4 border-black bg-white shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist',
+                           'border border-cyan-400/30 bg-black/60 rounded-none': currentTheme === 'cyberpunk',
+                           'border border-emerald-500/20 bg-transparent rounded': currentTheme === 'terminal',
+                           'border border-white/50 bg-white/40 rounded-2xl backdrop-blur-md shadow-sm': currentTheme === 'aurora',
+                           'border border-neutral-200 bg-neutral-50 rounded-none': currentTheme === 'editorial'
+                         }">
                         <template x-for="dayType in ['today', 'tomorrow']">
-                            <button @click="let d = new Date(); if(dayType==='tomorrow') d.setDate(d.getDate()+1); selectDate(d.toISOString().split('T')[0])"
-                                    :class="selectedDate === (dayType === 'today' ? new Date().toISOString().split('T')[0] : new Date(new Date().setDate(new Date().getDate()+1)).toISOString().split('T')[0]) ? 'bg-yellow-500 text-slate-900' : 'text-slate-400'"
-                                    class="px-6 py-2 rounded-lg text-sm font-bold transition-all"
+                            <button @click="selectDateByDayType(dayType)"
+                                    :class="{
+                                      'bg-black text-white font-bold rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'brutalist',
+                                      'bg-transparent text-black font-medium hover:bg-neutral-100 rounded-none px-6 py-2': !isDateSelected(dayType) && currentTheme === 'brutalist',
+                                      
+                                      'bg-fuchsia-500 text-white font-mono rounded-none px-6 py-2 shadow-[0_0_8px_rgba(217,70,239,0.5)]': isDateSelected(dayType) && currentTheme === 'cyberpunk',
+                                      'bg-transparent text-white/50 font-mono rounded-none px-6 py-2 hover:text-white': !isDateSelected(dayType) && currentTheme === 'cyberpunk',
+                                      
+                                      'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded px-6 py-2': isDateSelected(dayType) && currentTheme === 'terminal',
+                                      'bg-transparent text-emerald-500/50 rounded px-6 py-2 hover:text-emerald-400': !isDateSelected(dayType) && currentTheme === 'terminal',
+                                      
+                                      'bg-indigo-600 text-white rounded-xl px-6 py-2 shadow-sm': isDateSelected(dayType) && currentTheme === 'aurora',
+                                      'bg-transparent text-slate-600 rounded-xl px-6 py-2 hover:bg-white/30': !isDateSelected(dayType) && currentTheme === 'aurora',
+                                      
+                                      'bg-neutral-900 text-white rounded-none px-6 py-2': isDateSelected(dayType) && currentTheme === 'editorial',
+                                      'bg-transparent text-neutral-400 rounded-none px-6 py-2 hover:text-neutral-900': !isDateSelected(dayType) && currentTheme === 'editorial'
+                                    }"
+                                    class="text-sm font-bold transition-all"
                                     x-text="dayType === 'today' ? 'Dzisiaj' : 'Jutro'">
                             </button>
                         </template>
                     </div>
-                    <div class="text-sm font-semibold text-yellow-500 glass px-4 py-2 rounded-xl">
-                        Podgląd dla: <span x-text="selectedDate"></span>
+                    
+                    <!-- Date indicator -->
+                    <div class="text-sm font-semibold px-4 py-2 border w-fit"
+                         :class="{
+                           'border-4 border-black bg-yellow-300 text-black font-black shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist',
+                           'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono rounded-none': currentTheme === 'cyberpunk',
+                           'border-emerald-500/20 text-emerald-400 font-mono rounded': currentTheme === 'terminal',
+                           'border-white/60 bg-white/40 text-slate-700 rounded-xl shadow-sm': currentTheme === 'aurora',
+                           'border-neutral-200 text-neutral-800 font-serif rounded-none': currentTheme === 'editorial'
+                         }">
+                        Podgląd dla: <span x-text="selectedDate" class="font-bold"></span>
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
+                <!-- STATS CARDS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="glass p-6 rounded-2xl border-l-4 border-yellow-500">
-                        <p class="text-[10px] uppercase text-slate-500 mb-1">Energia całkowita</p>
+                    <!-- Energy Card -->
+                    <div class="panel-card p-6" :class="currentTheme === 'brutalist' ? 'border-l-[8px] border-l-black' : ''">
+                        <p class="stat-label mb-1">Energia całkowita</p>
                         <div class="flex items-baseline gap-1">
-                            <span class="text-3xl font-bold" x-text="history[selectedDate]?.energy || 0"></span>
-                            <span class="text-sm text-slate-500 uppercase">kWh</span>
+                            <span class="stat-value" x-text="history[selectedDate]?.energy || 0"></span>
+                            <span class="text-xs opacity-60 uppercase font-bold">kWh</span>
                         </div>
                     </div>
-                    <div class="glass p-6 rounded-2xl">
-                        <p class="text-[10px] uppercase text-slate-500 mb-1">Moc szczytowa</p>
+                    
+                    <!-- Peak Power Card -->
+                    <div class="panel-card p-6">
+                        <p class="stat-label mb-1">Moc szczytowa</p>
                         <div class="flex items-baseline gap-1">
-                            <span class="text-3xl font-bold text-yellow-500" x-text="stats.peakPower"></span>
-                            <span class="text-sm text-slate-500 uppercase">W</span>
+                            <span class="stat-value" x-text="stats.peakPower"></span>
+                            <span class="text-xs opacity-60 uppercase font-bold">W</span>
                         </div>
                     </div>
-                    <div class="glass p-6 rounded-2xl relative overflow-hidden">
-                        <p class="text-[10px] uppercase text-slate-500 mb-1">Limit falownika</p>
+                    
+                    <!-- Inverter Limit Card -->
+                    <div class="panel-card p-6 relative overflow-hidden">
+                        <p class="stat-label mb-1">Limit falownika</p>
                         <div class="flex items-baseline gap-1">
-                            <span class="text-3xl font-bold text-slate-300" x-text="params.limit"></span>
-                            <span class="text-sm text-slate-500 uppercase">W</span>
+                            <span class="stat-value opacity-80" x-text="params.limit"></span>
+                            <span class="text-xs opacity-60 uppercase font-bold">W</span>
                         </div>
-                        <div x-show="stats.peakPower >= params.limit" class="absolute -right-6 -bottom-2 bg-red-500/20 text-red-500 text-[8px] font-bold py-1 px-8 rotate-[-15deg] uppercase border border-red-500/30">
+                        
+                        <!-- Limit hit badge -->
+                        <div x-show="stats.peakPower >= params.limit" 
+                             :class="{
+                               'bg-red-500 text-white border-2 border-black font-black': currentTheme === 'brutalist',
+                               'bg-red-500/20 text-red-500 border border-red-500/30': currentTheme !== 'brutalist'
+                             }"
+                             class="absolute -right-7 -bottom-2 text-[8px] font-bold py-1 px-8 rotate-[-15deg] uppercase">
                             Limit!
                         </div>
                     </div>
                 </div>
 
-                <!-- Chart -->
-                <div class="glass p-6 rounded-3xl min-h-[400px]">
+                <!-- CHART CARD -->
+                <div class="panel-card p-6 min-h-[400px]">
                     <div class="h-[350px]">
                         <canvas id="forecastChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Table -->
-                <div class="glass rounded-3xl overflow-hidden">
+                <!-- TABLE CARD -->
+                <div class="panel-card overflow-hidden">
                     <table class="w-full text-left">
-                        <thead class="bg-white/5 text-[10px] uppercase text-slate-500">
+                        <thead class="text-[10px] uppercase">
                             <tr>
                                 <th class="p-4">Godzina</th>
                                 <th class="p-4">Moc (W)</th>
                                 <th class="p-4 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-white/5">
+                        <tbody>
                             <template x-for="(val, time) in hourlyData" :key="time">
-                                <tr class="hover:bg-white/5 transition text-sm">
+                                <tr class="transition text-sm hover:bg-neutral-500/5">
                                     <td class="p-4 font-medium" x-text="time.split(' ')[1].substring(0,5)"></td>
-                                    <td class="p-4 font-bold" :class="val >= params.limit ? 'text-red-400' : 'text-yellow-500'" x-text="val"></td>
+                                    <td class="p-4 font-bold" 
+                                        :class="val >= params.limit ? 'text-red-500' : (currentTheme === 'brutalist' ? 'text-black' : (currentTheme === 'cyberpunk' ? 'text-cyan-300' : (currentTheme === 'terminal' ? 'text-emerald-300' : (currentTheme === 'aurora' ? 'text-indigo-600' : 'text-neutral-900'))))" 
+                                        x-text="val"></td>
                                     <td class="p-4 text-right">
-                                        <span x-show="val >= params.limit" class="text-[10px] bg-red-500/10 text-red-400 px-2 py-1 rounded-full border border-red-500/20 font-bold uppercase">Clipping</span>
+                                        <span x-show="val >= params.limit" 
+                                              :class="{
+                                                'bg-red-500 text-white border-2 border-black font-black px-2 py-0.5 rounded-none': currentTheme === 'brutalist',
+                                                'bg-red-500/10 text-red-400 px-2 py-0.5 rounded-full border border-red-500/20 font-bold uppercase text-[10px]': currentTheme !== 'brutalist'
+                                              }">Clipping</span>
                                     </td>
                                 </tr>
                             </template>
@@ -423,6 +644,86 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- GLOBAL FLOATING THEME SWITCHER -->
+    <div x-data="{ open: false }" class="fixed bottom-5 right-5 z-50 font-sans">
+        <!-- Button -->
+        <button @click="open = !open" 
+                :class="{
+                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist',
+                  'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk',
+                  'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal',
+                  'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora',
+                  'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial'
+                }"
+                class="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 focus:outline-none">
+            <i class="fas fa-cog text-lg transition-transform duration-500" :class="open ? 'rotate-90' : ''"></i>
+        </button>
+
+        <!-- Dropdown Panel -->
+        <div x-show="open" 
+             @click.away="open = false"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-75"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
+             :class="{
+               'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist',
+               'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk',
+               'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal',
+               'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora',
+               'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial'
+             }"
+             class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
+             
+             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
+                  :class="currentTheme === 'terminal' || currentTheme === 'cyberpunk' ? 'text-white/50' : 'text-neutral-500'">
+                  Styl strony:
+             </div>
+             
+             <!-- Brutalist -->
+             <button @click="currentTheme = 'brutalist'; open = false"
+                     :class="currentTheme === 'brutalist' ? 'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000]' : 'hover:bg-neutral-100 text-neutral-700'"
+                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
+                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-black bg-[#fdf6e3]"></span>
+                     Neo-Brutalizm
+             </button>
+             
+             <!-- Cyberpunk -->
+             <button @click="currentTheme = 'cyberpunk'; open = false"
+                     :class="currentTheme === 'cyberpunk' ? 'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold' : 'hover:bg-white/5 text-neutral-300'"
+                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
+                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-cyan-400 bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
+                     Cyber Dashboard
+             </button>
+             
+             <!-- Terminal -->
+             <button @click="currentTheme = 'terminal'; open = false"
+                     :class="currentTheme === 'terminal' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold' : 'hover:bg-emerald-500/10 text-emerald-400/70'"
+                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
+                     <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-400"></span>
+                     Dev Terminal
+             </button>
+             
+             <!-- Aurora -->
+             <button @click="currentTheme = 'aurora'; open = false"
+                     :class="currentTheme === 'aurora' ? 'bg-indigo-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'"
+                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
+                     <span class="inline-block w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 shadow"></span>
+                     Aurora Glass
+             </button>
+             
+             <!-- Editorial -->
+             <button @click="currentTheme = 'editorial'; open = false"
+                     :class="currentTheme === 'editorial' ? 'bg-neutral-900 text-white font-bold' : 'hover:bg-neutral-100 text-neutral-700'"
+                     class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg">
+                     <span class="inline-block w-3.5 h-3.5 rounded-full border border-neutral-300 bg-white shadow-sm"></span>
+                     Editorial
+             </button>
+        </div>
     </div>
 </body>
 </html>

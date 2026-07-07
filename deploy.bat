@@ -10,7 +10,21 @@ if not exist config.bat (
 )
 call config.bat
 
-type clean.b64 | plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "base64 -d > index.html"
-plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S mv index.html /var/lib/nginx/html/index.html"
+echo [1/3] Uploading files to server via PSCP...
+pscp -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% index.html panels.html 404.html themes.css %MIKRUS_USER%@%MIKRUS_HOST%:/home/%MIKRUS_USER%/
+
+if %ERRORLEVEL% neq 0 (
+    echo.
+    echo [ERROR] Failed to upload files. Check your connection or config.bat.
+    exit /b %ERRORLEVEL%
+)
+
+echo [2/3] Moving files to Nginx HTML directory...
+plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S mv /home/%MIKRUS_USER%/index.html /home/%MIKRUS_USER%/panels.html /home/%MIKRUS_USER%/404.html /home/%MIKRUS_USER%/themes.css /var/lib/nginx/html/"
+
+echo [3/3] Restarting Nginx server...
 plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S rc-service nginx restart"
+
+echo.
+echo [SUCCESS] Site deployed successfully!
 endlocal

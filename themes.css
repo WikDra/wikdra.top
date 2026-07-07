@@ -1,0 +1,398 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Orbitron:wght@500;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@700;800&display=swap');
+
+/* --- 1. THEME VARIABLES --- */
+
+.theme-brutalist {
+    --bg-main: #fdf6e3;
+    --text-main: #000000;
+    --font-heading: 'Syne', 'Impact', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --card-bg: #ffffff;
+    --card-border: 4px solid #000000;
+    --card-shadow: 6px 6px 0px #000000;
+    --card-shadow-hover: 10px 10px 0px #000000;
+    
+    --accent: #eab308; /* yellow */
+    --accent-glow: transparent;
+    --accent-hover: #bef264; /* lime */
+}
+
+.theme-cyberpunk {
+    --bg-main: #05010f;
+    --text-main: #ffffff;
+    --font-heading: 'Orbitron', sans-serif;
+    --font-body: 'Space Mono', monospace;
+    
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: 1px solid rgba(34, 211, 238, 0.3);
+    --card-shadow: 0 0 12px rgba(34, 211, 238, 0.1);
+    --card-shadow-hover: 0 0 20px rgba(217, 70, 239, 0.4);
+    
+    --accent: #22d3ee; /* cyan */
+    --accent-glow: 0 0 10px rgba(34, 211, 238, 0.5);
+    --accent-hover: #e879f9; /* fuchsia */
+}
+
+.theme-terminal {
+    --bg-main: #000000;
+    --text-main: #34d399; /* emerald-400 */
+    --font-heading: 'Space Mono', monospace;
+    --font-body: 'Space Mono', monospace;
+    
+    --card-bg: transparent;
+    --card-border: 1px solid rgba(52, 211, 153, 0.2);
+    --card-shadow: none;
+    --card-shadow-hover: 0 0 10px rgba(52, 211, 153, 0.15);
+    
+    --accent: #10b981; /* emerald-500 */
+    --accent-glow: transparent;
+    --accent-hover: #059669;
+}
+
+.theme-aurora {
+    --bg-main: #f8fafc; /* slate-50 */
+    --text-main: #0f172a; /* slate-900 */
+    --font-heading: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --card-bg: rgba(255, 255, 255, 0.55);
+    --card-border: 1px solid rgba(255, 255, 255, 0.7);
+    --card-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.05), 0 8px 10px -6px rgba(99, 102, 241, 0.05);
+    --card-shadow-hover: 0 20px 25px -5px rgba(124, 58, 237, 0.1), 0 10px 10px -6px rgba(124, 58, 237, 0.1);
+    
+    --accent: #6366f1; /* indigo-500 */
+    --accent-glow: transparent;
+    --accent-hover: #4f46e5;
+}
+
+.theme-editorial {
+    --bg-main: #ffffff;
+    --text-main: #171717; /* neutral-900 */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --card-bg: #ffffff;
+    --card-border: 1px solid #e5e5e5;
+    --card-shadow: none;
+    --card-shadow-hover: none;
+    
+    --accent: #171717;
+    --accent-glow: transparent;
+    --accent-hover: #404040;
+}
+
+/* --- 2. GLOBAL ELEMENTS --- */
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+}
+
+.theme-brutalist h1, .theme-brutalist h2, .theme-brutalist h3 {
+    letter-spacing: -0.03em;
+}
+
+/* --- 3. PANEL CARDS --- */
+
+.panel-card {
+    background-color: var(--card-bg);
+    border: var(--card-border);
+    box-shadow: var(--card-shadow);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.panel-card:hover {
+    box-shadow: var(--card-shadow-hover);
+}
+
+.theme-brutalist .panel-card {
+    border-radius: 0px !important;
+}
+
+.theme-cyberpunk .panel-card {
+    border-radius: 0px !important;
+}
+
+.theme-terminal .panel-card {
+    border-radius: 4px !important;
+}
+
+.theme-aurora .panel-card {
+    border-radius: 1.5rem !important;
+}
+
+.theme-editorial .panel-card {
+    border-radius: 0px !important;
+    box-shadow: none !important;
+}
+
+/* --- 4. FORM INPUTS --- */
+
+.theme-input {
+    width: 100%;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.theme-brutalist .theme-input {
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    color: #000000;
+    border-radius: 0px;
+    padding: 0.375rem 0.625rem;
+    font-weight: 500;
+}
+.theme-brutalist .theme-input:focus {
+    background-color: #bef264; /* lime */
+}
+
+.theme-cyberpunk .theme-input {
+    background-color: rgba(5, 1, 15, 0.8);
+    border: 1px solid rgba(34, 211, 238, 0.5);
+    color: #22d3ee;
+    border-radius: 0px;
+    padding: 0.375rem 0.625rem;
+    font-family: 'Space Mono', monospace;
+}
+.theme-cyberpunk .theme-input:focus {
+    border-color: #e879f9; /* fuchsia */
+    box-shadow: 0 0 8px rgba(232, 121, 249, 0.4);
+}
+
+.theme-terminal .theme-input {
+    background-color: #000000;
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    color: #34d399;
+    border-radius: 4px;
+    padding: 0.375rem 0.625rem;
+}
+.theme-terminal .theme-input:focus {
+    border-color: #34d399;
+    background-color: rgba(52, 211, 153, 0.05);
+}
+
+.theme-aurora .theme-input {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    color: #0f172a;
+    border-radius: 0.75rem;
+    padding: 0.45rem 0.75rem;
+}
+.theme-aurora .theme-input:focus {
+    border-color: #6366f1;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.theme-editorial .theme-input {
+    background-color: #fafafa;
+    border: 1px solid #d4d4d4;
+    color: #171717;
+    border-radius: 0px;
+    padding: 0.375rem 0.625rem;
+}
+.theme-editorial .theme-input:focus {
+    border-color: #171717;
+    background-color: #ffffff;
+}
+
+/* --- 5. BUTTONS --- */
+
+.theme-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.theme-brutalist .theme-btn {
+    background-color: #bef264; /* lime */
+    color: #000000;
+    border: 3px solid #000000;
+    box-shadow: 3px 3px 0px #000000;
+    border-radius: 0px;
+    text-transform: uppercase;
+}
+.theme-brutalist .theme-btn:hover:not(:disabled) {
+    background-color: #eab308; /* yellow */
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px #000000;
+}
+.theme-brutalist .theme-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000000;
+}
+
+.theme-cyberpunk .theme-btn {
+    background-color: transparent;
+    border: 1px solid #22d3ee;
+    color: #22d3ee;
+    border-radius: 0px;
+    text-shadow: 0 0 5px rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
+    text-transform: uppercase;
+}
+.theme-cyberpunk .theme-btn:hover:not(:disabled) {
+    background-color: rgba(34, 211, 238, 0.1);
+    border-color: #e879f9;
+    color: #e879f9;
+    text-shadow: 0 0 5px rgba(232, 121, 249, 0.5);
+}
+
+.theme-terminal .theme-btn {
+    background-color: transparent;
+    border: 1px solid #34d399;
+    color: #34d399;
+    border-radius: 4px;
+}
+.theme-terminal .theme-btn:hover:not(:disabled) {
+    background-color: rgba(52, 211, 153, 0.1);
+}
+
+.theme-aurora .theme-btn {
+    background-color: #6366f1;
+    color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2), 0 2px 4px -1px rgba(99, 102, 241, 0.1);
+}
+.theme-aurora .theme-btn:hover:not(:disabled) {
+    background-color: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+.theme-editorial .theme-btn {
+    background-color: #171717;
+    color: #ffffff;
+    border-radius: 0px;
+}
+.theme-editorial .theme-btn:hover:not(:disabled) {
+    background-color: #404040;
+}
+
+/* --- 6. STAT LABELS & VALUES --- */
+
+.stat-label {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.theme-brutalist .stat-label { color: #000000; opacity: 0.75; }
+.theme-cyberpunk .stat-label { color: rgba(255, 255, 255, 0.5); }
+.theme-terminal .stat-label { color: rgba(52, 211, 153, 0.5); }
+.theme-aurora .stat-label { color: #64748b; }
+.theme-editorial .stat-label { color: #737373; }
+
+.stat-value {
+    font-size: 1.875rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.theme-brutalist .stat-value { color: #000000; font-weight: 900; }
+.theme-cyberpunk .stat-value { color: #22d3ee; text-shadow: 0 0 8px rgba(34, 211, 238, 0.5); }
+.theme-terminal .stat-value { color: #34d399; }
+.theme-aurora .stat-value { color: #0f172a; }
+.theme-editorial .stat-value { color: #171717; font-family: 'Playfair Display', serif; }
+
+/* --- 7. TABLES --- */
+
+.theme-brutalist table th {
+    background-color: #000000;
+    color: #ffffff;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-bottom: 2px solid #000000;
+}
+.theme-brutalist table td {
+    color: #000000;
+    border-bottom: 2px solid #000000;
+}
+.theme-brutalist table tr:last-child td {
+    border-bottom: none;
+}
+
+.theme-cyberpunk table th {
+    background-color: rgba(34, 211, 238, 0.1);
+    color: #22d3ee;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.3);
+}
+.theme-cyberpunk table td {
+    color: #ffffff;
+    border-bottom: 1px solid rgba(34, 211, 238, 0.1);
+}
+
+.theme-terminal table th {
+    background-color: transparent;
+    color: rgba(52, 211, 153, 0.5);
+    border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+}
+.theme-terminal table td {
+    color: #34d399;
+    border-bottom: 1px solid rgba(52, 211, 153, 0.1);
+}
+
+.theme-aurora table th {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #475569;
+    border-bottom: 1px solid #f1f5f9;
+}
+.theme-aurora table td {
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.theme-editorial table th {
+    background-color: #fafafa;
+    color: #171717;
+    border-bottom: 1px solid #e5e5e5;
+    font-family: 'Playfair Display', serif;
+}
+.theme-editorial table td {
+    color: #404040;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* --- 8. SPECIFIC DECORATIONS --- */
+
+/* Terminal Cursor animation */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+.cursor-blink {
+    animation: blink 1s infinite;
+}
+
+/* Custom scrollbars */
+.theme-brutalist ::-webkit-scrollbar { width: 8px; height: 8px; }
+.theme-brutalist ::-webkit-scrollbar-track { background: #fdf6e3; border-left: 2px solid #000; }
+.theme-brutalist ::-webkit-scrollbar-thumb { background: #000; border: 1px solid #fdf6e3; }
+
+.theme-cyberpunk ::-webkit-scrollbar { width: 6px; height: 6px; }
+.theme-cyberpunk ::-webkit-scrollbar-track { background: #05010f; }
+.theme-cyberpunk ::-webkit-scrollbar-thumb { background: #22d3ee; box-shadow: 0 0 5px #22d3ee; }
+
+.theme-terminal ::-webkit-scrollbar { width: 6px; height: 6px; }
+.theme-terminal ::-webkit-scrollbar-track { background: #000000; }
+.theme-terminal ::-webkit-scrollbar-thumb { background: #10b981; }
+
+.theme-aurora ::-webkit-scrollbar { width: 6px; height: 6px; }
+.theme-aurora ::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }
+.theme-aurora ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.2); border-radius: 10px; }
+
+.theme-editorial ::-webkit-scrollbar { width: 5px; height: 5px; }
+.theme-editorial ::-webkit-scrollbar-track { background: #ffffff; }
+.theme-editorial ::-webkit-scrollbar-thumb { background: #d4d4d4; }
