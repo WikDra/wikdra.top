@@ -75,6 +75,7 @@
         
         $watch('currentTheme', val => {
             document.documentElement.className = 'theme-' + val;
+            localStorage.setItem('global_theme', val);
         });
       ">
 
