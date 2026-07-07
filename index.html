@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikdra - Oficjalna Strona i Projekty</title>
+    <meta name="description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
+    <link rel="canonical" href="https://wikdra.top/">
+    <link rel="icon" href="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- OpenGraph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://wikdra.top/">
+    <meta property="og:title" content="Wikdra - Oficjalna Strona i Projekty">
+    <meta property="og:description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
+    <meta property="og:image" content="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj">
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Wikdra",
+      "url": "https://wikdra.top/",
+      "image": "https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s512-c-k-c0x00ffffff-no-rj",
+      "sameAs": [
+        "https://www.youtube.com/@wikdra651",
+        "https://github.com/WikDra"
+      ],
+      "description": "Twórca wideo, programista i entuzjasta technologii. Znany z eksperymentalnych edycji EPP w 8K oraz legendarnych testów wytrzymałości telefonów."
+    }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Existing styles ... */
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent-color: #eab308;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --glass-blur: blur(10px);
+        }
+
+        /* System Monitor Styles */
+        .system-monitor {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 0.75rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .system-monitor:hover { opacity: 1; border-color: rgba(234, 179, 8, 0.2); }
+        .monitor-row { display: flex; align-items: center; gap: 0.75rem; min-width: 120px; }
+        .monitor-label { width: 30px; font-weight: bold; color: var(--text-primary); }
+        .monitor-bar-container { flex-grow: 1; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 2px; overflow: hidden; }
+        .monitor-bar-fill { height: 100%; width: 0%; background: var(--accent-color); box-shadow: 0 0 5px var(--accent-color); transition: width 1s ease-in-out; }
+        .monitor-value { width: 30px; text-align: right; font-size: 0.6rem; opacity: 0.7; }
+        .pulse-dot { width: 4px; height: 4px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 4px; box-shadow: 0 0 5px #22c55e; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        /* ... existing styles ... */
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 4rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #eab308, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.025em;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(234, 179, 8, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(234, 179, 8, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            background: rgba(234, 179, 8, 0.1);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+        }
+
+        .card-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card-link i {
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-link i {
+            transform: translateX(5px);
+        }
+
+        .placeholder {
+            opacity: 0.6;
+            cursor: default;
+        }
+
+        .placeholder:hover {
+            transform: none;
+            border-color: var(--card-border);
+            box-shadow: none;
+        }
+
+        .placeholder .card-icon {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(234, 179, 8, 0.2);
+            color: var(--accent-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 4rem 0 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 2.25rem; }
+            .container { margin-top: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- System Monitor -->
+    <div class="system-monitor" id="sysMon">
+        <div class="monitor-row">
+            <span class="monitor-label">CPU</span>
+            <div class="monitor-bar-container"><div id="cpu-bar" class="monitor-bar-fill"></div></div>
+            <span class="monitor-value"><span class="pulse-dot"></span><span id="cpu-val">--</span>%</span>
+        </div>
+        <div class="monitor-row">
+            <span class="monitor-label">RAM</span>
+            <div class="monitor-bar-container"><div id="ram-bar" class="monitor-bar-fill"></div></div>
+            <span class="monitor-value"><span id="ram-val">--</span>%</span>
+        </div>
+        <div class="monitor-row">
+            <span class="monitor-label">DSK</span>
+            <div class="monitor-bar-container"><div id="disk-bar" class="monitor-bar-fill" style="background: #3b82f6; box-shadow: 0 0 5px #3b82f6;"></div></div>
+            <span class="monitor-value"><span id="disk-val">--</span>%</span>
+        </div>
+    </div>
+
+    <script>
+        async function fetchStats() {
+            try {
+                const res = await fetch('/stats.php');
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                document.getElementById('cpu-bar').style.width = data.cpu + '%';
+                document.getElementById('cpu-val').innerText = Math.round(data.cpu);
+                
+                document.getElementById('ram-bar').style.width = data.ram + '%';
+                document.getElementById('ram-val').innerText = Math.round(data.ram);
+                
+                document.getElementById('disk-bar').style.width = data.disk + '%';
+                document.getElementById('disk-val').innerText = Math.round(data.disk);
+            } catch(e) {}
+        }
+        
+        // Initial fetch
+        fetchStats();
+        // Update every 60 seconds
+        setInterval(fetchStats, 60000);
+    </script>
+
+    <div class="container">
+        <header>
+            <h1>Wikdra.top</h1>
+            <p>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.</p>
+        </header>
+
+        <div class="grid">
+            <!-- Solar Panels -->
+            <a href="https://panele.wikdra.top" class="card">
+                <div class="badge">Aktywne</div>
+                <div class="card-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <h2 class="card-title">Panele Słoneczne</h2>
+                <p class="card-description">
+                    Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
+                </p>
+                <div class="card-link">
+                    Zobacz Dashboard <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- YouTube -->
+            <a href="https://www.youtube.com/@wikdra651" class="card" target="_blank">
+                <div class="card-icon">
+                    <i class="fab fa-youtube"></i>
+                </div>
+                <h2 class="card-title">YouTube</h2>
+                <p class="card-description">
+                    Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
+                </p>
+                <div class="card-link">
+                    Odwiedź Kanał <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/WikDra" class="card" target="_blank">
+                <div class="card-icon">
+                    <i class="fab fa-github"></i>
+                </div>
+                <h2 class="card-title">GitHub</h2>
+                <p class="card-description">
+                    Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
+                </p>
+                <div class="card-link">
+                    Odwiedź Profil <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <div style="margin-bottom: 1.5rem; display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; opacity: 0.6;">
+            <a href="https://wikdra.top/bichu" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;" class="hover-link">
+                <i class="fas fa-edit" style="font-size: 0.7rem;"></i> Bichu
+            </a>
+        </div>
+        <p>&copy; 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
+        <p style="margin-top: 1rem; opacity: 0.5; font-size: 0.8rem;">
+            W wolnej chwili posłuchaj: <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" style="color: inherit; text-decoration: underline;">Gówno święta (Suno)</a>
+        </p>
+    </footer>
+
+    <style>
+        .hover-link:hover {
+            opacity: 1;
+            color: var(--accent-color);
+            transition: all 0.2s;
+        }
+    </style>
+</body>
+</html>

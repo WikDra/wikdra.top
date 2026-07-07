@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - But odleciał | Wikdra.top</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+        .container {
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #eab308, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        .shoe {
+            font-size: 5rem;
+            display: inline-block;
+            animation: fly 4s infinite ease-in-out;
+            margin-bottom: 2rem;
+        }
+        h1 { font-size: 2rem; margin-bottom: 1rem; }
+        p { color: #94a3b8; margin: 0 auto 2rem auto; max-width: 400px; }
+        .btn {
+            background: #eab308;
+            color: #0f172a;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); }
+
+        @keyframes fly {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, -50px) rotate(45deg); }
+            50% { transform: translate(200px, 0px) rotate(90deg); }
+            75% { transform: translate(100px, 50px) rotate(135deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="shoe"><i class="fas fa-shoe-prints"></i></div>
+        <div class="error-code">404</div>
+        <div style="font-size: 2.5rem; font-weight: 900; color: #ef4444; text-transform: uppercase; margin-bottom: 2rem; letter-spacing: 0.1em; line-height: 1.1;">
+            UPOŚLEDZENIE W STOPNIU KRYTYCZNYM
+        </div>
+        <h1>Ups! But odleciał za daleko.</h1>
+        <p>Strona, której szukasz, prawdopodobnie została zrzucona z kiblem na telefon lub po prostu nie istnieje.</p>
+        <a href="https://wikdra.top" class="btn">Wróć na ziemię</a>
+    </div>
+</body>
+</html>
