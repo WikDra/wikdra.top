@@ -417,16 +417,16 @@ h1, h2, h3, h4, h5, h6 {
 .theme-brutalist.mode-dark table th {
     background-color: #bef264;
     color: #000000;
-    border-bottom: 2px solid #bef264;
+    border-bottom: 2px solid #ffffff;
 }
 .theme-brutalist.mode-dark table td {
     color: #ffffff;
-    border-bottom: 2px solid #bef264;
+    border-bottom: 2px solid #ffffff;
 }
 .theme-brutalist.mode-dark table tr:last-child td {
     border-bottom: none;
 }
-.theme-brutalist.mode-dark ::-webkit-scrollbar-track { background: #18181b; border-left: 2px solid #bef264; }
+.theme-brutalist.mode-dark ::-webkit-scrollbar-track { background: #18181b; border-left: 2px solid #ffffff; }
 .theme-brutalist.mode-dark ::-webkit-scrollbar-thumb { background: #bef264; border: 1px solid #18181b; }
 
 /* Cyberpunk - Light Mode Override */
@@ -535,13 +535,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Brutalist Dark Mode Inputs & Buttons */
 .theme-brutalist.mode-dark .theme-input {
     background-color: #1c1c1f;
-    border: 2px solid #bef264;
+    border: 2px solid #ffffff;
     color: #ffffff;
 }
 .theme-brutalist.mode-dark .theme-input:focus {
     background-color: #bef264;
     color: #000000;
-    border-color: #bef264;
+    border-color: #ffffff;
 }
 .theme-brutalist.mode-dark .theme-btn {
     background-color: #ffffff;
