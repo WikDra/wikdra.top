@@ -1,0 +1,24 @@
+{
+  "name": "SolarForecast Dashboard",
+  "short_name": "SolarPanel",
+  "description": "Monitorowanie produkcji energii słonecznej w czasie rzeczywistym.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#eab308",
+  "icons": [
+    {
+      "src": "https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s192-c-k-c0x00ffffff-no-rj",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s512-c-k-c0x00ffffff-no-rj",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

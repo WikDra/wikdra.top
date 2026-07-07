@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Forecast Dashboard</title>
+    <link rel="icon" href="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s512-c-k-c0x00ffffff-no-rj">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw-v4.js')
+                    .then(reg => console.log('PWA: Nowy ServiceWorker v4 zarejestrowany!'))
+                    .catch(err => console.log('PWA: Błąd ServiceWorkera:', err));
+            });
+        }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    </style>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('solarApp', () => ({
+                loading: false,
+                selectedDate: '',
+                params: {
+                    lat: 50.482,
+                    lon: 21.315,
+                    dec: 30,
+                    az: 0,
+                    kwp: 8,
+                    limit: 5500
+                },
+                address: '',
+                stats: {
+                    peakPower: 0,
+                    lastUpdate: 'Nigdy'
+                },
+                history: {}, 
+                hourlyData: {},
+
+                async init() {
+                    this.loadFromStorage();
+                    const today = new Date().toISOString().split('T')[0];
+                    if (!this.selectedDate) this.selectedDate = today;
+                    
+                    await this.fetchData();
+                },
+
+                loadFromStorage() {
+                    const savedParams = localStorage.getItem('solar_params');
+                    if (savedParams) this.params = JSON.parse(savedParams);
+
+                    const savedHistory = localStorage.getItem('solar_history');
+                    if (savedHistory) this.history = JSON.parse(savedHistory);
+                    
+                    const lastUpdate = localStorage.getItem('solar_last_update');
+                    if (lastUpdate) this.stats.lastUpdate = lastUpdate;
+                },
+
+                saveToStorage() {
+                    localStorage.setItem('solar_params', JSON.stringify(this.params));
+                    const dates = Object.keys(this.history).sort().reverse();
+                    const limitedHistory = {};
+                    dates.slice(0, 30).forEach(d => limitedHistory[d] = this.history[d]);
+                    
+                    localStorage.setItem('solar_history', JSON.stringify(limitedHistory));
+                    localStorage.setItem('solar_last_update', this.stats.lastUpdate);
+                },
+
+                async lookupAddress() {
+                    if (!this.address) return;
+                    this.loading = true;
+                    try {
+                        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.address)}`);
+                        const data = await response.json();
+                        if (data && data.length > 0) {
+                            this.params.lat = parseFloat(data[0].lat).toFixed(3);
+                            this.params.lon = parseFloat(data[0].lon).toFixed(3);
+                            this.saveToStorage();
+                        } else {
+                            alert('Nie znaleziono adresu');
+                        }
+                    } catch (error) {
+                        console.error('Błąd wyszukiwania adresu:', error);
+                        alert('Błąd wyszukiwania adresu');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async fetchData() {
+                    this.loading = true;
+                    // API format: lat/lon/dec/az/kwp
+                    const url = `https://api.forecast.solar/estimate/${this.params.lat}/${this.params.lon}/${this.params.dec}/${this.params.az}/${this.params.kwp}`;
+                    
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('API Error');
+                        const data = await response.json();
+                        
+                        this.processIncomingData(data.result);
+                        this.stats.lastUpdate = new Date().toLocaleString('pl-PL');
+                        this.saveToStorage();
+                    } catch (error) {
+                        console.error('Błąd pobierania danych:', error);
+                        if (Object.keys(this.history).length > 0) {
+                            console.log('Using cached data.');
+                        }
+                    } finally {
+                        this.loading = false;
+                        this.refreshView();
+                    }
+                },
+
+                processIncomingData(result) {
+                    const watts = result.watts;
+                    const dailyEnergy = result.watt_hours_day;
+
+                    Object.entries(dailyEnergy).forEach(([date, wh]) => {
+                        const dayWatts = {};
+                        Object.entries(watts).forEach(([time, w]) => {
+                            if (time.startsWith(date)) dayWatts[time] = w;
+                        });
+
+                        this.history[date] = {
+                            energy: (wh / 1000).toFixed(2),
+                            watts: dayWatts
+                        };
+                    });
+                },
+
+                refreshView() {
+                    const dayData = this.history[this.selectedDate];
+                    if (!dayData) {
+                        this.hourlyData = {};
+                        this.stats.peakPower = 0;
+                        if (window.solarChart) {
+                            window.solarChart.destroy();
+                            window.solarChart = null;
+                        }
+                        return;
+                    }
+
+                    const limit = this.params.limit;
+                    const clippedWatts = {};
+                    let peak = 0;
+
+                    Object.entries(dayData.watts).forEach(([time, watt]) => {
+                        const clipped = Math.min(watt, limit);
+                        clippedWatts[time] = clipped;
+                        if (clipped > peak) peak = clipped;
+                    });
+
+                    this.hourlyData = clippedWatts;
+                    this.stats.peakPower = peak;
+
+                    this.$nextTick(() => {
+                        this.updateChart(clippedWatts);
+                    });
+                },
+
+                updateChart(watts) {
+                    const canvas = document.getElementById('forecastChart');
+                    if (!canvas) return;
+                    
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) return;
+
+                    const labels = Object.keys(watts).map(t => t.split(' ')[1].substring(0, 5));
+                    const data = Object.values(watts);
+
+                    if (window.solarChart) {
+                        window.solarChart.data.labels = labels;
+                        window.solarChart.data.datasets[0].data = data;
+                        window.solarChart.options.scales.y.suggestedMax = this.params.limit * 1.1;
+                        window.solarChart.update();
+                    } else {
+                        window.solarChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Moc (W)',
+                                    data: data,
+                                    borderColor: '#eab308',
+                                    backgroundColor: 'rgba(234, 179, 8, 0.1)',
+                                    fill: true,
+                                    tension: 0.4,
+                                    borderWidth: 3,
+                                    pointRadius: 2,
+                                    pointHoverRadius: 6
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: '#1e293b'
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                        ticks: { color: '#64748b' },
+                                        suggestedMax: this.params.limit * 1.1,
+                                        beginAtZero: true
+                                    },
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { color: '#64748b' }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                },
+
+                selectDate(date) {
+                    this.selectedDate = date;
+                    this.refreshView();
+                },
+
+                getSortedHistoryDates() {
+                    return Object.keys(this.history).sort().reverse();
+                }
+            }));
+        });
+    </script>
+</head>
+<body x-data="solarApp">
+    <div class="min-h-screen p-4 md:p-8">
+        <!-- Header -->
+        <header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-yellow-500">
+                    <i class="fas fa-sun mr-2"></i>SolarForecast
+                </h1>
+                <p class="text-slate-400 text-sm">Pełna analiza Twojej produkcji słonecznej</p>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-slate-400 glass px-4 py-2 rounded-full">
+                <span class="w-2 h-2 rounded-full" :class="loading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'"></span>
+                <span x-text="loading ? 'Pobieranie danych...' : 'Aktualizacja: ' + stats.lastUpdate"></span>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar -->
+            <aside class="lg:col-span-1 space-y-6">
+                <!-- Params -->
+                <div class="glass p-6 rounded-2xl">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-yellow-500">
+                        <i class="fas fa-sliders-h"></i> Parametry API
+                    </h2>
+                    <div class="space-y-3">
+                        <!-- Address Lookup -->
+                        <div>
+                            <label class="text-[10px] uppercase text-slate-500 font-bold">Wyszukaj adres</label>
+                            <div class="flex gap-2">
+                                <input type="text" x-model="address" @keydown.enter="lookupAddress" placeholder="Miasto, ulica..." class="flex-1 bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                                <button @click="lookupAddress" class="bg-slate-700 hover:bg-slate-600 px-3 rounded-lg transition-colors">
+                                    <i class="fas fa-search text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 font-bold">Szerokość (Lat)</label>
+                                <input type="number" x-model="params.lat" step="0.001" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 font-bold">Długość (Lon)</label>
+                                <input type="number" x-model="params.lon" step="0.001" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 font-bold">Nachylenie (Dec)</label>
+                                <input type="number" x-model="params.dec" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 font-bold">Azymut (Az)</label>
+                                <input type="number" x-model="params.az" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] uppercase text-slate-500 font-bold">Moc Paneli (kWp)</label>
+                                <input type="number" x-model="params.kwp" step="0.1" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                            <div>
+                                <label class="text-[10px] uppercase text-yellow-500 font-bold">Limit (W)</label>
+                                <input type="number" x-model="params.limit" @input="refreshView()" class="w-full bg-slate-800 border-none rounded-lg px-2 py-1.5 text-sm outline-none focus:ring-1 focus:ring-yellow-500">
+                            </div>
+                        </div>
+                        <button @click="fetchData" :disabled="loading" class="w-full bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-black py-3 rounded-lg text-sm transition-all flex items-center justify-center gap-2 shadow-lg shadow-yellow-500/20">
+                            <i class="fas fa-sync" :class="loading && 'animate-spin'"></i> WYŚLIJ ZAPYTANIE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- History -->
+                <div class="glass p-6 rounded-2xl">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-history text-slate-400"></i> Historia Dni
+                    </h2>
+                    <div class="space-y-1 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        <template x-for="date in getSortedHistoryDates()" :key="date">
+                            <button @click="selectDate(date)" 
+                                    :class="selectedDate === date ? 'bg-yellow-500/20 border-yellow-500/50' : 'hover:bg-white/5 border-transparent'"
+                                    class="w-full flex justify-between items-center text-sm p-3 rounded-xl border transition-all text-left group">
+                                <div class="flex flex-col">
+                                    <span class="font-medium" x-text="date"></span>
+                                    <span class="text-[10px] text-slate-500 group-hover:text-slate-300">Produkcja całkowita</span>
+                                </div>
+                                <span class="text-yellow-500 font-bold" x-text="history[date].energy + ' kWh'"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main -->
+            <section class="lg:col-span-3 space-y-6">
+                <!-- Day Selector -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex p-1 bg-slate-800/50 rounded-xl w-fit">
+                        <template x-for="dayType in ['today', 'tomorrow']">
+                            <button @click="let d = new Date(); if(dayType==='tomorrow') d.setDate(d.getDate()+1); selectDate(d.toISOString().split('T')[0])"
+                                    :class="selectedDate === (dayType === 'today' ? new Date().toISOString().split('T')[0] : new Date(new Date().setDate(new Date().getDate()+1)).toISOString().split('T')[0]) ? 'bg-yellow-500 text-slate-900' : 'text-slate-400'"
+                                    class="px-6 py-2 rounded-lg text-sm font-bold transition-all"
+                                    x-text="dayType === 'today' ? 'Dzisiaj' : 'Jutro'">
+                            </button>
+                        </template>
+                    </div>
+                    <div class="text-sm font-semibold text-yellow-500 glass px-4 py-2 rounded-xl">
+                        Podgląd dla: <span x-text="selectedDate"></span>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="glass p-6 rounded-2xl border-l-4 border-yellow-500">
+                        <p class="text-[10px] uppercase text-slate-500 mb-1">Energia całkowita</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-bold" x-text="history[selectedDate]?.energy || 0"></span>
+                            <span class="text-sm text-slate-500 uppercase">kWh</span>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl">
+                        <p class="text-[10px] uppercase text-slate-500 mb-1">Moc szczytowa</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-bold text-yellow-500" x-text="stats.peakPower"></span>
+                            <span class="text-sm text-slate-500 uppercase">W</span>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl relative overflow-hidden">
+                        <p class="text-[10px] uppercase text-slate-500 mb-1">Limit falownika</p>
+                        <div class="flex items-baseline gap-1">
+                            <span class="text-3xl font-bold text-slate-300" x-text="params.limit"></span>
+                            <span class="text-sm text-slate-500 uppercase">W</span>
+                        </div>
+                        <div x-show="stats.peakPower >= params.limit" class="absolute -right-6 -bottom-2 bg-red-500/20 text-red-500 text-[8px] font-bold py-1 px-8 rotate-[-15deg] uppercase border border-red-500/30">
+                            Limit!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="glass p-6 rounded-3xl min-h-[400px]">
+                    <div class="h-[350px]">
+                        <canvas id="forecastChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="glass rounded-3xl overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-white/5 text-[10px] uppercase text-slate-500">
+                            <tr>
+                                <th class="p-4">Godzina</th>
+                                <th class="p-4">Moc (W)</th>
+                                <th class="p-4 text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <template x-for="(val, time) in hourlyData" :key="time">
+                                <tr class="hover:bg-white/5 transition text-sm">
+                                    <td class="p-4 font-medium" x-text="time.split(' ')[1].substring(0,5)"></td>
+                                    <td class="p-4 font-bold" :class="val >= params.limit ? 'text-red-400' : 'text-yellow-500'" x-text="val"></td>
+                                    <td class="p-4 text-right">
+                                        <span x-show="val >= params.limit" class="text-[10px] bg-red-500/10 text-red-400 px-2 py-1 rounded-full border border-red-500/20 font-bold uppercase">Clipping</span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
