@@ -467,32 +467,36 @@
       }">
     
     <!-- Aurora background blobs -->
-    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <!-- Dark Mode Blobs -->
-        <template x-if="currentMode === 'dark'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-                <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-            </div>
-        </template>
-        <!-- Light Mode Blobs -->
-        <template x-if="currentMode === 'light'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-                <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-            </div>
-        </template>
-    </div>
+    <template x-if="currentTheme === 'aurora'">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden z-0">
+            <!-- Dark Mode Blobs -->
+            <template x-if="currentMode === 'dark'">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
+                    <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
+                    <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+                </div>
+            </template>
+            <!-- Light Mode Blobs -->
+            <template x-if="currentMode === 'light'">
+                <div class="absolute inset-0 pointer-events-none">
+                    <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
+                    <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
+                    <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
+                </div>
+            </template>
+        </div>
+    </template>
 
     <!-- Cyberpunk grid/glow -->
-    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
-         :style="currentMode === 'dark' ? 
-                 'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' : 
-                 'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
-        <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b" :class="currentMode === 'dark' ? 'from-fuchsia-600/10 to-transparent' : 'from-sky-500/10 to-transparent'"></div>
-    </div>
+    <template x-if="currentTheme === 'cyberpunk'">
+        <div class="pointer-events-none absolute inset-0 overflow-hidden z-0"
+             :style="currentMode === 'dark' ?
+                     'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' :
+                     'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
+            <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b" :class="currentMode === 'dark' ? 'from-fuchsia-600/10 to-transparent' : 'from-sky-500/10 to-transparent'"></div>
+        </div>
+    </template>
 
     <!-- MAIN CONTAINER -->
     <div class="max-w-6xl mx-auto z-10 relative space-y-8">
@@ -549,7 +553,7 @@
             <div class="flex items-center gap-2 text-sm px-4 py-2 border w-fit"
                  :class="{
                    'border-4 border-black bg-white text-black font-bold shadow-[2px_2px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                   'border-4 border-white bg-[#27272a] text-white font-bold shadow-[2px_2px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
+                   'border-4 border-white bg-[#18181b] text-white font-bold shadow-[2px_2px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                    'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono': currentTheme === 'cyberpunk' && currentMode === 'dark',
                    'border-cyan-400/40 bg-white text-sky-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
                    'border-emerald-500/20 text-emerald-400 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
@@ -658,7 +662,7 @@
                             <button @click="selectDate(date)" 
                                     :class="{
                                       'bg-lime-300 border-2 border-black text-black font-black shadow-[2px_2px_0_#000] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'light',
-                                      'bg-[#bef264] border-2 border-white text-black font-black shadow-[2px_2px_0_#bef264] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'dark',
+                                      'bg-[#bef264] border-2 border-white text-black font-black shadow-[2px_2px_0_#fff] rounded-none': selectedDate === date && currentTheme === 'brutalist' && currentMode === 'dark',
                                       'bg-white border-2 border-black text-black hover:bg-neutral-50 rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'light',
                                       'bg-zinc-800 border-2 border-white text-white hover:bg-[#bef264] hover:text-black rounded-none': selectedDate !== date && currentTheme === 'brutalist' && currentMode === 'dark',
                                       
@@ -714,7 +718,7 @@
                     <div class="flex p-1 w-fit"
                          :class="{
                            'border-4 border-black bg-white shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                           'border-4 border-white bg-[#18181b] shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border-4 border-white bg-[#18181b] shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                            'border border-cyan-400/30 bg-black/60 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
                            'border border-cyan-400/40 bg-white rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                            'border border-emerald-500/20 bg-transparent rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -762,7 +766,7 @@
                     <div class="text-sm font-semibold px-4 py-2 border w-fit"
                          :class="{
                            'border-4 border-black bg-yellow-300 text-black font-black shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                           'border-4 border-white bg-yellow-300 text-black font-black shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                           'border-4 border-white bg-yellow-300 text-black font-black shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                            'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
                            'border-cyan-400/40 bg-white text-sky-600 font-mono rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                            'border-emerald-500/20 text-emerald-400 font-mono rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -878,7 +882,7 @@
         <button @click="open = !open" 
                 :class="{
                   'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#bef264] hover:shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#fff] hover:shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
                   'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'border border-sky-400 bg-white text-sky-600 shadow-[0_0_10px_rgba(14,165,233,0.15)] hover:border-fuchsia-500 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
