@@ -407,8 +407,8 @@ h1, h2, h3, h4, h5, h6 {
     --text-main: #ffffff;
     --card-bg: #27272a; /* zinc-800 */
     --card-border: 4px solid #bef264;
-    --card-shadow: 6px 6px 0px #bef264;
-    --card-shadow-hover: 10px 10px 0px #bef264;
+    --card-shadow: 6px 6px 0px #ffffff;
+    --card-shadow-hover: 10px 10px 0px #ffffff;
     --accent: #bef264;
     --accent-hover: #eab308;
 }
@@ -457,26 +457,26 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Terminal - Light Mode Override */
 .theme-terminal.mode-light {
-    --bg-main: #f4faf4;
-    --text-main: #065f46;
+    --bg-main: #ecfdf5;
+    --text-main: #047857;
     --card-bg: rgba(255, 255, 255, 0.8);
-    --card-border: 1px solid rgba(6, 95, 70, 0.3);
+    --card-border: 1px solid rgba(4, 120, 87, 0.3);
     --card-shadow: none;
-    --card-shadow-hover: 0 0 10px rgba(6, 95, 70, 0.15);
+    --card-shadow-hover: 0 0 10px rgba(4, 120, 87, 0.15);
     --accent: #059669;
     --accent-hover: #047857;
 }
-.theme-terminal.mode-light .stat-label { color: rgba(6, 95, 70, 0.6); }
-.theme-terminal.mode-light .stat-value { color: #065f46; }
+.theme-terminal.mode-light .stat-label { color: rgba(4, 120, 87, 0.6); }
+.theme-terminal.mode-light .stat-value { color: #047857; }
 .theme-terminal.mode-light table th {
-    color: rgba(6, 95, 70, 0.6);
-    border-bottom: 1px solid rgba(6, 95, 70, 0.2);
+    color: rgba(4, 120, 87, 0.6);
+    border-bottom: 1px solid rgba(4, 120, 87, 0.2);
 }
 .theme-terminal.mode-light table td {
-    color: #065f46;
-    border-bottom: 1px solid rgba(6, 95, 70, 0.1);
+    color: #047857;
+    border-bottom: 1px solid rgba(4, 120, 87, 0.1);
 }
-.theme-terminal.mode-light ::-webkit-scrollbar-track { background: #f4faf4; }
+.theme-terminal.mode-light ::-webkit-scrollbar-track { background: #ecfdf5; }
 .theme-terminal.mode-light ::-webkit-scrollbar-thumb { background: #059669; }
 
 /* Aurora (Glassmorphism) - Light Mode Override (Original Glass) */
@@ -547,16 +547,16 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #bef264;
     color: #000000;
     border: 3px solid #bef264;
-    box-shadow: 3px 3px 0px #bef264;
+    box-shadow: 3px 3px 0px #ffffff;
 }
 .theme-brutalist.mode-dark .theme-btn:hover:not(:disabled) {
     background-color: transparent;
     color: #bef264;
-    box-shadow: 5px 5px 0px #bef264;
+    box-shadow: 5px 5px 0px #ffffff;
 }
 .theme-brutalist.mode-dark .theme-btn:active:not(:disabled) {
     transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px #bef264;
+    box-shadow: 1px 1px 0px #ffffff;
 }
 
 /* Cyberpunk Light Mode Inputs & Buttons */
@@ -585,12 +585,12 @@ h1, h2, h3, h4, h5, h6 {
 /* Terminal Light Mode Inputs & Buttons */
 .theme-terminal.mode-light .theme-input {
     background-color: #ffffff;
-    border: 1px solid rgba(6, 95, 70, 0.4);
-    color: #065f46;
+    border: 1px solid rgba(4, 120, 87, 0.4);
+    color: #047857;
 }
 .theme-terminal.mode-light .theme-input:focus {
     border-color: #059669;
-    background-color: rgba(6, 95, 70, 0.05);
+    background-color: rgba(4, 120, 87, 0.05);
 }
 .theme-terminal.mode-light .theme-btn {
     background-color: #059669;

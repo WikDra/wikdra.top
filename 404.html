@@ -144,7 +144,7 @@
     <div class="panel-card max-w-lg p-8 sm:p-12 z-10 w-full flex flex-col items-center relative"
          :class="{
            'bg-black/60 backdrop-blur-sm': currentTheme === 'terminal' && currentMode === 'dark',
-           'bg-white/80 backdrop-blur-sm border border-emerald-600/20 text-[#065f46]': currentTheme === 'terminal' && currentMode === 'light'
+           'bg-[#ecfdf5]/80 backdrop-blur-sm border border-emerald-600/20 text-[#047857]': currentTheme === 'terminal' && currentMode === 'light'
          }">
          
          <!-- Cyberpunk corners -->
@@ -161,7 +161,7 @@
          <div class="shoe-fly text-5xl mb-6 flex justify-center items-center h-16 w-16"
               :class="{
                  'text-black border-4 border-black bg-orange-400 p-2 shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                 'text-black border-4 border-[#bef264] bg-orange-400 p-2 shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                 'text-black border-4 border-[#bef264] bg-orange-400 p-2 shadow-[2px_2px_0_#fff] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                 'text-fuchsia-400 border border-fuchsia-400/50 bg-fuchsia-500/10 p-2 rounded-md shadow-[0_0_10px_rgba(217,70,239,0.5)]': currentTheme === 'cyberpunk',
                 'text-emerald-400': currentTheme === 'terminal',
                 'text-white border border-white/10 bg-white/[0.08] backdrop-blur-md shadow-md rounded-2xl p-2': currentTheme === 'aurora',
@@ -178,7 +178,7 @@
                 'text-cyan-300 font-mono shadow-cyan-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
                 'text-sky-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
                 'text-emerald-300 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-                'text-[#065f46] font-mono': currentTheme === 'terminal' && currentMode === 'light',
+                'text-[#047857] font-mono': currentTheme === 'terminal' && currentMode === 'light',
                 'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'dark',
                 'bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'light',
                 'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial' && currentMode === 'light',
@@ -200,7 +200,7 @@
                'text-white font-mono uppercase': currentTheme === 'cyberpunk' && currentMode === 'dark',
                'text-[#0f172a] font-mono uppercase': currentTheme === 'cyberpunk' && currentMode === 'light',
                'text-emerald-300 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-               'text-[#065f46] font-mono': currentTheme === 'terminal' && currentMode === 'light',
+               'text-emerald-600 font-mono': currentTheme === 'terminal' && currentMode === 'light',
                'text-white': currentTheme === 'aurora' && currentMode === 'dark',
                'text-slate-900': currentTheme === 'aurora' && currentMode === 'light',
                'text-neutral-900 font-serif italic': currentTheme === 'editorial' && currentMode === 'light',
@@ -217,7 +217,7 @@
               'text-white/60 font-mono': currentTheme === 'cyberpunk' && currentMode === 'dark',
               'text-slate-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
               'text-emerald-400/80 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-              'text-[#065f46]/80 font-mono': currentTheme === 'terminal' && currentMode === 'light',
+              'text-emerald-600/80 font-mono': currentTheme === 'terminal' && currentMode === 'light',
               'text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
               'text-slate-600': currentTheme === 'aurora' && currentMode === 'light',
               'text-neutral-500': currentTheme === 'editorial' && currentMode === 'light',
@@ -262,11 +262,11 @@
              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
              :class="{
                'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-[#bef264] bg-[#18181b] text-white shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
+                'border-4 border-[#bef264] bg-[#18181b] text-white shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
                'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
                'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
-               'border border-emerald-600/30 bg-[#f4faf4] text-[#065f46]': currentTheme === 'terminal' && currentMode === 'light',
+                'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
                'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
                'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
                'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
