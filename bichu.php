@@ -133,7 +133,7 @@ if (isset($_GET['api'])) {
         <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 w-full"
                 :class="{
                   'border-black border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-[#bef264] border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'border-white border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
                   'border-white/10': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'border-sky-200': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'border-emerald-500/20': currentTheme === 'terminal' && currentMode === 'dark',
@@ -166,7 +166,7 @@ if (isset($_GET['api'])) {
             <a href="https://wikdra.top" class="text-sm px-4 py-2 border w-fit font-bold flex items-center gap-1.5"
                  :class="{
                    'border-4 border-black bg-white text-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all': currentTheme === 'brutalist' && currentMode === 'light',
-                   'border-4 border-[#bef264] bg-zinc-800 text-white shadow-[2px_2px_0_#fff] hover:shadow-[4px_4px_0_#fff] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all': currentTheme === 'brutalist' && currentMode === 'dark',
+                   'border-4 border-white bg-zinc-800 text-white shadow-[2px_2px_0_#bef264] hover:shadow-[4px_4px_0_#bef264] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all': currentTheme === 'brutalist' && currentMode === 'dark',
                    'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
                    'border-cyan-400/40 bg-white text-sky-600 font-mono hover:border-fuchsia-400 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
                    'border-emerald-500/20 text-emerald-400 font-mono hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
@@ -243,7 +243,7 @@ if (isset($_GET['api'])) {
                             class="py-3 px-6 text-sm font-bold border transition"
                             :class="{
                               'border-4 border-black bg-white text-black hover:bg-neutral-100 rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                              'border-4 border-[#bef264] bg-zinc-800 text-white hover:bg-zinc-700 rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
+                              'border-4 border-white bg-zinc-800 text-white hover:bg-zinc-700 rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
                               'border border-cyan-400 bg-transparent text-cyan-300 hover:bg-cyan-500/10 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
                               'border border-cyan-400 bg-white text-sky-600 hover:bg-sky-50 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
                               'border border-emerald-500/30 bg-transparent text-emerald-400 hover:bg-emerald-500/10 rounded': currentTheme === 'terminal' && currentMode === 'dark',
@@ -290,7 +290,7 @@ if (isset($_GET['api'])) {
              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
              :class="{
                'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-[#bef264] bg-[#18181b] text-white shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
+               'border-4 border-white bg-[#18181b] text-white shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
                'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
@@ -351,7 +351,7 @@ if (isset($_GET['api'])) {
              <div class="border-t my-1"
                   :class="{
                     'border-black border-t-2': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-[#bef264] border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
+                    'border-white border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border-white/10': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
                     'border-emerald-500/20': currentTheme === 'terminal',
                     'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
@@ -366,7 +366,7 @@ if (isset($_GET['api'])) {
              <div class="flex p-0.5"
                   :class="{
                     'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-2 border-[#bef264] bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                    'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
                     'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
                     'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
