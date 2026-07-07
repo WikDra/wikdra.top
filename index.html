@@ -130,15 +130,9 @@
 
             <!-- Cyberpunk Header Stats -->
             <div x-show="currentTheme === 'cyberpunk'" 
-                 class="flex flex-col gap-4 border-b border-white/10 pb-4 sm:grid sm:grid-cols-3 sm:items-center">
-                <!-- Left Column (Empty Spacer) -->
-                <div class="hidden sm:block"></div>
-                
-                <!-- Middle Column (Centered WIKDRA.TOP Logo) -->
-                <span class="font-mono text-sm font-bold tracking-[0.2em] text-cyan-300 text-center whitespace-nowrap">WIKDRA.TOP</span>
-                
-                <!-- Right Column (Stats aligned right) -->
-                <div class="flex gap-6 justify-center sm:justify-end">
+                 class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <span class="font-mono text-sm font-bold tracking-[0.2em] text-cyan-300">WIKDRA.TOP</span>
+                <div class="flex gap-6">
                     <!-- CPU -->
                     <div class="min-w-[92px]">
                         <div class="flex justify-between text-[10px] uppercase tracking-widest text-white/50">
@@ -255,9 +249,9 @@
              <p class="mt-4 leading-relaxed"
                 :class="{
                   'max-w-xl text-lg font-bold text-black': currentTheme === 'brutalist',
-                  'mx-auto max-w-lg font-mono text-sm text-white/60': currentTheme === 'cyberpunk',
+                  'mx-auto max-w-lg font-mono text-sm text-white/60 text-center': currentTheme === 'cyberpunk',
                   'max-w-xl font-mono text-sm text-emerald-400/80': currentTheme === 'terminal',
-                  'mx-auto max-w-lg text-base text-slate-200/80': currentTheme === 'aurora',
+                  'mx-auto max-w-lg text-base text-slate-200/80 text-center': currentTheme === 'aurora',
                   'max-w-md text-base text-neutral-500': currentTheme === 'editorial'
                 }">
                 <span x-show="currentTheme === 'terminal'"># </span>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.
