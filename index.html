@@ -183,7 +183,7 @@
             <div x-show="currentTheme === 'brutalist'" 
                  :class="{
                    'border-black bg-lime-300 text-black shadow-[6px_6px_0_#000]': currentMode === 'light',
-                   'border-[#bef264] bg-zinc-800 text-white shadow-[6px_6px_0_#fff]': currentMode === 'dark'
+                   'border-white bg-zinc-800 text-white shadow-[6px_6px_0_#bef264]': currentMode === 'dark'
                  }"
                  class="flex flex-wrap items-center justify-between gap-3 border-4 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wide">
                 <span>WIKDRA.TOP</span>
@@ -194,7 +194,7 @@
                 </div>
             </div>
 
-            <!-- Cyberpunk Header            <!-- Cyberpunk Header Stats -->
+            <!-- Cyberpunk Header -->
             <div x-show="currentTheme === 'cyberpunk'" 
                  class="flex flex-wrap items-center justify-between gap-4 border-b pb-4"
                  :class="currentMode === 'dark' ? 'border-white/10' : 'border-sky-200'">
@@ -288,7 +288,7 @@
         <div class="w-full"
              :class="{
                'border-4 border-black bg-white p-6 shadow-[8px_8px_0_#000] sm:p-8': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-[#bef264] bg-[#27272a] p-6 shadow-[8px_8px_0_#fff] sm:p-8': currentTheme === 'brutalist' && currentMode === 'dark',
+               'border-4 border-white bg-[#27272a] p-6 shadow-[8px_8px_0_#bef264] sm:p-8': currentTheme === 'brutalist' && currentMode === 'dark',
                'text-center': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
                'rounded border border-emerald-500/30 p-5': currentTheme === 'terminal',
                '': currentTheme === 'editorial'
@@ -360,7 +360,7 @@
              <a href="https://panele.wikdra.top" 
                 :class="{
                   'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-[#bef264] p-5 shadow-[6px_6px_0_#fff] hover:shadow-[10px_10px_0_#fff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono': currentTheme === 'terminal',
@@ -484,7 +484,7 @@
              <a href="https://www.youtube.com/@wikdra651" target="_blank"
                 :class="{
                   'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-[#bef264] p-5 shadow-[6px_6px_0_#fff] hover:shadow-[10px_10px_0_#fff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono': currentTheme === 'terminal',
@@ -591,7 +591,7 @@
              <a href="https://github.com/WikDra" target="_blank"
                 :class="{
                   'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-violet-300 sm:col-span-2 text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-[#bef264] p-5 shadow-[6px_6px_0_#fff] hover:shadow-[10px_10px_0_#fff] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#2e1065] sm:col-span-2 text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#2e1065] sm:col-span-2 text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95 sm:col-span-2': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a] sm:col-span-2': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono sm:col-span-2': currentTheme === 'terminal',
@@ -697,7 +697,7 @@
 
                 <span :class="{
                   'mt-5 inline-block w-fit border-2 border-black bg-black px-3 py-1.5 text-xs font-black uppercase text-white transition group-hover:bg-white group-hover:text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'mt-5 inline-block w-fit border-2 border-[#bef264] bg-[#bef264] px-3 py-1.5 text-xs font-black uppercase text-black transition group-hover:bg-transparent group-hover:text-[#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'mt-5 inline-block w-fit border-2 border-white bg-white px-3 py-1.5 text-xs font-black uppercase text-black transition group-hover:bg-transparent group-hover:text-[#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                   'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-cyan-300 group-hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
                   'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-sky-600 group-hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
                   'shrink-0 text-xs text-emerald-300 underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'dark',
@@ -716,7 +716,7 @@
         <footer class="w-full"
                 :class="{
                   'flex flex-wrap items-center justify-between gap-3 border-4 border-black bg-black px-4 py-3 font-mono text-xs font-bold uppercase text-white shadow-[4px_4px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'flex flex-wrap items-center justify-between gap-3 border-4 border-[#bef264] bg-black px-4 py-3 font-mono text-xs font-bold uppercase text-white shadow-[4px_4px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
+                  'flex flex-wrap items-center justify-between gap-3 border-4 border-white bg-black px-4 py-3 font-mono text-xs font-bold uppercase text-white shadow-[4px_4px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
                   'flex flex-col items-center gap-2 border-t border-white/10 pt-6 text-center font-mono text-[11px] uppercase tracking-widest text-white/40': currentTheme === 'cyberpunk',
                   'border-t border-emerald-500/20 pt-4 text-xs text-emerald-500/50 space-y-1 font-mono': currentTheme === 'terminal',
                   'flex flex-col items-center gap-2 border-t border-white/10 pt-6 text-center text-xs text-slate-400': currentTheme === 'aurora',
@@ -813,14 +813,14 @@
              x-transition:leave-start="opacity-100 scale-100 translate-y-0"
              x-transition:leave-end="opacity-0 scale-95 translate-y-2"
              :class="{
-               'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-[#bef264] bg-[#18181b] text-white shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
-               'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
-               'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
+               'shadow-[6px_6px_0_#000] border-4 border-black bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
+               'shadow-[6px_6px_0_#bef264] border-4 border-white bg-[#18181b] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+               'shadow-[0_0_15px_rgba(34,211,238,0.3)] border border-cyan-400/80 bg-[#05010f] text-white': currentTheme === 'cyberpunk' && currentMode === 'dark',
+               'shadow-[0_0_15px_rgba(14,165,233,0.15)] border border-cyan-400/40 bg-sky-50 text-slate-900': currentTheme === 'cyberpunk' && currentMode === 'light',
                'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
                'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
-               'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
-               'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
+               'shadow-2xl border border-white/10 bg-slate-900/90 text-white rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
+               'shadow-2xl border border-white/60 bg-white/95 text-slate-800 rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
                'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
                'border border-neutral-800 bg-[#121212] text-white rounded-md': currentTheme === 'editorial' && currentMode === 'dark'
              }"
@@ -875,7 +875,7 @@
              <div class="border-t my-1"
                   :class="{
                     'border-black border-t-2': currentTheme === 'brutalist' && currentMode === 'light',
-                     'border-[#bef264] border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
+                     'border-white border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border-white/10': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
                     'border-emerald-500/20': currentTheme === 'terminal',
                     'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
@@ -890,7 +890,7 @@
              <div class="flex p-0.5"
                   :class="{
                     'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                     'border-2 border-[#bef264] bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
+                     'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
                     'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
                     'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
                     'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',

@@ -406,9 +406,9 @@ h1, h2, h3, h4, h5, h6 {
     --bg-main: #18181b; /* zinc-900 */
     --text-main: #ffffff;
     --card-bg: #27272a; /* zinc-800 */
-    --card-border: 4px solid #bef264;
-    --card-shadow: 6px 6px 0px #ffffff;
-    --card-shadow-hover: 10px 10px 0px #ffffff;
+    --card-border: 4px solid #ffffff;
+    --card-shadow: 6px 6px 0px #bef264;
+    --card-shadow-hover: 10px 10px 0px #bef264;
     --accent: #bef264;
     --accent-hover: #eab308;
 }
@@ -544,19 +544,19 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn {
-    background-color: #bef264;
+    background-color: #ffffff;
     color: #000000;
-    border: 3px solid #bef264;
-    box-shadow: 3px 3px 0px #ffffff;
+    border: 3px solid #ffffff;
+    box-shadow: 3px 3px 0px #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn:hover:not(:disabled) {
     background-color: transparent;
     color: #bef264;
-    box-shadow: 5px 5px 0px #ffffff;
+    box-shadow: 5px 5px 0px #bef264;
 }
 .theme-brutalist.mode-dark .theme-btn:active:not(:disabled) {
     transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0px #ffffff;
+    box-shadow: 1px 1px 0px #bef264;
 }
 
 /* Cyberpunk Light Mode Inputs & Buttons */
