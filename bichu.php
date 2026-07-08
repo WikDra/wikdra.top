@@ -120,12 +120,12 @@ if (isset($_GET['api'])) {
         </template>
     </div>
 
-    <!-- Cyberpunk grid/glow -->
-    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
-         :style="currentMode === 'dark' ? 
-                 'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' : 
-                 'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
-        <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b" :class="currentMode === 'dark' ? 'from-fuchsia-600/10 to-transparent' : 'from-sky-500/10 to-transparent'"></div>
+    <!-- Cyberpunk grid/glow (CSS-controlled via .theme-cyberpunk on <html>) -->
+    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;"></div>
+        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
+        <div class="cyberpunk-glow-dark absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
+        <div class="cyberpunk-glow-light absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-sky-500/10 to-transparent"></div>
     </div>
 
     <div class="max-w-4xl mx-auto z-10 relative space-y-8 flex flex-col items-center">
