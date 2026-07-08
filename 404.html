@@ -133,11 +133,10 @@
         </template>
     </div>
 
-    <!-- Cyberpunk grid/glow -->
-    <div x-show="currentTheme === 'cyberpunk'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0"
-         :style="currentMode === 'dark' ? 
-                 'background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;' : 
-                 'background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;'">
+    <!-- Cyberpunk grid/glow (CSS-controlled via .theme-cyberpunk on <html>) -->
+    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
+        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;"></div>
+        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
     </div>
 
     <!-- Main Container -->
