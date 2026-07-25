@@ -3,10 +3,16 @@ config.bat
 bichu_config.php
 dostep.txt
 deploy_config.bat
+SECRETS*
+*.local.*
 
 # Build/temporary/base64/hex artifacts
 *.b64
 *.hex
+
+# Node / frontend tooling
+node_modules/
+dist/
 
 # Python caches
 __pycache__/
