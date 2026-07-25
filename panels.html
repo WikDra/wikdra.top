@@ -435,6 +435,77 @@
 
                 getSortedHistoryDates() {
                     return Object.keys(this.history).sort().reverse();
+                },
+
+                exportHistory() {
+                    if (!this.history || Object.keys(this.history).length === 0) {
+                        alert('Brak danych historii do wyeksportowania.');
+                        return;
+                    }
+                    const exportData = {
+                        version: "1.0",
+                        exportDate: new Date().toISOString(),
+                        params: this.params,
+                        stats: this.stats,
+                        history: this.history
+                    };
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+                    const downloadAnchor = document.createElement('a');
+                    downloadAnchor.setAttribute("href", dataStr);
+                    downloadAnchor.setAttribute("download", `solar_history_${new Date().toISOString().split('T')[0]}.json`);
+                    document.body.appendChild(downloadAnchor);
+                    downloadAnchor.click();
+                    downloadAnchor.remove();
+                },
+
+                importHistory(event) {
+                    const file = event.target.files && event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const imported = JSON.parse(e.target.result);
+                            let importedHistory = null;
+                            let importedParams = null;
+
+                            if (imported && imported.history && typeof imported.history === 'object') {
+                                importedHistory = imported.history;
+                                if (imported.params && typeof imported.params === 'object') {
+                                    importedParams = imported.params;
+                                }
+                            } else if (imported && imported.solar_history && typeof imported.solar_history === 'object') {
+                                importedHistory = imported.solar_history;
+                            } else if (imported && typeof imported === 'object') {
+                                importedHistory = imported;
+                            }
+
+                            if (!importedHistory || Object.keys(importedHistory).length === 0) {
+                                alert('Nieprawidłowy format pliku JSON lub brak wpisów w historii.');
+                                return;
+                            }
+
+                            this.history = { ...this.history, ...importedHistory };
+                            if (importedParams) {
+                                this.params = { ...this.params, ...importedParams };
+                            }
+
+                            const dates = this.getSortedHistoryDates();
+                            if (dates.length > 0 && (!this.selectedDate || !this.history[this.selectedDate])) {
+                                this.selectedDate = dates[0];
+                            }
+
+                            this.saveToStorage();
+                            this.refreshView();
+                            alert(`Pomyślnie zaimportowano historię (${Object.keys(importedHistory).length} dni)!`);
+                        } catch (err) {
+                            console.error('Błąd importu JSON:', err);
+                            alert('Błąd odczytu pliku JSON. Upewnij się, że plik ma poprawną strukturę JSON.');
+                        } finally {
+                            event.target.value = '';
+                        }
+                    };
+                    reader.readAsText(file);
                 }
             }));
         });
@@ -644,10 +715,21 @@
 
                 <!-- HISTORY CARD -->
                 <div class="panel-card p-6">
-                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2"
-                        :class="currentTheme === 'editorial' ? 'font-serif' : ''">
-                        <i class="fas fa-history" :class="currentTheme === 'terminal' ? (currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]') : 'text-slate-400'"></i> Historia Dni
-                    </h2>
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <h2 class="text-lg font-bold flex items-center gap-2"
+                            :class="currentTheme === 'editorial' ? 'font-serif' : ''">
+                            <i class="fas fa-history" :class="currentTheme === 'terminal' ? (currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]') : 'text-slate-400'"></i> Historia Dni
+                        </h2>
+                        <div class="flex items-center gap-1.5 select-none">
+                            <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1">
+                                <i class="fas fa-download"></i> <span>Eksport</span>
+                            </button>
+                            <label title="Importuj historię z pliku JSON" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1 cursor-pointer">
+                                <i class="fas fa-upload"></i> <span>Import</span>
+                                <input type="file" accept=".json" @change="importHistory($event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
                     
                     <div class="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 select-none">
                         <template x-for="date in getSortedHistoryDates()" :key="date">
