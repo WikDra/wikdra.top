@@ -1,7 +1,9 @@
 <?php
 $content_file = 'bichu_content.txt';
-$admin_password = 'PoleMarysi123';
-
+$admin_password = '';
+if (file_exists(__DIR__ . '/bichu_config.php')) {
+    require_once __DIR__ . '/bichu_config.php';
+}
 // Simple API for AJAX
 if (isset($_GET['api'])) {
     header('Content-Type: application/json');
