@@ -14,8 +14,11 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw-v4.js')
-                    .then(reg => console.log('PWA: Nowy ServiceWorker v4 zarejestrowany!'))
+                navigator.serviceWorker.register('/sw-v5.js')
+                    .then(reg => {
+                        console.log('PWA: ServiceWorker v5 zarejestrowany!');
+                        reg.update();
+                    })
                     .catch(err => console.log('PWA: Błąd ServiceWorkera:', err));
             });
         }
