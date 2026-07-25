@@ -143,9 +143,16 @@
 
                 async init() {
                     this.loadFromStorage();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const dateParam = urlParams.get('date');
+
                     const today = new Date().toISOString().split('T')[0];
-                    if (!this.selectedDate) this.selectedDate = today;
-                    
+                    if (dateParam && this.history[dateParam]) {
+                        this.selectedDate = dateParam;
+                    } else if (!this.selectedDate) {
+                        this.selectedDate = today;
+                    }
+
                     await this.fetchData();
 
                     // sync <html> class once after init (no watchers to avoid loops)
@@ -165,11 +172,7 @@
 
                 saveToStorage() {
                     localStorage.setItem('solar_params', JSON.stringify(this.params));
-                    const dates = Object.keys(this.history).sort().reverse();
-                    const limitedHistory = {};
-                    dates.slice(0, 30).forEach(d => limitedHistory[d] = this.history[d]);
-                    
-                    localStorage.setItem('solar_history', JSON.stringify(limitedHistory));
+                    localStorage.setItem('solar_history', JSON.stringify(this.history));
                     localStorage.setItem('solar_last_update', this.stats.lastUpdate);
                 },
 
@@ -229,7 +232,8 @@
 
                         this.history[date] = {
                             energy: (wh / 1000).toFixed(2),
-                            watts: dayWatts
+                            watts: dayWatts,
+                            params: { ...this.params }
                         };
                     });
                 },
@@ -485,7 +489,25 @@
                                 return;
                             }
 
-                            this.history = { ...this.history, ...importedHistory };
+                            let countNew = 0;
+                            let countMerged = 0;
+
+                            Object.keys(importedHistory).forEach(date => {
+                                if (!this.history[date]) {
+                                    this.history[date] = importedHistory[date];
+                                    countNew++;
+                                } else {
+                                    const existingWatts = this.history[date].watts || {};
+                                    const newWatts = importedHistory[date].watts || {};
+                                    this.history[date] = {
+                                        ...this.history[date],
+                                        ...importedHistory[date],
+                                        watts: { ...existingWatts, ...newWatts }
+                                    };
+                                    countMerged++;
+                                }
+                            });
+
                             if (importedParams) {
                                 this.params = { ...this.params, ...importedParams };
                             }
@@ -497,7 +519,7 @@
 
                             this.saveToStorage();
                             this.refreshView();
-                            alert(`Pomyślnie zaimportowano historię (${Object.keys(importedHistory).length} dni)!`);
+                            alert(`Pomyślnie scalono historię! (Nowe dni: ${countNew}, zaktualizowane: ${countMerged})`);
                         } catch (err) {
                             console.error('Błąd importu JSON:', err);
                             alert('Błąd odczytu pliku JSON. Upewnij się, że plik ma poprawną strukturę JSON.');
@@ -720,14 +742,17 @@
                             :class="currentTheme === 'editorial' ? 'font-serif' : ''">
                             <i class="fas fa-history" :class="currentTheme === 'terminal' ? (currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]') : 'text-slate-400'"></i> Historia Dni
                         </h2>
-                        <div class="flex items-center gap-1.5 select-none">
+                        <div class="flex flex-wrap items-center gap-1.5 select-none">
                             <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1">
-                                <i class="fas fa-download"></i> <span>Eksport</span>
+                                <i class="fas fa-file-export"></i> <span>Eksport</span>
                             </button>
-                            <label title="Importuj historię z pliku JSON" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1 cursor-pointer">
-                                <i class="fas fa-upload"></i> <span>Import</span>
+                            <label title="Importuj i scal historię z pliku JSON" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1 cursor-pointer">
+                                <i class="fas fa-file-import"></i> <span>Import</span>
                                 <input type="file" accept=".json" @change="importHistory($event)" class="hidden">
                             </label>
+                            <a href="/history.html" title="Zobacz pełną historię i archiwum wpisów" class="theme-btn px-2.5 py-1 text-xs flex items-center gap-1">
+                                <i class="fas fa-list-ul"></i> <span>Wszystkie</span>
+                            </a>
                         </div>
                     </div>
                     
