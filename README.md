@@ -5,16 +5,16 @@ This is the repository for the **wikdra.top** / **panele.wikdra.top** website ho
 ## Repository structure
 
 - `index.html` - The main homepage file.
-- `panels.html` - The panels subpage.
-- `404.html` - Error page.
+- `panels.html` - The solar forecast panels subpage.
+- `history.html` - Archive subpage displaying all saved histories, stats, export/import and search.
+- `404.html` - Custom error page.
+- `themes-v5.css` - Central visual design system (5 themes x Light/Dark modes).
+- `sw-v5.js` - Service Worker v5 with Network-First strategy and PWA support.
 - `robots.txt` & `sitemap.xml` - SEO and crawler files.
-- `manifest.json` & `sw.js` / `sw-v4.js` - Service Worker / PWA assets.
-- `bichu.php` & `stats.php` - Backend/PHP scripts.
+- `manifest.json` - PWA Web App Manifest.
+- `bichu.php` & `stats.php` - Backend PHP endpoints.
 - `*.conf` - Nginx configuration templates.
-- `deploy.bat` - Local Windows script to deploy the main index file to the server.
-- `encode_index.py` - Script that base64-encodes `index.html` into `clean.b64` (used in deployment).
-- `clean_b64.py` - Script that cleans up raw base64 data.
-- `create_update_sh.py` - Script to generate the update script.
+- `deploy.bat` - Windows deployment script using PSCP/Plink.
 
 ## Setup & Deployment
 
@@ -26,14 +26,8 @@ This is the repository for the **wikdra.top** / **panele.wikdra.top** website ho
    @set MIKRUS_USER=YOUR_USER
    @set MIKRUS_HOST=YOUR_HOST
    ```
+   Optionally create `bichu_config.php` for Bichu admin panel credentials (also ignored by Git).
 
-2. **Editing content**:
-   Edit `index.html` as needed.
+2. **Deploying**:
+   Run `deploy.bat` in the terminal to automatically upload all updated site files to Mikrus server, move them to `/var/lib/nginx/html/` with `sudo`, and restart Nginx.
 
-3. **Deploying**:
-   - First, update the encoded main file by running `python encode_index.py`.
-   - Then, deploy the changes to the Mikrus server using:
-     ```cmd
-     deploy.bat
-     ```
-     This automatically uploads the encoded file, decodes it on the server, places it under `/var/lib/nginx/html/` with sudo, and restarts Nginx.
