@@ -1,0 +1,14 @@
+{
+  "name": "wikdra.top",
+  "private": true,
+  "version": "6.0.0",
+  "description": "wikdra.top / panele.wikdra.top - static site, built CSS via Tailwind CLI",
+  "scripts": {
+    "build:css": "tailwindcss -i src/app.css -o site/assets/css/app-v6.css --minify",
+    "watch:css": "tailwindcss -i src/app.css -o site/assets/css/app-v6.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.17",
+    "tailwindcss": "^4.1.17"
+  }
+}
