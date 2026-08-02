@@ -6,7 +6,7 @@
     <title>Wikdra - Oficjalna Strona i Projekty</title>
     <meta name="description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
     <link rel="canonical" href="https://wikdra.top/">
-    <link rel="icon" href="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj" type="image/x-icon">
+    <link rel="icon" href="/assets/icons/favicon.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
     <meta property="og:url" content="https://wikdra.top/">
     <meta property="og:title" content="Wikdra - Oficjalna Strona i Projekty">
     <meta property="og:description" content="Oficjalna strona twórcy Wikdra. Dashboard paneli słonecznych, eksperymentalne edycje EPP 8K, testy telefonów i projekty programistyczne.">
-    <meta property="og:image" content="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s160-c-k-c0x00ffffff-no-rj">
+    <meta property="og:image" content="https://wikdra.top/assets/icons/icon-512.png">
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -26,7 +26,7 @@
       "@type": "Person",
       "name": "Wikdra",
       "url": "https://wikdra.top/",
-      "image": "https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s512-c-k-c0x00ffffff-no-rj",
+      "image": "https://wikdra.top/assets/icons/icon-512.png",
       "sameAs": [
         "https://www.youtube.com/@wikdra651",
         "https://github.com/WikDra"
@@ -35,24 +35,15 @@
     }
     </script>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Custom Theme Styling -->
-    <link rel="stylesheet" href="/themes-v5.css">
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js CDN -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="/assets/css/app-v6.css">
+    <script defer src="/assets/js/alpine.min.js"></script>
 
-    <!-- Theme Helper & Anti-FOUC Script -->
+    <!-- Theme init (anti-FOUC) -->
     <script>
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
+            for (let i = 0; i < ca.length; i++) {
                 let c = ca[i].trim();
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
             }
@@ -60,911 +51,239 @@
         }
         function getSystemPreferredThemeAndMode() {
             const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            return {
-                theme: isDark ? 'terminal' : 'brutalist',
-                mode: isDark ? 'dark' : 'light'
-            };
+            return { theme: isDark ? 'terminal' : 'brutalist', mode: isDark ? 'dark' : 'light' };
         }
         function getGlobalTheme() {
-            let theme = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (theme) return theme;
-            return getSystemPreferredThemeAndMode().theme;
-        }
-        function setGlobalTheme(val) {
-            localStorage.setItem('global_theme', val);
-            if (window.location.hostname.endsWith('wikdra.top')) {
-                // Delete host-specific cookie to prevent shadowing
-                document.cookie = "global_theme=;path=/;max-age=0;SameSite=Lax";
-                // Set wildcard cookie for subdomain sharing
-                document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
-            } else {
-                document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
-            }
+            return getCookie('global_theme') || localStorage.getItem('global_theme') || getSystemPreferredThemeAndMode().theme;
         }
         function getGlobalMode() {
             let mode = getCookie('global_mode') || localStorage.getItem('global_mode');
             if (mode) return mode;
-            let hasThemeCookie = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (hasThemeCookie) {
+            let hasTheme = getCookie('global_theme') || localStorage.getItem('global_theme');
+            if (hasTheme) {
                 let theme = getGlobalTheme();
                 return (theme === 'brutalist' || theme === 'editorial') ? 'light' : 'dark';
             }
             return getSystemPreferredThemeAndMode().mode;
         }
-        function setGlobalMode(val) {
-            localStorage.setItem('global_mode', val);
+        function setGlobal(key, val) {
+            localStorage.setItem(key, val);
             if (window.location.hostname.endsWith('wikdra.top')) {
-                document.cookie = "global_mode=;path=/;max-age=0;SameSite=Lax";
-                document.cookie = "global_mode=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=;path=/;max-age=0;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
             } else {
-                document.cookie = "global_mode=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;max-age=31536000;SameSite=Lax";
             }
         }
-        document.documentElement.className = 'theme-' + getGlobalTheme() + ' mode-' + getGlobalMode();
+        (function () {
+            const el = document.documentElement;
+            el.dataset.theme = getGlobalTheme();
+            el.dataset.mode = getGlobalMode();
+        })();
     </script>
 </head>
-<body x-data="{ 
-        currentTheme: getGlobalTheme(), 
-        currentMode: getGlobalMode(), 
-        cpu: 0, 
-        ram: 0, 
-        dsk: 0,
-        setTheme(val) {
-            this.currentTheme = val;
-            this.currentMode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
-            setGlobalTheme(val);
-            setGlobalMode(this.currentMode);
-            this.updateRootClasses();
-        },
-        setMode(val) {
-            this.currentMode = val;
-            setGlobalMode(val);
-            this.updateRootClasses();
-        },
-        updateRootClasses() {
-            document.documentElement.className = 'theme-' + this.currentTheme + ' mode-' + this.currentMode;
-        }
-      }" 
-      :class="'theme-' + currentTheme + ' mode-' + currentMode" 
-      class="min-h-full flex flex-col items-center px-4 py-8 sm:py-16 transition-colors duration-300 relative"
-      x-init="
-        updateRootClasses();
-        $watch('currentTheme', val => setTheme(val));
-        $watch('currentMode', val => setMode(val));
-        const getStats = async () => {
-          try {
-            const res = await fetch('/stats.php');
-            if (res.ok) {
-              const data = await res.json();
-              cpu = Math.round(data.cpu);
-              ram = Math.round(data.ram);
-              dsk = Math.round(data.disk);
-            }
-          } catch(e) {}
-        };
-        getStats();
-        setInterval(getStats, 60000);
-      ">
+<body x-data="siteApp()" class="min-h-full flex flex-col items-center px-4 py-6 sm:py-10 relative">
 
-    <!-- Aurora Background Blobs -->
-    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <!-- Dark Mode Blobs -->
-        <template x-if="currentMode === 'dark'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1s;"></div>
-                <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-            </div>
-        </template>
-        <!-- Light Mode Blobs -->
-        <template x-if="currentMode === 'light'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1s;"></div>
-                <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-            </div>
-        </template>
+    <!-- Background decoration (CSS-controlled per theme) -->
+    <div class="bg-decoration" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="cyber-grid"></div>
+        <div class="cyber-scanlines"></div>
+        <div class="cyber-glow"></div>
+        <div class="cyber-sun"></div>
     </div>
 
-    <!-- Cyberpunk Background Grid (CSS-controlled via .theme-cyberpunk on <html>) -->
-    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-glow-dark absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
-        <div class="cyberpunk-glow-light absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-sky-500/10 to-transparent"></div>
-    </div>
+    <div class="w-full max-w-3xl flex-1 flex flex-col gap-10 z-10">
 
-    <!-- MAIN WRAPPER -->
-    <div class="w-full max-w-3xl flex-1 flex flex-col justify-between z-10 space-y-12">
-        
-        <!-- HEADER STATS -->
-        <header class="w-full">
-            <!-- Brutalist Header Stats -->
-            <div x-show="currentTheme === 'brutalist'" 
-                 :class="{
-                   'border-black bg-lime-300 text-black shadow-[6px_6px_0_#000]': currentMode === 'light',
-                   'border-white bg-zinc-800 text-white shadow-[6px_6px_0_#bef264]': currentMode === 'dark'
-                 }"
-                 class="flex flex-wrap items-center justify-between gap-3 border-4 px-4 py-3 font-mono text-xs font-bold uppercase tracking-wide">
-                <span>WIKDRA.TOP</span>
-                <div class="flex gap-4">
-                    <span>CPU <span x-text="cpu">--</span>%</span>
-                    <span>RAM <span x-text="ram">--</span>%</span>
-                    <span>DSK <span x-text="dsk">--</span>%</span>
-                </div>
+        <!-- HEADER: name + stats + theme switcher (in flow, mobile-friendly) -->
+        <header class="site-header">
+            <span class="site-name">WIKDRA.TOP</span>
+
+            <div class="stats" aria-live="polite">
+                <template x-for="s in statsList" :key="s.key">
+                    <span class="stat">
+                        <span class="stat-top">
+                            <span class="stat-label" x-text="s.label"></span>
+                            <span class="stat-num" x-text="Math.round(s.value) + '%'"></span>
+                        </span>
+                        <span class="stat-bar" aria-hidden="true">
+                            <template x-for="i in 10" :key="i">
+                                <span class="seg" :class="{ 'on': s.value >= i * 10 }"></span>
+                            </template>
+                        </span>
+                        <span class="stat-num stat-inline" x-text="Math.round(s.value) + '%'"></span>
+                    </span>
+                </template>
             </div>
 
-            <!-- Cyberpunk Header -->
-            <div x-show="currentTheme === 'cyberpunk'" 
-                 class="flex flex-wrap items-center justify-between gap-4 border-b pb-4"
-                 :class="currentMode === 'dark' ? 'border-white/10' : 'border-sky-200'">
-                <span class="font-mono text-sm font-bold tracking-[0.2em]" :class="currentMode === 'dark' ? 'text-cyan-300' : 'text-sky-600'">WIKDRA.TOP</span>
-                <div class="flex gap-6">
-                    <!-- CPU -->
-                    <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
-                            <span>CPU</span>
-                            <span :class="currentMode === 'dark' ? 'text-cyan-300' : 'text-sky-600'"><span x-text="cpu">--</span>%</span>
-                        </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
-                            <div class="h-full rounded-full bg-cyan-400 transition-all duration-500 shadow-[0_0_8px_#22d3ee]" :style="'width: ' + cpu + '%'"></div>
-                        </div>
-                    </div>
-                    <!-- RAM -->
-                    <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
-                            <span>RAM</span>
-                            <span :class="currentMode === 'dark' ? 'text-fuchsia-400' : 'text-fuchsia-600'"><span x-text="ram">--</span>%</span>
-                        </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
-                            <div class="h-full rounded-full bg-fuchsia-400 transition-all duration-500 shadow-[0_0_8px_#e879f9]" :style="'width: ' + ram + '%'"></div>
-                        </div>
-                    </div>
-                    <!-- DSK -->
-                    <div class="min-w-[92px]">
-                        <div class="flex justify-between text-[10px] uppercase tracking-widest" :class="currentMode === 'dark' ? 'text-white/50' : 'text-slate-500'">
-                            <span>DSK</span>
-                            <span :class="currentMode === 'dark' ? 'text-lime-400' : 'text-emerald-600'"><span x-text="dsk">--</span>%</span>
-                        </div>
-                        <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full" :class="currentMode === 'dark' ? 'bg-white/10' : 'bg-sky-100'">
-                            <div class="h-full rounded-full bg-lime-400 transition-all duration-500 shadow-[0_0_8px_#a3e635]" :style="'width: ' + dsk + '%'"></div>
-                        </div>
-                    </div>
+            <div class="switcher" x-data="{ open: false }">
+                <button class="switcher-btn" @click="open = !open" :data-open="open" aria-label="Zmień motyw">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <div class="switcher-panel" x-show="open" @click.away="open = false" x-transition.origin.top.right style="display: none;">
+                    <div class="switcher-title">Styl strony:</div>
+                    <template x-for="t in themes" :key="t.key">
+                        <button class="switcher-item" :class="{ 'active': theme === t.key }" @click="setTheme(t.key); open = false">
+                            <span class="switcher-dot" :style="'background:' + t.color"></span>
+                            <span x-text="t.name"></span>
+                        </button>
+                    </template>
+                    <div class="switcher-sep"></div>
+                    <div class="switcher-title">Tryb:</div>
+                    <button class="switcher-item" :class="{ 'active': mode === 'light' }" @click="setMode('light'); open = false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+                        Jasny
+                    </button>
+                    <button class="switcher-item" :class="{ 'active': mode === 'dark' }" @click="setMode('dark'); open = false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+                        Ciemny
+                    </button>
                 </div>
-            </div>
-
-            <!-- Terminal Header Stats -->
-            <div x-show="currentTheme === 'terminal'" class="space-y-1 text-xs" :class="currentMode === 'dark' ? 'text-emerald-500/70' : 'text-[#047857]/70'">
-                <div class="flex items-center gap-2">
-                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">CPU</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(cpu / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(cpu / 5))) + ']'"></span>
-                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="cpu">--</span>%</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">RAM</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(ram / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(ram / 5))) + ']'"></span>
-                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="ram">--</span>%</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/70'">DSK</span>
-                    <span :class="currentMode === 'dark' ? 'text-emerald-500' : 'text-emerald-600'" class="font-bold" x-text="'[' + '█'.repeat(Math.min(20, Math.round(dsk / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(dsk / 5))) + ']'"></span>
-                    <span class="w-10 text-right" :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#047857]'"><span x-text="dsk">--</span>%</span>
-                </div>
-            </div>
-
-            <!-- Aurora Header Stats -->
-            <div x-show="currentTheme === 'aurora'" class="flex flex-wrap items-center justify-between gap-3">
-                <span class="text-sm font-bold tracking-tight" :class="currentMode === 'dark' ? 'text-white' : 'text-slate-900'">Wikdra.top</span>
-                <div class="flex flex-wrap gap-2">
-                    <div class="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md"
-                         :class="currentMode === 'dark' ? 'border-white/10 bg-white/[0.04] text-slate-300' : 'border-slate-200 bg-white/50 text-slate-600'">
-                        <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8]"></span>
-                        CPU <span class="font-semibold" :class="currentMode === 'dark' ? 'text-white' : 'text-slate-900'" x-text="cpu + '%'">--%</span>
-                    </div>
-                    <div class="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md"
-                         :class="currentMode === 'dark' ? 'border-white/10 bg-white/[0.04] text-slate-300' : 'border-slate-200 bg-white/50 text-slate-600'">
-                        <span class="h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_#c084fc]"></span>
-                        RAM <span class="font-semibold" :class="currentMode === 'dark' ? 'text-white' : 'text-slate-900'" x-text="ram + '%'">--%</span>
-                    </div>
-                    <div class="flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium backdrop-blur-md"
-                         :class="currentMode === 'dark' ? 'border-white/10 bg-white/[0.04] text-slate-300' : 'border-slate-200 bg-white/50 text-slate-600'">
-                        <span class="h-1.5 w-1.5 rounded-full bg-pink-400 shadow-[0_0_8px_#f472b6]"></span>
-                        DSK <span class="font-semibold" :class="currentMode === 'dark' ? 'text-white' : 'text-slate-900'" x-text="dsk + '%'">--%</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Editorial Header Stats -->
-            <div x-show="currentTheme === 'editorial'" class="flex items-baseline justify-between border-b pb-5"
-                 :class="currentMode === 'dark' ? 'border-neutral-800' : 'border-neutral-200'">
-                <span class="font-serif text-lg italic tracking-tight" :class="currentMode === 'dark' ? 'text-neutral-200' : 'text-neutral-900'">Wikdra.top</span>
-                <span class="font-mono text-[11px] tracking-widest" :class="currentMode === 'dark' ? 'text-neutral-500' : 'text-neutral-400'">
-                    CPU <span x-text="cpu">--</span>% · RAM <span x-text="ram">--</span>% · DSK <span x-text="dsk">--</span>%
-                </span>
             </div>
         </header>
 
-        <!-- HERO SECTION -->
-        <div class="w-full"
-             :class="{
-               'border-4 border-black bg-white p-6 shadow-[8px_8px_0_#000] sm:p-8': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-white bg-[#27272a] p-6 shadow-[8px_8px_0_#bef264] sm:p-8': currentTheme === 'brutalist' && currentMode === 'dark',
-               'text-center': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
-               'rounded border border-emerald-500/30 p-5': currentTheme === 'terminal',
-               '': currentTheme === 'editorial'
-             }">
-             
-             <!-- Terminal Prompt -->
-             <p x-show="currentTheme === 'terminal'" class="font-mono mb-2"
-                :class="currentMode === 'dark' ? 'text-emerald-500/60' : 'text-[#047857]/60'">
-                 wikdra@server:~$ <span :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#059669]'">whoami</span>
-             </p>
-             
-             <!-- Editorial Label -->
-             <p x-show="currentTheme === 'editorial'" class="mb-3 font-mono text-xs uppercase tracking-[0.3em]" :class="currentMode === 'dark' ? 'text-neutral-400' : 'text-neutral-400'">
-                 Portfolio &amp; projekty
-             </p>
+        <!-- HERO -->
+        <section class="hero-section">
+            <p class="hero-prompt">wikdra@server:~$ <span class="cmd">whoami</span></p>
+            <p class="hero-label">Portfolio &amp; projekty</p>
+            <h1 class="hero-title glitch" data-text="Wikdra.top">Wikdra.top</h1>
+            <p class="hero-lead">Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.</p>
+        </section>
 
-             <!-- Main Title -->
-             <h1 class="font-bold tracking-tight text-4xl sm:text-5xl lg:text-6xl"
-                 :class="{
-                   'font-black uppercase leading-none text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                   'font-black uppercase leading-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                   'font-black uppercase text-white text-center w-full': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                   'font-black uppercase text-[#0f172a] text-center w-full': currentTheme === 'cyberpunk' && currentMode === 'light',
-                   'text-emerald-300 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-                   'text-[#047857] font-mono': currentTheme === 'terminal' && currentMode === 'light',
-                   'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent text-center w-full': currentTheme === 'aurora' && currentMode === 'dark',
-                   'bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 bg-clip-text text-transparent text-center w-full': currentTheme === 'aurora' && currentMode === 'light',
-                   'font-serif leading-[1.05] text-neutral-900': currentTheme === 'editorial' && currentMode === 'light',
-                   'font-serif leading-[1.05] text-neutral-200': currentTheme === 'editorial' && currentMode === 'dark'
-                 }"
-                 :style="currentTheme === 'cyberpunk' && currentMode === 'dark' ? 'text-shadow: 0 0 18px rgba(34,211,238,0.6), 0 0 40px rgba(217,70,239,0.4);' : (currentTheme === 'cyberpunk' && currentMode === 'light' ? 'text-shadow: 0 0 10px rgba(14,165,233,0.3);' : '')">
-                 <span x-show="currentTheme === 'terminal'">&gt; </span>Wikdra.top<span x-show="currentTheme === 'brutalist'">!</span><span x-show="currentTheme === 'terminal'" class="cursor-blink">_</span>
-             </h1>
-             
-             <p class="mt-4 leading-relaxed"
-                :class="{
-                  'max-w-xl text-lg font-bold text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'max-w-xl text-lg font-bold text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'mx-auto max-w-lg font-mono text-sm text-white/60 text-center': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'mx-auto max-w-lg font-mono text-sm text-slate-600 text-center': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'max-w-xl font-mono text-sm text-emerald-400/80': currentTheme === 'terminal' && currentMode === 'dark',
-                  'max-w-xl font-mono text-sm text-[#047857]/80': currentTheme === 'terminal' && currentMode === 'light',
-                  'mx-auto max-w-lg text-base text-slate-200/80 text-center': currentTheme === 'aurora' && currentMode === 'dark',
-                  'mx-auto max-w-lg text-base text-slate-600 text-center': currentTheme === 'aurora' && currentMode === 'light',
-                  'max-w-md text-base text-neutral-500': currentTheme === 'editorial' && currentMode === 'light',
-                  'max-w-md text-base text-neutral-400': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
-                <span x-show="currentTheme === 'terminal'"># </span>Witaj na mojej platformie. Tutaj znajdziesz wszystkie moje projekty i narzędzia w jednym miejscu.
-             </p>
-        </div>
+        <!-- PROJECTS -->
+        <main>
+            <p class="projects-cmd">wikdra@server:~$ <span class="cmd">ls ./projekty --long</span></p>
+            <div class="projects">
 
-        <!-- CARDS GRID -->
-        <main class="w-full"
-             :class="{
-               'grid gap-6 sm:grid-cols-2': currentTheme === 'brutalist',
-               'grid gap-5 sm:grid-cols-2': currentTheme === 'cyberpunk',
-               'flex flex-col gap-3': currentTheme === 'terminal',
-               'grid gap-5 sm:grid-cols-2': currentTheme === 'aurora',
-               'divide-y divide-neutral-200 border-t border-neutral-200': currentTheme === 'editorial'
-             }">
-             
-             <!-- Terminal list command -->
-             <p x-show="currentTheme === 'terminal'" class="font-mono sm:col-span-2 -mb-1"
-                 :class="currentMode === 'dark' ? 'text-emerald-500/60' : 'text-[#047857]/60'">
-                  wikdra@server:~$ <span :class="currentMode === 'dark' ? 'text-emerald-300' : 'text-[#059669]'">ls ./projekty --long</span>
-             </p>
-
-             <!-- PROJECT 1: PANELE SŁONECZNE -->
-             <a href="https://panele.wikdra.top" 
-                :class="{
-                  'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono': currentTheme === 'terminal',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 hover:border-white/20': currentTheme === 'aurora' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-indigo-100 bg-white/60 p-6 shadow-xl shadow-indigo-100/30 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-200/50 hover:border-indigo-200 text-slate-800': currentTheme === 'aurora' && currentMode === 'light',
-                  'group flex flex-col gap-4 py-8 transition sm:flex-row sm:items-center sm:justify-between': currentTheme === 'editorial'
-                }">
-                
-                <!-- Cyberpunk Card Corner Brackets -->
-                <template x-if="currentTheme === 'cyberpunk'">
-                    <div class="absolute inset-0 pointer-events-none">
-                        <span class="absolute left-0 top-0 h-3 w-3 border-l-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute right-0 top-0 h-3 w-3 border-r-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 right-0 h-3 w-3 border-b-2 border-r-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                    </div>
-                </template>
-
-                <!-- Box Layout (Brutalist, Cyberpunk, Aurora) -->
-                <div :class="currentTheme === 'terminal' || currentTheme === 'editorial' ? 'hidden' : 'block'">
-                    <div class="flex items-center justify-between">
-                        <div :class="{
-                           'flex h-12 w-12 items-center justify-center border-4 border-black bg-orange-400 text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                           'flex h-12 w-12 items-center justify-center border-4 border-white bg-orange-400 text-black': currentTheme === 'brutalist' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400/50 text-fuchsia-300 shadow-[0_0_12px_rgba(217,70,239,0.5)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400 bg-fuchsia-100 text-fuchsia-600 shadow-[0_0_12px_rgba(217,70,239,0.2)]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] text-white backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 text-indigo-600 backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'light'
-                         }">
-                             <i class="fas fa-sun text-lg"></i>
-                         </div>
-                        
-                         <span x-show="currentTheme === 'brutalist'" class="border-2 px-2 py-1 text-[11px] font-black uppercase text-black" :class="currentMode === 'dark' ? 'border-white bg-yellow-300' : 'border-black bg-yellow-300'">
-                             Aktywne
-                         </span>
-                         <span x-show="currentTheme === 'cyberpunk'" class="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider" :class="currentMode === 'dark' ? 'border-lime-400/50 text-lime-300' : 'border-lime-600/50 text-lime-700 bg-lime-50'">
-                             Aktywne
-                         </span>
-                         <span x-show="currentTheme === 'aurora'" class="rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm" :class="currentMode === 'dark' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-emerald-200 bg-emerald-50 text-emerald-700'">
-                             Aktywne
-                         </span>
-                    </div>
-                    
-                    <h3 :class="{
-                       'mt-4 text-2xl font-black uppercase text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-4 text-2xl font-black uppercase text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-white': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-4 text-lg font-semibold text-white': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-4 text-lg font-semibold text-slate-900': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                        Panele Słoneczne
-                    </h3>
-                    
-                    <p :class="{
-                       'mt-2 text-base font-semibold leading-normal text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-2 text-base font-semibold leading-normal text-white/90': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-white/60': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                        Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
-                    </p>
-                </div>
-
-                <!-- Terminal Layout -->
-                <div x-show="currentTheme === 'terminal'" class="flex items-start gap-3 w-full">
-                    <i class="fas fa-sun mt-1" :class="currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]'"></i>
-                    <div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span :class="currentMode === 'dark' ? 'text-emerald-500/50' : 'text-[#047857]/50'">01.</span>
-                            <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">Panele Słoneczne</span>
-                            <span class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-bold"
-                                  :class="currentMode === 'dark' ? 'border-emerald-400/40 text-emerald-300' : 'border-emerald-600/40 text-[#047857] bg-emerald-100/50'">
-                                Aktywne
-                            </span>
-                        </div>
-                        <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                            Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Editorial Layout -->
-                <div x-show="currentTheme === 'editorial'" class="flex items-start gap-5 w-full">
-                    <span class="font-serif text-3xl text-neutral-300 transition group-hover:text-neutral-800">
-                        01
-                    </span>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-sun text-neutral-500 text-sm"></i>
-                            <h3 class="font-serif text-2xl tracking-tight">Panele Słoneczne</h3>
-                            <span class="rounded-full border border-neutral-300 px-2 py-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
-                                Aktywne
-                            </span>
-                        </div>
-                        <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.
-                        </p>
-                    </div>
-                </div>
-
-                <span :class="{
-                  'mt-5 inline-block w-fit border-2 border-black bg-black px-3 py-1.5 text-xs font-black uppercase text-white transition group-hover:bg-white group-hover:text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'mt-5 inline-block w-fit border-2 border-[#bef264] bg-[#bef264] px-3 py-1.5 text-xs font-black uppercase text-black transition group-hover:bg-transparent group-hover:text-[#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-cyan-300 group-hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-sky-600 group-hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'shrink-0 text-xs text-emerald-300 underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'dark',
-                  'shrink-0 text-xs text-[#065f46] underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'light',
-                  'mt-5 w-full bg-white text-[#0f0728] font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-slate-100 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'dark',
-                  'mt-5 w-full bg-indigo-600 text-white font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
-                    Zobacz Dashboard <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
-                </span>
-             </a>
-
-             <!-- PROJECT 2: YOUTUBE -->
-             <a href="https://www.youtube.com/@wikdra651" target="_blank"
-                :class="{
-                  'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#27272a] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono': currentTheme === 'terminal',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 hover:border-white/20': currentTheme === 'aurora' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-indigo-100 bg-white/60 p-6 shadow-xl shadow-indigo-100/30 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-200/50 hover:border-indigo-200 text-slate-800': currentTheme === 'aurora' && currentMode === 'light',
-                  'group flex flex-col gap-4 py-8 transition sm:flex-row sm:items-center sm:justify-between': currentTheme === 'editorial'
-                }">
-                
-                <!-- Cyberpunk Card Corner Brackets -->
-                <template x-if="currentTheme === 'cyberpunk'">
-                    <div class="absolute inset-0 pointer-events-none">
-                        <span class="absolute left-0 top-0 h-3 w-3 border-l-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute right-0 top-0 h-3 w-3 border-r-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 right-0 h-3 w-3 border-b-2 border-r-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                    </div>
-                </template>
-
-                <!-- Box Layout (Brutalist, Cyberpunk, Aurora) -->
-                <div :class="currentTheme === 'terminal' || currentTheme === 'editorial' ? 'hidden' : 'block'">
-                    <div class="flex items-center justify-between">
-                        <div :class="{
-                           'flex h-12 w-12 items-center justify-center border-4 border-black bg-red-400 text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                           'flex h-12 w-12 items-center justify-center border-4 border-white bg-red-400 text-black': currentTheme === 'brutalist' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400/50 text-fuchsia-300 shadow-[0_0_12px_rgba(217,70,239,0.5)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400 bg-fuchsia-100 text-fuchsia-600 shadow-[0_0_12px_rgba(217,70,239,0.2)]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] text-white backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 text-indigo-600 backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'light'
-                         }">
-                            <i class="fab fa-youtube text-lg"></i>
+                <a href="https://panele.wikdra.top" class="project-card panel-card">
+                    <div class="project-body">
+                        <span class="project-num">01.</span>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="project-icon icon-solar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+                                </span>
+                                <span class="project-badge">Aktywne</span>
+                            </div>
+                            <div class="project-head">
+                                <h3 class="project-title">Panele Słoneczne</h3>
+                            </div>
+                            <p class="project-desc">Monitorowanie produkcji energii słonecznej w czasie rzeczywistym. Analiza danych historycznych i prognozowanie produkcji na kolejne dni.</p>
                         </div>
                     </div>
-                    
-                    <h3 :class="{
-                       'mt-4 text-2xl font-black uppercase text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-4 text-2xl font-black uppercase text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-white': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-4 text-lg font-semibold text-white': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-4 text-lg font-semibold text-slate-900': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                        YouTube
-                    </h3>
-                    
-                    <p :class="{
-                       'mt-2 text-base font-semibold leading-normal text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-2 text-base font-semibold leading-normal text-white/90': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-white/60': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                        Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
-                    </p>
-                </div>
+                    <span class="project-cta">Zobacz Dashboard</span>
+                </a>
 
-                <!-- Terminal Layout -->
-                <div x-show="currentTheme === 'terminal'" class="flex items-start gap-3 w-full">
-                    <i class="fab fa-youtube mt-1" :class="currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]'"></i>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span :class="currentMode === 'dark' ? 'text-emerald-500/50' : 'text-[#047857]/50'">02.</span>
-                            <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">YouTube</span>
+                <a href="https://www.youtube.com/@wikdra651" target="_blank" rel="noopener" class="project-card panel-card">
+                    <div class="project-body">
+                        <span class="project-num">02.</span>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="project-icon icon-youtube">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.85-.46-5.58a2.9 2.9 0 0 0-2-2C18.75 4 12 4 12 4s-6.75 0-8.54.42a2.9 2.9 0 0 0-2 2C1 8.15 1 12 1 12s0 3.85.46 5.58a2.9 2.9 0 0 0 2 2C5.25 20 12 20 12 20s6.75 0 8.54-.42a2.9 2.9 0 0 0 2-2C23 15.85 23 12 23 12zM9.75 15.5v-7L15.5 12l-5.75 3.5z"/></svg>
+                                </span>
+                            </div>
+                            <div class="project-head">
+                                <h3 class="project-title">YouTube</h3>
+                            </div>
+                            <p class="project-desc">Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.</p>
                         </div>
-                        <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                            Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
-                        </p>
                     </div>
-                </div>
+                    <span class="project-cta">Odwiedź Kanał</span>
+                </a>
 
-                <!-- Editorial Layout -->
-                <div x-show="currentTheme === 'editorial'" class="flex items-start gap-5 w-full">
-                    <span class="font-serif text-3xl text-neutral-300 transition group-hover:text-neutral-800">
-                        02
-                    </span>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i class="fab fa-youtube text-neutral-500 text-sm"></i>
-                            <h3 class="font-serif text-2xl tracking-tight">YouTube</h3>
+                <a href="https://github.com/WikDra" target="_blank" rel="noopener" class="project-card panel-card project-wide">
+                    <div class="project-body">
+                        <span class="project-num">03.</span>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="project-icon icon-github">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.69-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.15c0 .3.21.67.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+                                </span>
+                                <span class="project-badge">8 repo · 13 ★</span>
+                            </div>
+                            <div class="project-head">
+                                <h3 class="project-title">GitHub</h3>
+                            </div>
+                            <p class="project-desc">Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.</p>
                         </div>
-                        <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Eksperymentalne edycje EPP w 8K, latające buty i legendarne testy wytrzymałości telefonów (z użyciem kibla). Czysty klimat internetu.
-                        </p>
                     </div>
-                </div>
+                    <span class="project-cta">Odwiedź Profil</span>
+                </a>
 
-                <span :class="{
-                  'mt-5 inline-block w-fit border-2 border-black bg-black px-3 py-1.5 text-xs font-black uppercase text-white transition group-hover:bg-white group-hover:text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'mt-5 inline-block w-fit border-2 border-[#bef264] bg-[#bef264] px-3 py-1.5 text-xs font-black uppercase text-black transition group-hover:bg-transparent group-hover:text-[#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-cyan-300 group-hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-sky-600 group-hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'shrink-0 text-xs text-emerald-300 underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'dark',
-                  'shrink-0 text-xs text-[#047857] underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'light',
-                  'mt-5 w-full bg-white text-[#0f0728] font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-slate-100 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'dark',
-                  'mt-5 w-full bg-indigo-600 text-white font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
-                    Odwiedź Kanał <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
-                </span>
-             </a>
-
-             <!-- PROJECT 3: GITHUB -->
-             <a href="https://github.com/WikDra" target="_blank"
-                :class="{
-                  'group flex flex-col justify-between border-4 border-black p-5 shadow-[6px_6px_0_#000] hover:shadow-[10px_10px_0_#000] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-violet-300 sm:col-span-2 text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'group flex flex-col justify-between border-4 border-white p-5 shadow-[6px_6px_0_#bef264] hover:shadow-[10px_10px_0_#bef264] hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 bg-[#2e1065] sm:col-span-2 text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/30 bg-[#0d081e]/85 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-[#0d081e]/95 sm:col-span-2': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between border border-cyan-400/40 bg-white/90 p-6 backdrop-blur-md transition duration-300 hover:border-fuchsia-400/60 hover:bg-white text-[#0f172a] sm:col-span-2': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'group flex flex-col gap-2 rounded border border-emerald-500/20 p-4 transition hover:border-emerald-400 hover:bg-emerald-500/5 sm:flex-row sm:items-center sm:justify-between font-mono sm:col-span-2': currentTheme === 'terminal',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/20 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 hover:border-white/20 sm:col-span-2': currentTheme === 'aurora' && currentMode === 'dark',
-                  'group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-indigo-100 bg-white/60 p-6 shadow-xl shadow-indigo-100/30 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-200/50 hover:border-indigo-200 text-slate-800 sm:col-span-2': currentTheme === 'aurora' && currentMode === 'light',
-                  'group flex flex-col gap-4 py-8 transition sm:flex-row sm:items-center sm:justify-between': currentTheme === 'editorial'
-                }">
-                
-                <!-- Cyberpunk Card Corner Brackets -->
-                <template x-if="currentTheme === 'cyberpunk'">
-                    <div class="absolute inset-0 pointer-events-none">
-                        <span class="absolute left-0 top-0 h-3 w-3 border-l-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute right-0 top-0 h-3 w-3 border-r-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                        <span class="absolute bottom-0 right-0 h-3 w-3 border-b-2 border-r-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                    </div>
-                </template>
-
-                <!-- Box Layout (Brutalist, Cyberpunk, Aurora) -->
-                <div :class="currentTheme === 'terminal' || currentTheme === 'editorial' ? 'hidden' : 'block'">
-                    <div class="flex items-center justify-between">
-                        <div :class="{
-                           'flex h-12 w-12 items-center justify-center border-4 border-black bg-violet-400 text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                           'flex h-12 w-12 items-center justify-center border-4 border-white bg-violet-600 text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400/50 text-fuchsia-300 shadow-[0_0_12px_rgba(217,70,239,0.5)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-md border border-fuchsia-400 bg-fuchsia-100 text-fuchsia-600 shadow-[0_0_12px_rgba(217,70,239,0.2)]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] text-white backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'dark',
-                           'flex h-11 w-11 items-center justify-center rounded-2xl border border-indigo-100 bg-indigo-50 text-indigo-600 backdrop-blur-md': currentTheme === 'aurora' && currentMode === 'light'
-                         }">
-                            <i class="fab fa-github text-lg"></i>
-                        </div>
-                        
-                         <span x-show="currentTheme === 'brutalist'" class="border-2 px-2 py-1 text-[11px] font-black uppercase" :class="currentMode === 'dark' ? 'border-white bg-yellow-300 text-black' : 'border-black bg-yellow-300 text-black'">
-                             8 repo · 13 ★
-                         </span>
-                         <span x-show="currentTheme === 'cyberpunk'" class="rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider" :class="currentMode === 'dark' ? 'border-lime-400/50 text-lime-300' : 'border-lime-600/50 text-lime-700 bg-lime-50'">
-                             8 repo · 13 ★
-                         </span>
-                         <span x-show="currentTheme === 'aurora'" class="rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm" :class="currentMode === 'dark' ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-emerald-200 bg-emerald-50 text-emerald-700'">
-                             8 repo · 13 ★
-                         </span>
-                    </div>
-                    
-                    <h3 :class="{
-                       'mt-4 text-2xl font-black uppercase text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-4 text-2xl font-black uppercase text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-white': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-4 font-mono text-lg font-bold uppercase tracking-wide text-[#0f172a]': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-4 text-lg font-semibold text-white': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-4 text-lg font-semibold text-slate-900': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                        GitHub
-                    </h3>
-                    
-                    <p :class="{
-                       'mt-2 text-base font-semibold leading-normal text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                       'mt-2 text-base font-semibold leading-normal text-white/90': currentTheme === 'brutalist' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-white/60': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                       'mt-2 text-sm leading-relaxed text-slate-300/80': currentTheme === 'aurora' && currentMode === 'dark',
-                       'mt-2 text-sm leading-relaxed text-slate-600': currentTheme === 'aurora' && currentMode === 'light'
-                     }">
-                            Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
-                    </p>
-                </div>
-
-                <!-- Terminal Layout -->
-                 <div x-show="currentTheme === 'terminal'" class="flex items-start gap-3 w-full">
-                     <i class="fab fa-github mt-1" :class="currentMode === 'dark' ? 'text-emerald-400' : 'text-[#047857]'"></i>
-                     <div>
-                         <div class="flex items-center gap-2">
-                             <span :class="currentMode === 'dark' ? 'text-emerald-500/50' : 'text-[#047857]/50'">03.</span>
-                             <span class="font-bold" :class="currentMode === 'dark' ? 'text-emerald-200' : 'text-emerald-800'">GitHub</span>
-                             <span class="rounded border px-1.5 py-0.5 text-[10px] uppercase tracking-wider font-bold"
-                                   :class="currentMode === 'dark' ? 'border-emerald-400/40 text-emerald-300' : 'border-emerald-600/40 text-[#047857] bg-emerald-100/50'">
-                                 8 repo · 13 ★
-                             </span>
-                         </div>
-                         <p class="mt-1 text-xs leading-relaxed" :class="currentMode === 'dark' ? 'text-emerald-400/70' : 'text-[#047857]/90'">
-                             Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
-                         </p>
-                     </div>
-                 </div>
-
-                <!-- Editorial Layout -->
-                <div x-show="currentTheme === 'editorial'" class="flex items-start gap-5 w-full">
-                    <span class="font-serif text-3xl text-neutral-300 transition group-hover:text-neutral-800">
-                        03
-                    </span>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <i class="fab fa-github text-neutral-500 text-sm"></i>
-                            <h3 class="font-serif text-2xl tracking-tight">GitHub</h3>
-                            <span class="rounded-full border border-neutral-300 px-2 py-0.5 text-[10px] uppercase tracking-wider text-neutral-500">
-                                8 repo · 13 ★
-                            </span>
-                        </div>
-                        <p class="mt-2 max-w-md text-sm leading-relaxed text-neutral-500">
-                            Moje repozytoria i projekty open-source. Sprawdź nad czym aktualnie pracuję i przejrzyj kod moich aplikacji.
-                        </p>
-                    </div>
-                </div>
-
-                <span :class="{
-                  'mt-5 inline-block w-fit border-2 border-black bg-black px-3 py-1.5 text-xs font-black uppercase text-white transition group-hover:bg-white group-hover:text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                  'mt-5 inline-block w-fit border-2 border-white bg-white px-3 py-1.5 text-xs font-black uppercase text-black transition group-hover:bg-transparent group-hover:text-[#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-cyan-300 group-hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'mt-4 inline-flex items-center gap-1 font-mono text-xs uppercase tracking-widest text-sky-600 group-hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'shrink-0 text-xs text-emerald-300 underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'dark',
-                  'shrink-0 text-xs text-[#047857] underline-offset-4 group-hover:underline self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'terminal' && currentMode === 'light',
-                  'mt-5 w-full bg-white text-[#0f0728] font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-slate-100 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'dark',
-                  'mt-5 w-full bg-indigo-600 text-white font-bold rounded-xl py-2.5 px-4 text-center text-sm shadow-md hover:bg-indigo-700 transition duration-200 flex items-center justify-center gap-1.5': currentTheme === 'aurora' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-800 group-hover:border-neutral-800 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'light',
-                  'shrink-0 border-b border-transparent pb-0.5 text-sm font-medium tracking-tight text-neutral-200 group-hover:border-neutral-200 self-end sm:self-center mt-2 sm:mt-0': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
-                    Odwiedź Profil <span x-text="currentTheme === 'brutalist' ? '→' : (currentTheme === 'cyberpunk' ? '»' : (currentTheme === 'aurora' ? '↗' : '→'))"></span>
-                </span>
-             </a>
+            </div>
         </main>
 
         <!-- FOOTER -->
-        <footer class="w-full"
-                :class="{
-                  'flex flex-wrap items-center justify-between gap-3 border-4 border-black bg-black px-4 py-3 font-mono text-xs font-bold uppercase text-white shadow-[4px_4px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'flex flex-wrap items-center justify-between gap-3 border-4 border-white bg-black px-4 py-3 font-mono text-xs font-bold uppercase text-white shadow-[4px_4px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'flex flex-col items-center gap-2 border-t border-white/10 pt-6 text-center font-mono text-[11px] uppercase tracking-widest text-white/40': currentTheme === 'cyberpunk',
-                  'border-t border-emerald-500/20 pt-4 text-xs text-emerald-500/50 space-y-1 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border-t border-[#047857]/20 pt-4 text-xs text-[#047857]/70 space-y-1 font-mono': currentTheme === 'terminal' && currentMode === 'light',
-                  'flex flex-col items-center gap-2 border-t border-white/10 pt-6 text-center text-xs text-slate-400': currentTheme === 'aurora',
-                  'flex flex-col items-center gap-2 border-t border-neutral-200 pt-6 text-center text-xs text-neutral-400': currentTheme === 'editorial'
-                }">
-                
-                <!-- Brutalist Footer Content -->
-                <template x-if="currentTheme === 'brutalist'">
-                    <div class="flex flex-wrap items-center justify-between w-full font-mono text-xs">
-                        <a href="https://wikdra.top/bichu" class="underline decoration-2 text-white hover:text-lime-300">Bichu</a>
-                        <span>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</span>
-                        <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="flex items-center gap-1.5 underline decoration-2 text-white hover:text-lime-300">
-                            <i class="fas fa-music text-[10px]"></i> Gówno święta (Suno)
-                        </a>
-                    </div>
-                </template>
-
-                <!-- Cyberpunk Footer Content -->
-                <template x-if="currentTheme === 'cyberpunk'">
-                    <div class="space-y-1">
-                        <a href="https://wikdra.top/bichu" class="hover:text-fuchsia-300 font-bold">[ BICHU ]</a>
-                        <p>© 2026 WIKDRA.TOP. WSZYSTKIE PRAWA ZASTRZEŻONE.</p>
-                        <p class="flex items-center justify-center gap-1.5 normal-case tracking-normal">
-                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posłuchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="text-cyan-300 hover:text-fuchsia-300 underline">Gówno święta (Suno)</a>
-                        </p>
-                    </div>
-                </template>
-
-                <!-- Terminal Footer Content -->
-                <template x-if="currentTheme === 'terminal'">
-                    <div class="space-y-1">
-                        <p>// <a href="https://wikdra.top/bichu" class="underline hover:text-emerald-300">Bichu</a></p>
-                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
-                        <p class="flex items-center gap-1.5">
-                            <i class="fas fa-music text-[10px]"></i> W wolnej chwili posłuchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="underline hover:text-emerald-300">Gówno święta (Suno)</a>
-                        </p>
-                    </div>
-                </template>
-
-                <!-- Aurora Footer Content -->
-                <template x-if="currentTheme === 'aurora'">
-                    <div class="space-y-1">
-                        <a href="https://wikdra.top/bichu" class="font-medium text-slate-400 hover:text-purple-400">Bichu</a>
-                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
-                        <p class="flex items-center justify-center gap-1.5">
-                            <i class="fas fa-music text-[10px] text-slate-400"></i> W wolnej chwili posłuchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="font-medium text-purple-400 hover:underline">Gówno święta (Suno)</a>
-                        </p>
-                    </div>
-                </template>
-
-                <!-- Editorial Footer Content -->
-                <template x-if="currentTheme === 'editorial'">
-                    <div class="space-y-1">
-                        <a href="https://wikdra.top/bichu" class="font-medium text-neutral-500 hover:text-neutral-900">Bichu</a>
-                        <p>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</p>
-                        <p class="flex items-center justify-center gap-1.5">
-                            <i class="fas fa-music text-[10px] text-neutral-400"></i> W wolnej chwili posłuchaj: 
-                            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" class="italic text-neutral-600 hover:text-neutral-900 underline">Gówno święta (Suno)</a>
-                        </p>
-                    </div>
-                </template>
+        <footer class="site-footer">
+            <a href="https://wikdra.top/bichu">Bichu</a>
+            <span>© 2026 Wikdra.top. Wszystkie prawa zastrzeżone.</span>
+            <a href="https://suno.com/song/cecf8fc6-ffa5-4abe-8d5f-86fdbbb544e6" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="height:0.8em;width:0.8em;display:inline;vertical-align:-0.1em"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                Gówno święta (Suno)
+            </a>
         </footer>
     </div>
 
-    <!-- GLOBAL FLOATING THEME SWITCHER -->
-    <div x-data="{ open: false }" class="fixed bottom-5 right-5 z-50 font-sans">
-        <!-- Button -->
-        <button @click="open = !open" 
-                :class="{
-                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#bef264] hover:shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'border border-sky-400 bg-white text-sky-600 shadow-[0_0_10px_rgba(14,165,233,0.15)] hover:border-fuchsia-500 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border border-emerald-600 bg-[#ecfdf5] text-[#047857] hover:bg-emerald-100': currentTheme === 'terminal' && currentMode === 'light',
-                  'bg-white/5 border border-white/10 text-white shadow-lg backdrop-blur-md hover:bg-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                  'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora' && currentMode === 'light',
-                  'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
-                  'border border-neutral-800 bg-[#121212] text-neutral-200 hover:bg-neutral-900': currentTheme === 'editorial' && currentMode === 'dark'
-                }"
-                class="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 focus:outline-none">
-            <i class="fas fa-cog text-lg transition-transform duration-500" :class="open ? 'rotate-90' : ''"></i>
-        </button>
-
-        <!-- Dropdown Panel -->
-        <div x-show="open" 
-             @click.away="open = false"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-75"
-             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-             :class="{
-               'shadow-[6px_6px_0_#000] border-4 border-black bg-white text-black': currentTheme === 'brutalist' && currentMode === 'light',
-               'shadow-[6px_6px_0_#bef264] border-4 border-white bg-[#18181b] text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-               'shadow-[0_0_15px_rgba(34,211,238,0.3)] border border-cyan-400/80 bg-[#05010f] text-white': currentTheme === 'cyberpunk' && currentMode === 'dark',
-               'shadow-[0_0_15px_rgba(14,165,233,0.15)] border border-cyan-400/40 bg-sky-50 text-slate-900': currentTheme === 'cyberpunk' && currentMode === 'light',
-               'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
-               'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
-               'shadow-2xl border border-white/10 bg-slate-900/90 text-white rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
-               'shadow-2xl border border-white/60 bg-white/95 text-slate-800 rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
-               'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
-               'border border-neutral-800 bg-[#121212] text-white rounded-md': currentTheme === 'editorial' && currentMode === 'dark'
-             }"
-             class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
-             
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentMode === 'dark' ? 'text-white/50' : (currentTheme === 'terminal' ? 'text-[#047857]/60' : 'text-neutral-500')">
-                  Styl strony:
-             </div>
-             
-              <!-- Brutalist -->
-              <button @click="currentTheme = 'brutalist'; open = false"
-                      :class="{
-                        'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                        'bg-[#bef264] text-black border-2 border-white font-bold shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'brutalist' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-black bg-[#fdf6e3]"></span>
-                      Neo-Brutalizm
-              </button>
-              
-              <!-- Cyberpunk -->
-              <button @click="currentTheme = 'cyberpunk'; open = false"
-                      :class="{
-                        'bg-fuchsia-600 text-white border border-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.4)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
-                        'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'cyberpunk' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-cyan-400 bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
-                      Cyber Dashboard
-              </button>
-              
-              <!-- Terminal -->
-              <button @click="currentTheme = 'terminal'; open = false"
-                      :class="{
-                        'bg-[#047857]/20 text-[#047857] border border-[#047857] font-bold rounded': currentTheme === 'terminal' && currentMode === 'light',
-                        'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'terminal' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857] rounded': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-400"></span>
-                      Dev Terminal
-              </button>
-              
-              <!-- Aurora -->
-              <button @click="currentTheme = 'aurora'; open = false"
-                      :class="{
-                        'bg-indigo-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                        'bg-purple-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'aurora' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 shadow"></span>
-                      Glassmorphism
-              </button>
-              
-              <!-- Editorial -->
-              <button @click="currentTheme = 'editorial'; open = false"
-                      :class="{
-                        'bg-neutral-900 text-white font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'light',
-                        'bg-[#e4e4e7] text-black font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'editorial' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-neutral-300 bg-white shadow-sm"></span>
-                      Editorial
-              </button>
-
-             <!-- Separator line -->
-             <div class="border-t my-1"
-                  :class="{
-                    'border-black border-t-2': currentTheme === 'brutalist' && currentMode === 'light',
-                     'border-white border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
-                    'border-white/10': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
-                    'border-emerald-500/20': currentTheme === 'terminal',
-                    'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
-                    'border-neutral-800': currentTheme === 'editorial' && currentMode === 'dark'
-                  }"></div>
-
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
-                  Tryb:
-             </div>
-             
-             <div class="flex p-0.5"
-                  :class="{
-                    'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                     'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                    'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                    'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
-                    'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                     'border border-emerald-600/30 bg-[#d1fae5] text-[#047857] rounded': currentTheme === 'terminal' && currentMode === 'light',
-                    'border border-white/10 bg-white/[0.04] text-white rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                    'border border-white/15 bg-white/70 text-slate-700 rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                    'border border-neutral-200 bg-neutral-50 rounded-sm': currentTheme === 'editorial' && currentMode === 'light',
-                    'border border-neutral-800 bg-[#121212] text-white rounded-sm': currentTheme === 'editorial' && currentMode === 'dark'
-                  }">
-                 <button @click="currentMode = 'light'"
-                         class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
-                         :class="{
-                           'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-white text-black rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'dark',
-                           'bg-cyan-400 text-black font-bold': currentMode === 'light' && currentTheme === 'cyberpunk',
-                            'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'dark',
-                            'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'light',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'light' && currentTheme === 'aurora',
-                           'bg-neutral-900 text-white': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'dark',
-                           'opacity-50 hover:opacity-100': currentMode !== 'light'
-                         }">
-                     Jasny
-                 </button>
-                 <button @click="currentMode = 'dark'"
-                         class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
-                         :class="{
-                           'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
-                            'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
-                           'bg-cyan-400 text-black font-bold': currentMode === 'dark' && currentTheme === 'cyberpunk',
-                            'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'dark',
-                            'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'light',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'dark',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'light',
-                           'bg-neutral-900 text-white': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'dark',
-                           'opacity-50 hover:opacity-100': currentMode !== 'dark'
-                         }">
-                     Ciemny
-                 </button>
-             </div>
-        </div>
-    </div>
+    <script>
+        function siteApp() {
+            return {
+                theme: getGlobalTheme(),
+                mode: getGlobalMode(),
+                themes: [
+                    { key: 'brutalist', name: 'Neo-Brutalizm', color: '#eab308' },
+                    { key: 'cyberpunk', name: 'Cyber Dashboard', color: '#22d3ee' },
+                    { key: 'terminal', name: 'Dev Terminal', color: '#34d399' },
+                    { key: 'aurora', name: 'Glassmorphism', color: '#a855f7' },
+                    { key: 'editorial', name: 'Editorial', color: '#171717' }
+                ],
+                stats: { cpu: 0, ram: 0, disk: 0 },
+                get statsList() {
+                    return [
+                        { key: 'cpu', label: 'CPU', value: this.stats.cpu },
+                        { key: 'ram', label: 'RAM', value: this.stats.ram },
+                        { key: 'disk', label: 'DSK', value: this.stats.disk }
+                    ];
+                },
+                setTheme(val) {
+                    this.theme = val;
+                    this.mode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
+                    this.apply();
+                },
+                setMode(val) {
+                    this.mode = val;
+                    this.apply();
+                },
+                apply() {
+                    const el = document.documentElement;
+                    el.dataset.theme = this.theme;
+                    el.dataset.mode = this.mode;
+                    setGlobal('global_theme', this.theme);
+                    setGlobal('global_mode', this.mode);
+                },
+                init() {
+                    this.apply();
+                    const getStats = async () => {
+                        try {
+                            const res = await fetch('/stats.php');
+                            if (res.ok) {
+                                const data = await res.json();
+                                this.stats = { cpu: data.cpu, ram: data.ram, disk: data.disk };
+                            }
+                        } catch (e) {}
+                    };
+                    getStats();
+                    setInterval(getStats, 60000);
+                }
+            };
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw-v6.js');
+        }
+    </script>
 </body>
 </html>

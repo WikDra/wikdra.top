@@ -1,5 +1,6 @@
 <?php
 $content_file = 'bichu_content.txt';
+$attempts_file = 'bichu_attempts.json';
 $admin_password = '';
 if (file_exists(__DIR__ . '/bichu_config.php')) {
     require_once __DIR__ . '/bichu_config.php';
@@ -8,12 +9,32 @@ if (file_exists(__DIR__ . '/bichu_config.php')) {
 if (isset($_GET['api'])) {
     header('Content-Type: application/json');
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Rate limiting: 1s delay per failed attempt, 60s lockout after 5 failures
+        $attempts = ['count' => 0, 'locked_until' => 0];
+        if (file_exists($attempts_file)) {
+            $decoded = json_decode(file_get_contents($attempts_file), true);
+            if (is_array($decoded)) $attempts = array_merge($attempts, $decoded);
+        }
+        if (time() < $attempts['locked_until']) {
+            http_response_code(429);
+            echo json_encode(['success' => false, 'error' => 'Zbyt wiele nieudanych prób. Odczekaj minutę.']);
+            exit;
+        }
+
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true);
         if (($data['password'] ?? '') === $admin_password) {
+            file_put_contents($attempts_file, json_encode(['count' => 0, 'locked_until' => 0]));
             file_put_contents($content_file, $data['content'] ?? '');
             echo json_encode(['success' => true]);
         } else {
+            sleep(1);
+            $attempts['count']++;
+            if ($attempts['count'] >= 5) {
+                $attempts['locked_until'] = time() + 60;
+                $attempts['count'] = 0;
+            }
+            file_put_contents($attempts_file, json_encode($attempts));
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => 'Błędne hasło']);
         }
@@ -29,29 +50,18 @@ if (isset($_GET['api'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bichu | Wikdra.top</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Shared themes CSS -->
-    <link rel="stylesheet" href="/themes-v5.css">
-    
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
+    <link rel="icon" href="/assets/icons/favicon.png" type="image/png">
 
-    <!-- Theme Helper & Anti-FOUC Script -->
+    <link rel="stylesheet" href="/assets/css/app-v6.css">
+    <script defer src="/assets/js/alpine.min.js"></script>
+    <style>[x-cloak] { display: none !important; }</style>
+
+    <!-- Theme init (anti-FOUC) -->
     <script>
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
+            for (let i = 0; i < ca.length; i++) {
                 let c = ca[i].trim();
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
             }
@@ -59,389 +69,127 @@ if (isset($_GET['api'])) {
         }
         function getSystemPreferredThemeAndMode() {
             const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            return {
-                theme: isDark ? 'terminal' : 'brutalist',
-                mode: isDark ? 'dark' : 'light'
-            };
+            return { theme: isDark ? 'terminal' : 'brutalist', mode: isDark ? 'dark' : 'light' };
         }
         function getGlobalTheme() {
-            let theme = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (theme) return theme;
-            return getSystemPreferredThemeAndMode().theme;
-        }
-        function setGlobalTheme(val) {
-            localStorage.setItem('global_theme', val);
-            if (window.location.hostname.endsWith('wikdra.top')) {
-                // Delete host-specific cookie to prevent shadowing
-                document.cookie = "global_theme=;path=/;max-age=0;SameSite=Lax";
-                // Set wildcard cookie for subdomain sharing
-                document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
-            } else {
-                document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
-            }
+            return getCookie('global_theme') || localStorage.getItem('global_theme') || getSystemPreferredThemeAndMode().theme;
         }
         function getGlobalMode() {
             let mode = getCookie('global_mode') || localStorage.getItem('global_mode');
             if (mode) return mode;
-            let hasThemeCookie = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (hasThemeCookie) {
+            let hasTheme = getCookie('global_theme') || localStorage.getItem('global_theme');
+            if (hasTheme) {
                 let theme = getGlobalTheme();
                 return (theme === 'brutalist' || theme === 'editorial') ? 'light' : 'dark';
             }
             return getSystemPreferredThemeAndMode().mode;
         }
-        function setGlobalMode(val) {
-            localStorage.setItem('global_mode', val);
+        function setGlobal(key, val) {
+            localStorage.setItem(key, val);
             if (window.location.hostname.endsWith('wikdra.top')) {
-                document.cookie = "global_mode=;path=/;max-age=0;SameSite=Lax";
-                document.cookie = "global_mode=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=;path=/;max-age=0;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
             } else {
-                document.cookie = "global_mode=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;max-age=31536000;SameSite=Lax";
             }
         }
-        document.documentElement.className = 'theme-' + getGlobalTheme() + ' mode-' + getGlobalMode();
+        (function () {
+            const el = document.documentElement;
+            el.dataset.theme = getGlobalTheme();
+            el.dataset.mode = getGlobalMode();
+        })();
     </script>
 </head>
-<body x-data="bichuApp()" x-init="init()" :class="'theme-' + currentTheme + ' mode-' + currentMode" class="min-h-screen p-4 md:p-8 transition-colors duration-300 relative">
-    
-    <!-- Aurora background blobs -->
-    <div x-show="currentTheme === 'aurora'" style="display: none;" class="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <!-- Dark Mode Blobs -->
-        <template x-if="currentMode === 'dark'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-            </div>
-        </template>
-        <!-- Light Mode Blobs -->
-        <template x-if="currentMode === 'light'">
-            <div class="absolute inset-0 pointer-events-none">
-                <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
-                <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-            </div>
-        </template>
+<body x-data="bichuApp()" class="min-h-screen p-4 md:p-8 relative">
+
+    <!-- Background decoration (CSS-controlled per theme) -->
+    <div class="bg-decoration" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="cyber-grid"></div>
+        <div class="cyber-scanlines"></div>
+        <div class="cyber-glow"></div>
+        <div class="cyber-sun"></div>
     </div>
 
-    <!-- Cyberpunk grid/glow (CSS-controlled via .theme-cyberpunk on <html>) -->
-    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-glow-dark absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
-        <div class="cyberpunk-glow-light absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-sky-500/10 to-transparent"></div>
-    </div>
+    <div class="max-w-4xl mx-auto z-10 relative space-y-8">
 
-    <div class="max-w-4xl mx-auto z-10 relative space-y-8 flex flex-col items-center">
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4 w-full"
-                :class="{
-                  'border-black border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-white border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'border-white/10': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'border-sky-200': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'border-emerald-500/20': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border-emerald-600/20': currentTheme === 'terminal' && currentMode === 'light',
-                  'border-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                  'border-indigo-100': currentTheme === 'aurora' && currentMode === 'light',
-                  'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
-                  'border-neutral-800': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 w-full">
             <div>
-                <!-- Brand Title -->
-                <a href="/" class="text-3xl font-bold hover:opacity-80 transition flex items-center gap-2"
-                   :class="{
-                     'text-black uppercase font-black': currentTheme === 'brutalist' && currentMode === 'light',
-                     'text-white uppercase font-black': currentTheme === 'brutalist' && currentMode === 'dark',
-                     'text-cyan-300 font-mono': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                     'text-sky-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
-                     'text-emerald-300 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-                     'text-[#047857] font-mono': currentTheme === 'terminal' && currentMode === 'light',
-                     'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'dark',
-                     'bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'light',
-                     'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial' && currentMode === 'light',
-                     'text-neutral-200 font-serif font-semibold': currentTheme === 'editorial' && currentMode === 'dark'
-                   }">
-                    <i class="fas fa-edit"></i> Bichu
+                <a href="/" class="page-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    <span>Bichu</span>
                 </a>
             </div>
-            
-            <!-- Back link -->
-            <a href="https://wikdra.top" class="text-sm px-4 py-2 border w-fit font-bold flex items-center gap-1.5"
-                 :class="{
-                   'border-4 border-black bg-white text-black shadow-[2px_2px_0_#000] hover:shadow-[4px_4px_0_#000] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all': currentTheme === 'brutalist' && currentMode === 'light',
-                   'border-4 border-white bg-zinc-800 text-white shadow-[2px_2px_0_#bef264] hover:shadow-[4px_4px_0_#bef264] hover:-translate-x-0.5 hover:-translate-y-0.5 transition-all': currentTheme === 'brutalist' && currentMode === 'dark',
-                   'border-cyan-400/30 bg-black/60 text-cyan-300 font-mono hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                   'border-cyan-400/40 bg-white text-sky-600 font-mono hover:border-fuchsia-400 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                   'border-emerald-500/20 text-emerald-400 font-mono hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
-                   'border-emerald-600/20 bg-[#ecfdf5] text-[#047857] font-mono hover:bg-emerald-100': currentTheme === 'terminal' && currentMode === 'light',
-                   'border-white/10 bg-white/[0.04] text-slate-300 rounded-full backdrop-blur-md shadow-sm hover:bg-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                   'border-indigo-100 bg-white/60 text-slate-700 rounded-full backdrop-blur-md shadow-sm hover:bg-white': currentTheme === 'aurora' && currentMode === 'light',
-                   'border-neutral-200 text-neutral-800 font-serif hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
-                   'border-neutral-800 bg-[#1c1c1f] text-neutral-200 font-serif hover:bg-neutral-900': currentTheme === 'editorial' && currentMode === 'dark'
-                 }">
-                <i class="fas fa-arrow-left"></i> Powrót
-            </a>
+
+            <div class="flex items-center gap-3">
+                <a href="https://wikdra.top" class="theme-btn px-4 text-sm" style="text-decoration:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    Powrót
+                </a>
+
+                <!-- THEME SWITCHER (in flow) -->
+                <div class="switcher" x-data="{ open: false }">
+                    <button class="switcher-btn" @click="open = !open" :data-open="open" aria-label="Zmień motyw">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                    <div class="switcher-panel" x-show="open" @click.away="open = false" x-transition.origin.top.right style="display: none;">
+                        <div class="switcher-title">Styl strony:</div>
+                        <template x-for="t in themes" :key="t.key">
+                            <button class="switcher-item" :class="{ 'active': theme === t.key }" @click="setTheme(t.key); open = false">
+                                <span class="switcher-dot" :style="'background:' + t.color"></span>
+                                <span x-text="t.name"></span>
+                            </button>
+                        </template>
+                        <div class="switcher-sep"></div>
+                        <div class="switcher-title">Tryb:</div>
+                        <button class="switcher-item" :class="{ 'active': mode === 'light' }" @click="setMode('light'); open = false">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+                            Jasny
+                        </button>
+                        <button class="switcher-item" :class="{ 'active': mode === 'dark' }" @click="setMode('dark'); open = false">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+                            Ciemny
+                        </button>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <main class="w-full relative">
             <!-- View Mode -->
-            <div x-show="!editMode" x-cloak 
-                 class="panel-card p-8 min-h-[300px] relative group overflow-hidden"
-                 :class="{
-                   'bg-black/60 backdrop-blur-sm': currentTheme === 'terminal' && currentMode === 'dark',
-                   'bg-white/80 backdrop-blur-sm border border-emerald-600/20': currentTheme === 'terminal' && currentMode === 'light'
-                 }">
-                 
-                 <!-- Cyberpunk corners -->
-                 <template x-if="currentTheme === 'cyberpunk'">
-                     <div class="absolute inset-0 pointer-events-none">
-                         <span class="absolute left-0 top-0 h-3 w-3 border-l-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute right-0 top-0 h-3 w-3 border-r-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute bottom-0 right-0 h-3 w-3 border-b-2 border-r-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                     </div>
-                 </template>
-
-                <div class="prose max-w-none whitespace-pre-wrap text-base leading-relaxed" 
-                     :class="currentTheme === 'editorial' ? 'font-serif' : (currentTheme === 'terminal' || currentTheme === 'cyberpunk' ? 'font-mono' : 'font-sans')"
+            <div x-show="!editMode" x-cloak class="panel-card p-8 min-h-[300px] relative group">
+                <div class="whitespace-pre-wrap text-base leading-relaxed"
                      x-text="content || 'Brak treści...'"></div>
-                     
-                <button @click="openEditor()" 
-                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 theme-btn px-4 py-2 text-xs">
-                    <i class="fas fa-lock"></i> Edytuj
+
+                <button @click="openEditor()"
+                        class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 theme-btn px-4 py-1.5 text-xs transition-opacity duration-200">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;margin-right:0.4em"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Edytuj
                 </button>
             </div>
 
             <!-- Edit Mode -->
-            <div x-show="editMode" x-cloak 
-                 class="panel-card p-8 space-y-6 relative overflow-hidden"
-                 :class="{
-                   'bg-black/60 backdrop-blur-sm': currentTheme === 'terminal' && currentMode === 'dark',
-                   'bg-white/80 backdrop-blur-sm border border-emerald-600/20': currentTheme === 'terminal' && currentMode === 'light'
-                 }">
-                 
-                 <!-- Cyberpunk corners -->
-                 <template x-if="currentTheme === 'cyberpunk'">
-                     <div class="absolute inset-0 pointer-events-none">
-                         <span class="absolute left-0 top-0 h-3 w-3 border-l-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute right-0 top-0 h-3 w-3 border-r-2 border-t-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                         <span class="absolute bottom-0 right-0 h-3 w-3 border-b-2 border-r-2" :class="currentMode === 'dark' ? 'border-cyan-400' : 'border-sky-600'"></span>
-                     </div>
-                 </template>
-
+            <div x-show="editMode" x-cloak class="panel-card p-8 space-y-6 relative">
                 <div class="flex flex-col gap-2">
-                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">Hasło edycji</label>
-                    <input type="password" x-model="password" placeholder="Wpisz hasło..." class="theme-input py-2 px-3 text-sm">
+                    <label class="label-tiny">Hasło edycji</label>
+                    <input type="password" x-model="password" placeholder="Wpisz hasło..." class="theme-input text-sm">
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-[10px] uppercase font-bold tracking-wider opacity-60">Treść strony</label>
-                    <textarea x-model="tempContent" rows="12" class="theme-input py-3 px-4 resize-none font-mono text-sm"></textarea>
+                    <label class="label-tiny">Treść strony</label>
+                    <textarea x-model="tempContent" rows="12" class="theme-input resize-none font-mono text-sm"></textarea>
                 </div>
-                <div class="flex gap-4">
-                    <button @click="save()" :disabled="saving" class="theme-btn py-3 px-6 text-sm flex-1 flex items-center justify-center gap-2">
-                        <i class="fas fa-save" :class="saving && 'animate-spin'"></i> ZAPISZ ZMIANY
+                <div class="flex flex-wrap gap-4">
+                    <button @click="save()" :disabled="saving" class="theme-btn py-2.5 px-6 text-sm flex-1">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em" :style="saving && 'animation: spin 1s linear infinite'"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+                        ZAPISZ ZMIANY
                     </button>
-                    <button @click="editMode = false" 
-                            class="py-3 px-6 text-sm font-bold border transition"
-                            :class="{
-                              'border-4 border-black bg-white text-black hover:bg-neutral-100 rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                              'border-4 border-white bg-zinc-800 text-white hover:bg-zinc-700 rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
-                              'border border-cyan-400 bg-transparent text-cyan-300 hover:bg-cyan-500/10 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                              'border border-cyan-400 bg-white text-sky-600 hover:bg-sky-50 rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
-                              'border border-emerald-500/30 bg-transparent text-emerald-400 hover:bg-emerald-500/10 rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                              'border border-emerald-600/20 bg-[#ecfdf5] text-[#047857] hover:bg-emerald-100 rounded': currentTheme === 'terminal' && currentMode === 'light',
-                              'border border-white/10 bg-white/[0.04] text-slate-300 hover:bg-white/10 rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                              'border border-indigo-100 bg-white/70 text-slate-700 hover:bg-white rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                              'border border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50 rounded-none': currentTheme === 'editorial' && currentMode === 'light',
-                              'border border-neutral-800 bg-[#1c1c1f] text-neutral-200 hover:bg-neutral-900 rounded-none': currentTheme === 'editorial' && currentMode === 'dark'
-                            }">
-                        Anuluj
-                    </button>
+                    <button @click="editMode = false" class="theme-btn py-2.5 px-6 text-sm">Anuluj</button>
                 </div>
             </div>
         </main>
-    </div>
-
-    <!-- GLOBAL FLOATING THEME SWITCHER -->
-    <div x-data="{ open: false }" class="fixed bottom-5 right-5 z-50 font-sans">
-        <!-- Button -->
-        <button @click="open = !open" 
-                :class="{
-                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#bef264] hover:shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'border border-sky-400 bg-white text-sky-600 shadow-[0_0_10px_rgba(14,165,233,0.15)] hover:border-fuchsia-500 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border border-emerald-600 bg-[#d1fae5] text-[#047857] hover:bg-emerald-100': currentTheme === 'terminal' && currentMode === 'light',
-                  'bg-white/5 border border-white/10 text-white shadow-lg backdrop-blur-md hover:bg-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                  'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora' && currentMode === 'light',
-                  'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
-                  'border border-neutral-800 bg-[#121212] text-neutral-200 hover:bg-neutral-900': currentTheme === 'editorial' && currentMode === 'dark'
-                }"
-                class="flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 focus:outline-none">
-            <i class="fas fa-cog text-lg transition-transform duration-500" :class="open ? 'rotate-90' : ''"></i>
-        </button>
-
-        <!-- Dropdown Panel -->
-        <div x-show="open" 
-             @click.away="open = false"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-75"
-             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-             :class="{
-               'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-white bg-[#18181b] text-white shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-               'border border-cyan-400/80 bg-[#05010f] text-white shadow-[0_0_15px_rgba(34,211,238,0.3)]': currentTheme === 'cyberpunk' && currentMode === 'dark',
-               'border border-cyan-400/40 bg-sky-50 text-slate-900 shadow-[0_0_15px_rgba(14,165,233,0.15)]': currentTheme === 'cyberpunk' && currentMode === 'light',
-               'border border-emerald-500 bg-black text-emerald-400': currentTheme === 'terminal' && currentMode === 'dark',
-               'border border-emerald-600/30 bg-[#ecfdf5] text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
-               'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
-               'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
-               'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
-               'border border-neutral-800 bg-[#121212] text-white rounded-md': currentTheme === 'editorial' && currentMode === 'dark'
-             }"
-             class="absolute bottom-14 right-0 mt-2 w-56 p-3 flex flex-col gap-1.5 focus:outline-none select-none">
-             
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
-                  Styl strony:
-             </div>
-             
-              <!-- Brutalist -->
-              <button @click="currentTheme = 'brutalist'; open = false"
-                      :class="{
-                        'bg-lime-300 text-black border-2 border-black font-bold shadow-[2px_2px_0_#000] rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                        'bg-[#bef264] text-black border-2 border-white font-bold shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === 'brutalist' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'brutalist' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'brutalist' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-black bg-[#fdf6e3]"></span>
-                      Neo-Brutalizm
-              </button>
-              
-              <!-- Cyberpunk -->
-              <button @click="currentTheme = 'cyberpunk'; open = false"
-                      :class="{
-                        'bg-fuchsia-600 text-white border border-fuchsia-400 shadow-[0_0_8px_rgba(217,70,239,0.4)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'light',
-                        'bg-fuchsia-500 text-white border border-fuchsia-300 shadow-[0_0_8px_rgba(217,70,239,0.6)] font-bold rounded-none': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'cyberpunk' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'cyberpunk' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-cyan-400 bg-cyan-400 shadow-[0_0_5px_#22d3ee]"></span>
-                      Cyber Dashboard
-              </button>
-              
-              <!-- Terminal -->
-              <button @click="currentTheme = 'terminal'; open = false"
-                      :class="{
-                        'bg-[#047857]/20 text-[#047857] border border-[#047857] font-bold rounded': currentTheme === 'terminal' && currentMode === 'light',
-                        'bg-emerald-500/20 text-emerald-300 border border-emerald-400 font-bold rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'terminal' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857] rounded': currentTheme !== 'terminal' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded bg-emerald-500 border border-emerald-400"></span>
-                      Dev Terminal
-              </button>
-              
-              <!-- Aurora -->
-              <button @click="currentTheme = 'aurora'; open = false"
-                      :class="{
-                        'bg-indigo-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                        'bg-purple-600 text-white font-bold rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'aurora' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'aurora' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-indigo-500 to-pink-500 shadow"></span>
-                      Glassmorphism
-              </button>
-              
-              <!-- Editorial -->
-              <button @click="currentTheme = 'editorial'; open = false"
-                      :class="{
-                        'bg-neutral-900 text-white font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'light',
-                        'bg-[#e4e4e7] text-black font-bold rounded-none': currentTheme === 'editorial' && currentMode === 'dark',
-                        'hover:bg-white/5 text-neutral-300': currentTheme !== 'editorial' && currentMode === 'dark',
-                        'hover:bg-neutral-100 text-neutral-700': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme !== 'terminal',
-                        'hover:bg-[#047857]/10 text-[#047857]': currentTheme !== 'editorial' && currentMode === 'light' && currentTheme === 'terminal'
-                      }"
-                      class="flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-all duration-150 rounded-lg w-full">
-                      <span class="inline-block w-3.5 h-3.5 rounded-full border border-neutral-300 bg-white shadow-sm"></span>
-                      Editorial
-              </button>
-
-             <!-- Separator line -->
-             <div class="border-t my-1"
-                  :class="{
-                    'border-black border-t-2': currentTheme === 'brutalist' && currentMode === 'light',
-                    'border-white border-t-2': currentTheme === 'brutalist' && currentMode === 'dark',
-                    'border-white/10': currentTheme === 'cyberpunk' || currentTheme === 'aurora',
-                    'border-emerald-500/20': currentTheme === 'terminal',
-                    'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
-                    'border-neutral-800': currentTheme === 'editorial' && currentMode === 'dark'
-                  }"></div>
-
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60"
-                  :class="currentMode === 'dark' ? 'text-white/50' : 'text-neutral-500'">
-                  Tryb:
-             </div>
-             
-             <div class="flex p-0.5"
-                  :class="{
-                   'border-2 border-black bg-white rounded-none': currentTheme === 'brutalist' && currentMode === 'light',
-                   'border-2 border-white bg-[#18181b] rounded-none text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                   'border border-cyan-400/50 bg-[#0d081e] text-cyan-300 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                   'border border-cyan-400 bg-white text-cyan-500 rounded-md': currentTheme === 'cyberpunk' && currentMode === 'light',
-                   'border border-emerald-500/30 bg-black text-emerald-400 rounded': currentTheme === 'terminal' && currentMode === 'dark',
-                   'border border-emerald-600/30 bg-[#d1fae5] text-[#047857] rounded': currentTheme === 'terminal' && currentMode === 'light',
-                   'border border-white/10 bg-white/[0.04] text-white rounded-xl': currentTheme === 'aurora' && currentMode === 'dark',
-                   'border border-white/15 bg-white/70 text-slate-700 rounded-xl': currentTheme === 'aurora' && currentMode === 'light',
-                   'border border-neutral-200 bg-neutral-50 rounded-sm': currentTheme === 'editorial' && currentMode === 'light',
-                   'border border-neutral-800 bg-[#121212] text-white rounded-sm': currentTheme === 'editorial' && currentMode === 'dark'
-                 }">
-                 <button @click="currentMode = 'light'"
-                         class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
-                         :class="{
-                           'bg-black text-white rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-white text-black rounded-none': currentMode === 'light' && currentTheme === 'brutalist' && currentMode === 'dark',
-                           'bg-cyan-400 text-black font-bold': currentMode === 'light' && currentTheme === 'cyberpunk',
-                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'dark',
-                           'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'light' && currentTheme === 'terminal' && currentMode === 'light',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'light' && currentTheme === 'aurora',
-                           'bg-neutral-900 text-white': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'light' && currentTheme === 'editorial' && currentMode === 'dark',
-                           'opacity-50 hover:opacity-100': currentMode !== 'light'
-                         }">
-                     Jasny
-                 </button>
-                 <button @click="currentMode = 'dark'"
-                         class="flex-1 py-1 text-xs font-bold transition-all duration-150 text-center"
-                         :class="{
-                           'bg-black text-white rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'light',
-                           'bg-[#bef264] text-black rounded-none': currentMode === 'dark' && currentTheme === 'brutalist' && currentMode === 'dark',
-                           'bg-cyan-400 text-black font-bold': currentMode === 'dark' && currentTheme === 'cyberpunk',
-                           'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'dark',
-                           'bg-[#047857]/20 text-[#047857] border border-[#047857]/40 rounded': currentMode === 'dark' && currentTheme === 'terminal' && currentMode === 'light',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'dark',
-                           'bg-white text-slate-900 rounded-lg shadow-sm': currentMode === 'dark' && currentTheme === 'aurora' && currentMode === 'light',
-                           'bg-neutral-900 text-white': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'light',
-                           'bg-white text-black': currentMode === 'dark' && currentTheme === 'editorial' && currentMode === 'dark',
-                           'opacity-50 hover:opacity-100': currentMode !== 'dark'
-                         }">
-                     Ciemny
-                 </button>
-             </div>
-        </div>
     </div>
 
     <script>
@@ -452,32 +200,34 @@ if (isset($_GET['api'])) {
                 password: '',
                 editMode: false,
                 saving: false,
-                currentTheme: getGlobalTheme(),
-                currentMode: getGlobalMode(),
+                theme: getGlobalTheme(),
+                mode: getGlobalMode(),
+                themes: [
+                    { key: 'brutalist', name: 'Neo-Brutalizm', color: '#eab308' },
+                    { key: 'cyberpunk', name: 'Cyber Dashboard', color: '#22d3ee' },
+                    { key: 'terminal', name: 'Dev Terminal', color: '#34d399' },
+                    { key: 'aurora', name: 'Glassmorphism', color: '#a855f7' },
+                    { key: 'editorial', name: 'Editorial', color: '#171717' }
+                ],
 
                 setTheme(val) {
-                    this.currentTheme = val;
-                    this.currentMode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
-                    setGlobalTheme(val);
-                    setGlobalMode(this.currentMode);
-                    this.updateRootClasses();
+                    this.theme = val;
+                    this.mode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
+                    this.apply();
                 },
-
                 setMode(val) {
-                    this.currentMode = val;
-                    setGlobalMode(val);
-                    this.updateRootClasses();
+                    this.mode = val;
+                    this.apply();
                 },
-
-                updateRootClasses() {
-                    document.documentElement.className = 'theme-' + this.currentTheme + ' mode-' + this.currentMode;
+                apply() {
+                    const el = document.documentElement;
+                    el.dataset.theme = this.theme;
+                    el.dataset.mode = this.mode;
+                    setGlobal('global_theme', this.theme);
+                    setGlobal('global_mode', this.mode);
                 },
 
                 async init() {
-                    this.updateRootClasses();
-                    this.$watch('currentTheme', val => this.setTheme(val));
-                    this.$watch('currentMode', val => this.setMode(val));
-
                     const res = await fetch('?api=1');
                     const data = await res.json();
                     this.content = data.content;

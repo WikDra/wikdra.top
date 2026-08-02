@@ -13,13 +13,16 @@ if not exist "%REPO_ROOT%\config.bat" (
 )
 call "%REPO_ROOT%\config.bat"
 
-set EXTRA_FILES=
-if exist "%SITE_DIR%\bichu_config.php" set EXTRA_FILES=bichu_config.php
+echo [1/4] Preparing upload directory on server...
+plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "mkdir -p /home/%MIKRUS_USER%/site-upload/"
 
-echo [1/3] Uploading files to server via PSCP...
+echo [2/4] Uploading files to server via PSCP...
 pushd "%SITE_DIR%"
-pscp -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% index.html panels.html history.html 404.html themes-v5.css sw-v5.js manifest.json robots.txt sitemap.xml bichu.php stats.php %EXTRA_FILES% %MIKRUS_USER%@%MIKRUS_HOST%:/home/%MIKRUS_USER%/
+pscp -batch -r -P %MIKRUS_PORT% -pw %MIKRUS_PW% * %MIKRUS_USER%@%MIKRUS_HOST%:/home/%MIKRUS_USER%/site-upload/
 set UPLOAD_ERR=%ERRORLEVEL%
+if exist "bichu_config.php" (
+    pscp -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% bichu_config.php %MIKRUS_USER%@%MIKRUS_HOST%:/home/%MIKRUS_USER%/site-upload/
+)
 popd
 
 if %UPLOAD_ERR% neq 0 (
@@ -28,10 +31,10 @@ if %UPLOAD_ERR% neq 0 (
     exit /b %UPLOAD_ERR%
 )
 
-echo [2/3] Moving files to Nginx HTML directory...
-plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S mv /home/%MIKRUS_USER%/index.html /home/%MIKRUS_USER%/panels.html /home/%MIKRUS_USER%/history.html /home/%MIKRUS_USER%/404.html /home/%MIKRUS_USER%/themes-v5.css /home/%MIKRUS_USER%/sw-v5.js /home/%MIKRUS_USER%/manifest.json /home/%MIKRUS_USER%/robots.txt /home/%MIKRUS_USER%/sitemap.xml /home/%MIKRUS_USER%/bichu.php /home/%MIKRUS_USER%/stats.php /var/lib/nginx/html/ && ( [ -f /home/%MIKRUS_USER%/bichu_config.php ] && echo %MIKRUS_PW% | sudo -S mv /home/%MIKRUS_USER%/bichu_config.php /var/lib/nginx/html/ || true )"
+echo [3/4] Moving files to Nginx HTML directory...
+plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S rm -f /var/lib/nginx/html/themes-v5.css /var/lib/nginx/html/sw-v5.js && echo %MIKRUS_PW% | sudo -S cp -r /home/%MIKRUS_USER%/site-upload/* /var/lib/nginx/html/ && echo %MIKRUS_PW% | sudo -S rm -rf /home/%MIKRUS_USER%/site-upload"
 
-echo [3/3] Restarting Nginx server...
+echo [4/4] Restarting Nginx server...
 plink -batch -P %MIKRUS_PORT% -pw %MIKRUS_PW% %MIKRUS_USER%@%MIKRUS_HOST% "echo %MIKRUS_PW% | sudo -S rc-service nginx restart"
 
 echo.
