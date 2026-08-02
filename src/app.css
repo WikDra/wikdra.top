@@ -35,13 +35,13 @@ html[data-theme="brutalist"][data-mode="light"] {
     --muted: rgba(0,0,0,0.65); --line: #000000;
 }
 html[data-theme="brutalist"][data-mode="dark"] {
-    --bg-main: #0a0a0a; --text-main: #f0f0f0;
+    --bg-main: #111111; --text-main: #ffffff;
     --font-heading: 'Syne', 'Impact', sans-serif; --font-body: 'Space Grotesk', sans-serif;
-    --card-bg: #161618; --card-border: 4px solid #bef264;
-    --card-shadow: 6px 6px 0px #bef264; --card-shadow-hover: 10px 10px 0px #eab308;
+    --card-bg: #1e1e22; --card-border: 4px solid #ffffff;
+    --card-shadow: 6px 6px 0px #bef264; --card-shadow-hover: 10px 10px 0px #bef264;
     --accent: #bef264; --accent-2: #eab308; --accent-contrast: #000000;
     --accent-glow: transparent; --accent-hover: #eab308;
-    --muted: rgba(190,242,100,0.6); --line: #bef264;
+    --muted: rgba(255,255,255,0.7); --line: #ffffff;
 }
 
 /* Cyber Dashboard */
@@ -186,7 +186,7 @@ html[data-theme="brutalist"] .theme-btn {
     background-color: #bef264; color: #000; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 html[data-theme="brutalist"][data-mode="dark"] .theme-btn {
-    border: 3px solid #bef264; box-shadow: 3px 3px 0 #bef264;
+    border: 3px solid #fff; box-shadow: 3px 3px 0 #bef264;
     background-color: #bef264; color: #000;
 }
 html[data-theme="brutalist"] .theme-btn:hover:not(:disabled) {
@@ -194,7 +194,7 @@ html[data-theme="brutalist"] .theme-btn:hover:not(:disabled) {
     box-shadow: 5px 5px 0 #000; transform: translate(-2px, -2px);
 }
 html[data-theme="brutalist"][data-mode="dark"] .theme-btn:hover:not(:disabled) {
-    background-color: #eab308; color: #000; border-color: #eab308;
+    background-color: #eab308; color: #000; border-color: #fff;
     box-shadow: 5px 5px 0 #bef264; transform: translate(-2px, -2px);
 }
 html[data-theme="brutalist"] .theme-btn:active:not(:disabled) {
@@ -243,8 +243,8 @@ html[data-theme="brutalist"] .theme-input {
     padding: 0.45rem 0.65rem; font-size: 0.85rem;
 }
 html[data-theme="brutalist"] .theme-input:focus { background: var(--accent-2); box-shadow: 4px 4px 0 #000; transform: translate(-1px, -1px); }
-html[data-theme="brutalist"][data-mode="dark"] .theme-input { background: #0f0f11; border-color: #bef264; color: #f0f0f0; box-shadow: 3px 3px 0 #bef264; }
-html[data-theme="brutalist"][data-mode="dark"] .theme-input:focus { background: #1a1a1c; color: #bef264; border-color: #eab308; box-shadow: 4px 4px 0 #eab308; }
+html[data-theme="brutalist"][data-mode="dark"] .theme-input { background: #1c1c1f; border-color: #fff; color: #fff; box-shadow: 3px 3px 0 #bef264; }
+html[data-theme="brutalist"][data-mode="dark"] .theme-input:focus { background: var(--accent); color: #000; border-color: #fff; box-shadow: 4px 4px 0 #bef264; }
 html[data-theme="cyberpunk"] .theme-input { background: rgba(5,1,15,0.8); border: 1px solid var(--line); color: var(--accent); border-radius: 0; font-family: 'Space Mono', monospace; }
 html[data-theme="cyberpunk"] .theme-input:focus { border-color: var(--accent-2); box-shadow: 0 0 8px color-mix(in srgb, var(--accent-2) 40%, transparent); }
 html[data-theme="cyberpunk"][data-mode="light"] .theme-input { background: #fff; color: var(--accent); }
@@ -273,8 +273,8 @@ html[data-theme="editorial"] .stat-value { font-family: 'Playfair Display', seri
 table th { text-align: left; }
 html[data-theme="brutalist"] table th { background: #000; color: #fff; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #000; }
 html[data-theme="brutalist"] table td { color: #000; border-bottom: 2px solid #000; }
-html[data-theme="brutalist"][data-mode="dark"] table th { background: #bef264; color: #000; border-bottom: 2px solid #0a0a0a; }
-html[data-theme="brutalist"][data-mode="dark"] table td { color: #f0f0f0; border-bottom-color: rgba(190,242,100,0.25); }
+html[data-theme="brutalist"][data-mode="dark"] table th { background: var(--accent); color: #000; border-bottom-color: #fff; }
+html[data-theme="brutalist"][data-mode="dark"] table td { color: #fff; border-bottom-color: #fff; }
 html[data-theme="brutalist"] table tr:last-child td { border-bottom: none; }
 html[data-theme="cyberpunk"] table th { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--accent); border-bottom: 1px solid var(--line); }
 html[data-theme="cyberpunk"] table td { color: var(--text-main); border-bottom: 1px solid color-mix(in srgb, var(--accent) 15%, transparent); }
@@ -301,10 +301,7 @@ html[data-theme="editorial"][data-mode="dark"] table td { border-bottom-color: #
 }
 html[data-theme="brutalist"] .site-header { font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 html[data-theme="brutalist"][data-mode="light"] .site-header { background: var(--accent-2); }
-html[data-theme="brutalist"][data-mode="dark"] .site-header { background: #bef264; color: #000; border-color: #000; box-shadow: 6px 6px 0 #000; }
-html[data-theme="brutalist"][data-mode="dark"] .site-header .stat-label,
-html[data-theme="brutalist"][data-mode="dark"] .site-header .stat-num,
-html[data-theme="brutalist"][data-mode="dark"] .site-header .stat-inline { color: #000; }
+html[data-theme="brutalist"][data-mode="dark"] .site-header { background: #27272a; }
 html[data-theme="cyberpunk"] .site-header { border: none; border-bottom: 1px solid var(--line); background: transparent; box-shadow: none; font-family: 'Space Mono', monospace; }
 html[data-theme="terminal"] .site-header { border: none; background: transparent; box-shadow: none; font-family: 'Space Mono', monospace; font-size: 0.75rem; padding-left: 0; padding-right: 0; }
 html[data-theme="aurora"] .site-header { border-radius: 9999px; backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%); }
@@ -384,14 +381,14 @@ html[data-theme="brutalist"] .switcher-btn {
     box-shadow: 3px 3px 0 #000; transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 html[data-theme="brutalist"][data-mode="dark"] .switcher-btn {
-    border: 3px solid #bef264; background: #bef264; color: #000;
-    box-shadow: 3px 3px 0 #eab308;
+    border: 3px solid #fff; background: #bef264; color: #000;
+    box-shadow: 3px 3px 0 #bef264;
 }
 html[data-theme="brutalist"] .switcher-btn:hover {
     box-shadow: 5px 5px 0 #000; transform: translate(-2px, -2px);
 }
 html[data-theme="brutalist"][data-mode="dark"] .switcher-btn:hover {
-    box-shadow: 5px 5px 0 #eab308; transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 #bef264; transform: translate(-2px, -2px);
 }
 
 /* Switcher button inside .site-header (main page header bar) */
@@ -406,7 +403,7 @@ html[data-theme="brutalist"] .site-header .switcher-btn {
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn {
-    border: 2px solid #000; background: #000; color: #bef264;
+    border: 2px solid #fff; background: #fff; color: #000;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"] .site-header .switcher-btn:hover {
@@ -414,7 +411,7 @@ html[data-theme="brutalist"] .site-header .switcher-btn:hover {
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn:hover {
-    background: #1a1a1c; color: #eab308;
+    background: #e4e4e7; color: #000;
     box-shadow: none !important; transform: none !important;
 }
 
@@ -463,9 +460,9 @@ html[data-theme="brutalist"][data-mode="light"] .switcher-panel {
     box-shadow: 6px 6px 0 #000;
 }
 html[data-theme="brutalist"][data-mode="dark"] .switcher-panel {
-    background: #161618 !important;
-    border: 3px solid #bef264;
-    box-shadow: 6px 6px 0 #eab308;
+    background: #1c1c1f !important;
+    border: 3px solid #fff;
+    box-shadow: 6px 6px 0 #bef264;
 }
 .switcher-title { padding: 0.25rem 0.5rem; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
 .switcher-item {
@@ -621,7 +618,7 @@ html[data-theme="editorial"] .project-card:hover .project-num { color: var(--tex
     border: 1px solid var(--line); color: var(--text-main); white-space: nowrap;
 }
 html[data-theme="brutalist"] .project-badge { border: 2px solid #000; background: #fde047; color: #000; }
-html[data-theme="brutalist"][data-mode="dark"] .project-badge { border-color: #bef264; }
+html[data-theme="brutalist"][data-mode="dark"] .project-badge { border-color: #fff; }
 html[data-theme="cyberpunk"] .project-badge { border-radius: 0.125rem; border-color: rgba(163,230,53,0.5); color: #65a30d; font-family: 'Space Mono', monospace; }
 html[data-theme="cyberpunk"][data-mode="dark"] .project-badge { color: #bef264; }
 html[data-theme="terminal"] .project-badge { border-radius: 0.125rem; border-color: color-mix(in srgb, var(--accent) 40%, transparent); color: var(--accent); }
@@ -675,9 +672,7 @@ html[data-theme="brutalist"] .site-footer {
     font-family: 'Space Mono', monospace; text-transform: uppercase; font-weight: 700;
     box-shadow: 4px 4px 0 #000;
 }
-html[data-theme="brutalist"][data-mode="dark"] .site-footer { background: #bef264; color: #000; box-shadow: 4px 4px 0 #eab308; border-color: #bef264; }
-html[data-theme="brutalist"][data-mode="dark"] .site-footer a { color: #000; }
-html[data-theme="brutalist"][data-mode="dark"] .site-footer a:hover { color: #4a2000; }
+html[data-theme="brutalist"][data-mode="dark"] .site-footer { box-shadow: 4px 4px 0 #bef264; }
 html[data-theme="brutalist"] .site-footer a:hover { color: #bef264; }
 html[data-theme="cyberpunk"] .site-footer { justify-content: center; text-align: center; border-top: 1px solid var(--line); padding-top: 1.5rem; font-family: 'Space Mono', monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
 html[data-theme="terminal"] .site-footer { flex-direction: column; align-items: flex-start; border-top: 1px solid var(--line); padding-top: 1rem; font-family: 'Space Mono', monospace; color: var(--muted); }
@@ -840,7 +835,7 @@ html[data-theme="brutalist"] .pill {
     box-shadow: 3px 3px 0 #000; border-radius: 0; font-weight: 700;
 }
 html[data-theme="brutalist"][data-mode="dark"] .pill {
-    border: 3px solid #bef264; background: #161618; color: #f0f0f0;
+    border: 3px solid #fff; background: #1c1c1f; color: #fff;
     box-shadow: 3px 3px 0 #bef264;
 }
 html[data-theme="cyberpunk"] .pill, html[data-theme="terminal"] .pill { font-family: 'Space Mono', monospace; box-shadow: none; }
@@ -859,7 +854,7 @@ html[data-theme="brutalist"] .tab-group {
     border: 3px solid #000; box-shadow: 3px 3px 0 #000; background: #fff;
 }
 html[data-theme="brutalist"][data-mode="dark"] .tab-group {
-    border: 3px solid #bef264; box-shadow: 3px 3px 0 #bef264; background: #161618;
+    border: 3px solid #fff; box-shadow: 3px 3px 0 #bef264; background: #1c1c1f;
 }
 html[data-theme="brutalist"] .tab-btn.active { background: #bef264; color: #000; font-weight: 900; }
 html[data-theme="brutalist"][data-mode="dark"] .tab-btn.active { background: #bef264; color: #000; font-weight: 900; }
@@ -900,13 +895,13 @@ html[data-theme="brutalist"] .list-btn.active {
     transform: translate(-2px, -2px);
 }
 html[data-theme="brutalist"][data-mode="dark"] .list-btn {
-    background: #161618; border-color: #bef264; color: #f0f0f0;
+    background: #1c1c1f; border-color: #fff; color: #fff;
     box-shadow: 3px 3px 0 #bef264;
 }
 html[data-theme="brutalist"][data-mode="dark"] .list-btn:hover,
 html[data-theme="brutalist"][data-mode="dark"] .list-btn.active {
-    background: #bef264; color: #000;
-    box-shadow: 5px 5px 0 #eab308;
+    background: var(--accent); color: #000;
+    box-shadow: 5px 5px 0 #bef264;
     transform: translate(-2px, -2px);
 }
 html[data-theme="cyberpunk"] .list-btn { border-radius: 0; font-family: 'Space Mono', monospace; border: 1px solid var(--line); }
@@ -970,7 +965,7 @@ html[data-theme="terminal"] .status-ok-badge { border-radius: 2px; background: r
 }
 html[data-theme="terminal"] .uplot-tooltip { font-family: 'Space Mono', monospace; font-size: 0.7rem; border-color: var(--accent); border-radius: 4px; box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent); }
 html[data-theme="brutalist"] .uplot-tooltip { border: 2px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 0; font-weight: 700; background: #fff; color: #000; }
-html[data-theme="brutalist"][data-mode="dark"] .uplot-tooltip { border-color: #bef264; box-shadow: 4px 4px 0 #bef264; background: #161618; color: #f0f0f0; }
+html[data-theme="brutalist"][data-mode="dark"] .uplot-tooltip { border-color: #fff; box-shadow: 4px 4px 0 #bef264; background: #1e1e22; color: #fff; }
 html[data-theme="cyberpunk"] .uplot-tooltip { font-family: 'Space Mono', monospace; border-color: var(--accent); box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent); }
 .uplot-tooltip-time { font-size: 0.62rem; opacity: 0.75; font-weight: 700; text-transform: uppercase; margin-bottom: 0.15rem; letter-spacing: 0.05em; }
 .uplot-tooltip-val { font-size: 0.82rem; }
@@ -994,7 +989,7 @@ html[data-theme="brutalist"] .hour-chip {
     border-radius: 0; border: 2px solid #000; box-shadow: 2px 2px 0 #000;
 }
 html[data-theme="brutalist"][data-mode="dark"] .hour-chip {
-    border-color: #bef264; box-shadow: 2px 2px 0 #bef264;
+    border-color: #fff; box-shadow: 2px 2px 0 #bef264;
 }
 html[data-theme="aurora"] .hour-chip { border-radius: 0.75rem; }
 .danger-btn { color: #ef4444 !important; }
