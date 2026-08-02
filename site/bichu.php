@@ -125,7 +125,7 @@ if (isset($_GET['api'])) {
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="https://wikdra.top" class="theme-btn px-4 text-sm" style="text-decoration:none">
+                <a href="/" class="theme-btn px-4 text-sm" style="text-decoration:none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                     Powrót
                 </a>
@@ -186,7 +186,7 @@ if (isset($_GET['api'])) {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em" :style="saving && 'animation: spin 1s linear infinite'"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
                         ZAPISZ ZMIANY
                     </button>
-                    <button @click="editMode = false" class="theme-btn py-2.5 px-6 text-sm">Anuluj</button>
+                    <button @click="editMode = false" class="theme-btn theme-btn-secondary py-2.5 px-6 text-sm">Anuluj</button>
                 </div>
             </div>
         </main>
