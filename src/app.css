@@ -364,13 +364,13 @@ html[data-theme="cyberpunk"] .site-name { color: var(--accent); letter-spacing: 
 html[data-theme="cyberpunk"][data-mode="dark"] .site-name { text-shadow: 0 0 8px rgba(34,211,238,0.6); }
 
 /* Stats widget: single markup, per-theme presentation */
-.stats { display: flex; align-items: center; gap: 0.85rem; font-size: 0.75rem; flex-shrink: 1; min-width: 0; margin-left: auto; }
+.stats { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; flex-shrink: 1; min-width: 0; margin-left: auto; }
 @media (max-width: 480px) {
-    .stats { gap: 0.4rem; font-size: 0.65rem; }
-    .site-header { padding: 0.35rem 0.65rem; }
+    .stats { gap: 0.25rem; font-size: 0.62rem; }
+    .site-header { padding: 0.35rem 0.4rem; gap: 0.3rem; }
 }
-.stat { display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap; }
-.stat-top { display: inline-flex; align-items: baseline; gap: 0.4rem; }
+.stat { display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; flex-shrink: 0; }
+.stat-top { display: inline-flex; align-items: baseline; gap: 0.25rem; }
 .stat-num { font-weight: 700; }
 .stat-bar { display: none; }
 .stat-inline { display: none; }
@@ -381,19 +381,21 @@ html[data-theme="cyberpunk"][data-mode="dark"] .site-name { text-shadow: 0 0 8px
 html[data-theme="terminal"] .stat-bar { display: inline-flex; align-items: center; }
 html[data-theme="terminal"] .stat { font-family: 'Space Mono', monospace; }
 html[data-theme="terminal"] .stat-top .stat-num { display: none; }
-html[data-theme="terminal"] .stat-inline { display: inline; min-width: 2.6em; text-align: right; }
+html[data-theme="terminal"] .stat-inline { display: inline; min-width: 2.4em; text-align: right; }
 @media (max-width: 480px) {
-    html[data-theme="terminal"] .stat-bar .seg { width: 0.4em; height: 0.65em; }
-    html[data-theme="terminal"] .stat-inline { min-width: 2em; }
+    html[data-theme="terminal"] .stat-bar .seg { width: 0.35em; height: 0.6em; }
+    html[data-theme="terminal"] .stat-inline { min-width: 1.8em; }
 }
 
 /* mini progress bar (cyberpunk) */
-html[data-theme="cyberpunk"] .stat { flex-direction: column; align-items: stretch; gap: 0.2rem; min-width: 84px; }
+html[data-theme="cyberpunk"] .stat { flex-direction: column; align-items: stretch; gap: 0.15rem; min-width: 68px; }
 @media (max-width: 480px) {
-    html[data-theme="cyberpunk"] .stat { min-width: 48px; gap: 0.1rem; }
-    html[data-theme="cyberpunk"] .stat:nth-child(3) { display: none; }
+    html[data-theme="cyberpunk"] .stat { min-width: 42px; gap: 0.1rem; }
 }
-html[data-theme="cyberpunk"] .stat-top { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); }
+html[data-theme="cyberpunk"] .stat-top { display: flex; justify-content: space-between; gap: 0.3rem; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+@media (max-width: 480px) {
+    html[data-theme="cyberpunk"] .stat-top { font-size: 0.52rem; letter-spacing: 0.05em; }
+}
 html[data-theme="cyberpunk"] .stat-bar { display: block; height: 5px; border-radius: 9999px; background: color-mix(in srgb, var(--accent) 15%, transparent); overflow: hidden; }
 html[data-theme="cyberpunk"] .stat-bar .seg { display: block; float: left; width: 10%; height: 100%; margin: 0; opacity: 0; border-radius: 9999px; background: var(--accent); box-shadow: 0 0 6px var(--accent); transition: opacity 0.3s; }
 html[data-theme="cyberpunk"] .stat-bar .seg.on { opacity: 1; }
@@ -406,12 +408,11 @@ html[data-theme="cyberpunk"][data-mode="light"] .stat:nth-child(3) .stat-num { c
 
 /* aurora: pills */
 html[data-theme="aurora"] .stat {
-    border: 1px solid var(--line); border-radius: 9999px; padding: 0.35rem 0.8rem;
+    border: 1px solid var(--line); border-radius: 9999px; padding: 0.3rem 0.65rem;
     backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
 }
 @media (max-width: 480px) {
-    html[data-theme="aurora"] .stat { padding: 0.2rem 0.5rem; font-size: 0.65rem; }
-    html[data-theme="aurora"] .stat:nth-child(3) { display: none; }
+    html[data-theme="aurora"] .stat { padding: 0.15rem 0.4rem; font-size: 0.62rem; }
 }
 html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,255,0.5); }
 
@@ -419,7 +420,7 @@ html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,25
    5. THEME SWITCHER (in header, in flow)
    ============================================================ */
 
-.switcher { position: relative; }
+.switcher { position: relative; flex-shrink: 0; z-index: 10; margin-left: 0.25rem; }
 .switcher-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.3rem; width: 2.3rem; border-radius: 9999px; cursor: pointer;
