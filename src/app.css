@@ -382,9 +382,11 @@ html[data-theme="terminal"] .stat-bar { display: inline-flex; align-items: cente
 html[data-theme="terminal"] .stat { font-family: 'Space Mono', monospace; }
 html[data-theme="terminal"] .stat-top .stat-num { display: none; }
 html[data-theme="terminal"] .stat-inline { display: inline; min-width: 2.4em; text-align: right; }
-@media (max-width: 480px) {
-    html[data-theme="terminal"] .stat-bar .seg { width: 0.35em; height: 0.6em; }
-    html[data-theme="terminal"] .stat-inline { min-width: 1.8em; }
+@media (max-width: 540px) {
+    html[data-theme="terminal"] .stat-bar { display: none; }
+    html[data-theme="terminal"] .stat-top .stat-num { display: inline; }
+    html[data-theme="terminal"] .stat-inline { display: none; }
+    html[data-theme="terminal"] .stat { gap: 0.2rem; font-size: 0.65rem; }
 }
 
 /* mini progress bar (cyberpunk) */
@@ -420,7 +422,7 @@ html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,25
    5. THEME SWITCHER (in header, in flow)
    ============================================================ */
 
-.switcher { position: relative; flex-shrink: 0; z-index: 10; margin-left: 0.25rem; }
+.switcher { position: relative; flex-shrink: 0; z-index: 10; margin-left: 0.35rem; }
 .switcher-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.3rem; width: 2.3rem; border-radius: 9999px; cursor: pointer;
