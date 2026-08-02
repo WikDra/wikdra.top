@@ -5,26 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pełna Historia Produkcji | SolarForecast | Wikdra.top</title>
     <meta name="description" content="Archiwum i pełna historia szacowanej produkcji energii słonecznej. Wykresy, statystyki, eksport i import danych JSON.">
-    <link rel="icon" href="https://yt3.googleusercontent.com/ytc/AIdro_nqg9KuS9FqyQSTFPyFxH9lx-5ZbgQh5YlEKEyWaXkVs5Y=s512-c-k-c0x00ffffff-no-rj">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Shared themes CSS -->
-    <link rel="stylesheet" href="/themes-v5.css">
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js -->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="icon" href="/assets/icons/favicon.png" type="image/png">
 
-    <!-- Theme Helper & Anti-FOUC Script -->
+    <link rel="stylesheet" href="/assets/css/app-v6.css">
+    <script defer src="/assets/js/alpine.min.js"></script>
+
+    <!-- Theme init (anti-FOUC) -->
     <script>
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
+            for (let i = 0; i < ca.length; i++) {
                 let c = ca[i].trim();
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
             }
@@ -32,52 +23,49 @@
         }
         function getSystemPreferredThemeAndMode() {
             const isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            return {
-                theme: isDark ? 'terminal' : 'brutalist',
-                mode: isDark ? 'dark' : 'light'
-            };
+            return { theme: isDark ? 'terminal' : 'brutalist', mode: isDark ? 'dark' : 'light' };
         }
         function getGlobalTheme() {
-            let theme = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (theme) return theme;
-            return getSystemPreferredThemeAndMode().theme;
-        }
-        function setGlobalTheme(val) {
-            localStorage.setItem('global_theme', val);
-            if (window.location.hostname.endsWith('wikdra.top')) {
-                document.cookie = "global_theme=;path=/;max-age=0;SameSite=Lax";
-                document.cookie = "global_theme=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
-            } else {
-                document.cookie = "global_theme=" + val + ";path=/;max-age=31536000;SameSite=Lax";
-            }
+            return getCookie('global_theme') || localStorage.getItem('global_theme') || getSystemPreferredThemeAndMode().theme;
         }
         function getGlobalMode() {
             let mode = getCookie('global_mode') || localStorage.getItem('global_mode');
             if (mode) return mode;
-            let hasThemeCookie = getCookie('global_theme') || localStorage.getItem('global_theme');
-            if (hasThemeCookie) {
+            let hasTheme = getCookie('global_theme') || localStorage.getItem('global_theme');
+            if (hasTheme) {
                 let theme = getGlobalTheme();
                 return (theme === 'brutalist' || theme === 'editorial') ? 'light' : 'dark';
             }
             return getSystemPreferredThemeAndMode().mode;
         }
-        function setGlobalMode(val) {
-            localStorage.setItem('global_mode', val);
+        function setGlobal(key, val) {
+            localStorage.setItem(key, val);
             if (window.location.hostname.endsWith('wikdra.top')) {
-                document.cookie = "global_mode=;path=/;max-age=0;SameSite=Lax";
-                document.cookie = "global_mode=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=;path=/;max-age=0;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;domain=.wikdra.top;max-age=31536000;SameSite=Lax";
             } else {
-                document.cookie = "global_mode=" + val + ";path=/;max-age=31536000;SameSite=Lax";
+                document.cookie = key + "=" + val + ";path=/;max-age=31536000;SameSite=Lax";
             }
         }
-        document.documentElement.className = 'theme-' + getGlobalTheme() + ' mode-' + getGlobalMode();
+        (function () {
+            const el = document.documentElement;
+            el.dataset.theme = getGlobalTheme();
+            el.dataset.mode = getGlobalMode();
+        })();
     </script>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('solarHistoryApp', () => ({
-                currentTheme: getGlobalTheme(),
-                currentMode: getGlobalMode(),
+                theme: getGlobalTheme(),
+                mode: getGlobalMode(),
+                themes: [
+                    { key: 'brutalist', name: 'Neo-Brutalizm', color: '#eab308' },
+                    { key: 'cyberpunk', name: 'Cyber Dashboard', color: '#22d3ee' },
+                    { key: 'terminal', name: 'Dev Terminal', color: '#34d399' },
+                    { key: 'aurora', name: 'Glassmorphism', color: '#a855f7' },
+                    { key: 'editorial', name: 'Editorial', color: '#171717' }
+                ],
                 history: {},
                 params: {},
                 searchQuery: '',
@@ -86,36 +74,33 @@
 
                 init() {
                     this.loadFromStorage();
-                    document.documentElement.className = 'theme-' + this.currentTheme + ' mode-' + this.currentMode;
                 },
 
-                applyTheme(theme, mode) {
-                    this.currentTheme = theme;
-                    this.currentMode = mode;
-                    setGlobalTheme(theme);
-                    setGlobalMode(mode);
-                    document.documentElement.className = 'theme-' + theme + ' mode-' + mode;
+                applyTheme() {
+                    const el = document.documentElement;
+                    el.dataset.theme = this.theme;
+                    el.dataset.mode = this.mode;
+                    setGlobal('global_theme', this.theme);
+                    setGlobal('global_mode', this.mode);
                 },
-
-                setTheme(theme) {
-                    const newMode = (theme === 'brutalist' || theme === 'editorial') ? 'light'
-                                  : (theme === 'terminal' || theme === 'cyberpunk') ? 'dark'
-                                  : this.currentMode;
-                    this.applyTheme(theme, newMode);
+                setTheme(val) {
+                    this.theme = val;
+                    this.mode = (val === 'brutalist' || val === 'editorial') ? 'light' : 'dark';
+                    this.applyTheme();
                 },
-
-                setMode(mode) {
-                    this.applyTheme(this.currentTheme, mode);
+                setMode(val) {
+                    this.mode = val;
+                    this.applyTheme();
                 },
 
                 loadFromStorage() {
                     const savedHistory = localStorage.getItem('solar_history');
                     if (savedHistory) {
-                        try { this.history = JSON.parse(savedHistory); } catch(e) { this.history = {}; }
+                        try { this.history = JSON.parse(savedHistory); } catch (e) { this.history = {}; }
                     }
                     const savedParams = localStorage.getItem('solar_params');
                     if (savedParams) {
-                        try { this.params = JSON.parse(savedParams); } catch(e) {}
+                        try { this.params = JSON.parse(savedParams); } catch (e) {}
                     }
                 },
 
@@ -129,7 +114,6 @@
                         const q = this.searchQuery.trim().toLowerCase();
                         dates = dates.filter(d => d.toLowerCase().includes(q));
                     }
-
                     if (this.sortBy === 'newest') {
                         dates.sort().reverse();
                     } else if (this.sortBy === 'oldest') {
@@ -145,15 +129,13 @@
                 getTotalEnergy() {
                     const keys = Object.keys(this.history);
                     if (keys.length === 0) return '0.00';
-                    const sum = keys.reduce((acc, d) => acc + parseFloat(this.history[d].energy || 0), 0);
-                    return sum.toFixed(2);
+                    return keys.reduce((acc, d) => acc + parseFloat(this.history[d].energy || 0), 0).toFixed(2);
                 },
 
                 getAverageEnergy() {
                     const keys = Object.keys(this.history);
                     if (keys.length === 0) return '0.00';
-                    const sum = keys.reduce((acc, d) => acc + parseFloat(this.history[d].energy || 0), 0);
-                    return (sum / keys.length).toFixed(2);
+                    return (keys.reduce((acc, d) => acc + parseFloat(this.history[d].energy || 0), 0) / keys.length).toFixed(2);
                 },
 
                 getRecordEnergy() {
@@ -163,10 +145,7 @@
                     let maxVal = parseFloat(this.history[keys[0]].energy || 0);
                     keys.forEach(d => {
                         const val = parseFloat(this.history[d].energy || 0);
-                        if (val > maxVal) {
-                            maxVal = val;
-                            maxDate = d;
-                        }
+                        if (val > maxVal) { maxVal = val; maxDate = d; }
                     });
                     return { date: maxDate, energy: maxVal.toFixed(2) };
                 },
@@ -209,24 +188,22 @@
                         history: this.history
                     };
                     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
-                    const downloadAnchor = document.createElement('a');
-                    downloadAnchor.setAttribute("href", dataStr);
-                    downloadAnchor.setAttribute("download", `solar_history_full_${new Date().toISOString().split('T')[0]}.json`);
-                    document.body.appendChild(downloadAnchor);
-                    downloadAnchor.click();
-                    downloadAnchor.remove();
+                    const a = document.createElement('a');
+                    a.setAttribute("href", dataStr);
+                    a.setAttribute("download", `solar_history_full_${new Date().toISOString().split('T')[0]}.json`);
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
                 },
 
                 importHistory(event) {
                     const file = event.target.files && event.target.files[0];
                     if (!file) return;
-
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         try {
                             const imported = JSON.parse(e.target.result);
                             let importedHistory = null;
-
                             if (imported && imported.history && typeof imported.history === 'object') {
                                 importedHistory = imported.history;
                             } else if (imported && imported.solar_history && typeof imported.solar_history === 'object') {
@@ -234,15 +211,11 @@
                             } else if (imported && typeof imported === 'object') {
                                 importedHistory = imported;
                             }
-
                             if (!importedHistory || Object.keys(importedHistory).length === 0) {
                                 alert('Nieprawidłowy format pliku JSON lub brak wpisów w historii.');
                                 return;
                             }
-
-                            let countNew = 0;
-                            let countMerged = 0;
-
+                            let countNew = 0, countMerged = 0;
                             Object.keys(importedHistory).forEach(date => {
                                 if (!this.history[date]) {
                                     this.history[date] = importedHistory[date];
@@ -250,19 +223,13 @@
                                 } else {
                                     const existingWatts = this.history[date].watts || {};
                                     const newWatts = importedHistory[date].watts || {};
-                                    this.history[date] = {
-                                        ...this.history[date],
-                                        ...importedHistory[date],
-                                        watts: { ...existingWatts, ...newWatts }
-                                    };
+                                    this.history[date] = { ...this.history[date], ...importedHistory[date], watts: { ...existingWatts, ...newWatts } };
                                     countMerged++;
                                 }
                             });
-
                             this.saveToStorage();
                             alert(`Pomyślnie scalono historię! (Dodano nowych dni: ${countNew}, zaktualizowano: ${countMerged})`);
                         } catch (err) {
-                            console.error('Błąd importu JSON:', err);
                             alert('Błąd odczytu pliku JSON.');
                         } finally {
                             event.target.value = '';
@@ -274,138 +241,90 @@
         });
     </script>
 </head>
-<body x-data="solarHistoryApp"
-      class="min-h-screen p-4 md:p-8 relative"
-      :style="{
-        'background-color':
-          currentTheme === 'brutalist' && currentMode === 'light' ? '#fdf6e3' :
-          currentTheme === 'brutalist' && currentMode === 'dark'  ? '#18181b' :
-          currentTheme === 'cyberpunk' && currentMode === 'dark'  ? '#05010f' :
-          currentTheme === 'cyberpunk' && currentMode === 'light' ? '#f0f9ff' :
-          currentTheme === 'terminal'  && currentMode === 'dark'  ? '#000000' :
-          currentTheme === 'terminal'  && currentMode === 'light' ? '#ecfdf5' :
-          currentTheme === 'aurora'    && currentMode === 'dark'  ? '#0f0728' :
-          currentTheme === 'aurora'    && currentMode === 'light' ? '#f8fafc' :
-          currentTheme === 'editorial' && currentMode === 'light' ? '#ffffff' :
-          currentTheme === 'editorial' && currentMode === 'dark'  ? '#121212' : '#ffffff',
-        'color':
-          currentTheme === 'brutalist' && currentMode === 'light' ? '#000000' :
-          currentTheme === 'brutalist' && currentMode === 'dark'  ? '#ffffff' :
-          currentTheme === 'cyberpunk' && currentMode === 'dark'  ? '#ffffff' :
-          currentTheme === 'cyberpunk' && currentMode === 'light' ? '#0f172a' :
-          currentTheme === 'terminal'  && currentMode === 'dark'  ? '#34d399' :
-          currentTheme === 'terminal'  && currentMode === 'light' ? '#047857' :
-          currentTheme === 'aurora'    ? '#f8fafc' :
-          currentTheme === 'editorial' && currentMode === 'light' ? '#171717' :
-          currentTheme === 'editorial' && currentMode === 'dark'  ? '#e4e4e7' : '#000000'
-      }">
-    
-    <!-- Aurora background blobs -->
-    <div class="aurora-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div class="aurora-bg-dark absolute inset-0 pointer-events-none">
-            <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-600/15 blur-[120px] animate-pulse"></div>
-            <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-indigo-500/15 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-            <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-sky-500/10 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-        </div>
-        <div class="aurora-bg-light absolute inset-0 pointer-events-none">
-            <div class="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-violet-300/45 blur-[120px] animate-pulse"></div>
-            <div class="absolute top-1/4 -right-40 h-[600px] w-[600px] rounded-full bg-sky-300/40 blur-[140px] animate-pulse" style="animation-delay: 1.5s;"></div>
-            <div class="absolute bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-pink-200/35 blur-[100px] animate-pulse" style="animation-delay: 2s;"></div>
-        </div>
+<body x-data="solarHistoryApp" class="min-h-screen p-4 md:p-8 relative">
+
+    <!-- Background decoration (CSS-controlled per theme) -->
+    <div class="bg-decoration" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="cyber-grid"></div>
+        <div class="cyber-scanlines"></div>
+        <div class="cyber-glow"></div>
+        <div class="cyber-sun"></div>
     </div>
 
-    <!-- Cyberpunk grid -->
-    <div class="cyberpunk-bg pointer-events-none absolute inset-0 overflow-hidden z-0">
-        <div class="cyberpunk-grid-dark absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-grid-light absolute inset-0" style="background-image: linear-gradient(rgba(217,70,239,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(14,165,233,0.08) 1px, transparent 1px); background-size: 34px 34px;"></div>
-        <div class="cyberpunk-glow-dark absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-fuchsia-600/10 to-transparent"></div>
-        <div class="cyberpunk-glow-light absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-sky-500/10 to-transparent"></div>
-    </div>
-
-    <!-- MAIN CONTAINER -->
     <div class="max-w-6xl mx-auto z-10 relative space-y-8">
-        
+
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4"
-                :class="{
-                  'border-black border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-white border-b-4 pb-6': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'border-cyan-400/30': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'border-sky-200': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'border-emerald-500/20': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border-emerald-600/20': currentTheme === 'terminal' && currentMode === 'light',
-                  'border-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                  'border-indigo-100': currentTheme === 'aurora' && currentMode === 'light',
-                  'border-neutral-200': currentTheme === 'editorial' && currentMode === 'light',
-                  'border-neutral-800': currentTheme === 'editorial' && currentMode === 'dark'
-                }">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4">
             <div>
-                <!-- Brand Title -->
-                <a href="/panels.html" class="text-3xl font-bold hover:opacity-80 transition flex items-center gap-2"
-                   :class="{
-                     'text-black uppercase font-black': currentTheme === 'brutalist' && currentMode === 'light',
-                     'text-white uppercase font-black': currentTheme === 'brutalist' && currentMode === 'dark',
-                     'text-cyan-300 font-mono': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                     'text-sky-600 font-mono': currentTheme === 'cyberpunk' && currentMode === 'light',
-                     'text-emerald-300 font-mono': currentTheme === 'terminal' && currentMode === 'dark',
-                     'text-[#047857] font-mono': currentTheme === 'terminal' && currentMode === 'light',
-                     'bg-gradient-to-r from-violet-200 via-indigo-200 to-sky-200 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'dark',
-                     'bg-gradient-to-r from-indigo-600 via-violet-600 to-pink-500 bg-clip-text text-transparent': currentTheme === 'aurora' && currentMode === 'light',
-                     'text-neutral-900 font-serif font-semibold': currentTheme === 'editorial' && currentMode === 'light',
-                     'text-neutral-200 font-serif font-semibold': currentTheme === 'editorial' && currentMode === 'dark'
-                   }">
-                    <i class="fas fa-history"></i> Archiwum Historii SolarForecast
+                <a href="/panels.html" class="page-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                    <span>Archiwum Historii SolarForecast</span>
                 </a>
-                <p class="text-sm mt-1 opacity-70">
-                    Pełna baza danych zapisanych prognoz, statystyki i zbiorczy eksport/import
-                </p>
+                <p class="page-subtitle">Pełna baza danych zapisanych prognoz, statystyki i zbiorczy eksport/import</p>
             </div>
 
-            <!-- Nav Links -->
-            <div class="flex flex-wrap items-center gap-2 text-sm">
-                <a href="/panels.html" class="theme-btn px-4 py-2 flex items-center gap-2">
-                    <i class="fas fa-solar-panel"></i> Wróć do Paneli
-                </a>
-                <a href="/" class="theme-btn px-4 py-2 flex items-center gap-2">
-                    <i class="fas fa-home"></i> Strona Główna
-                </a>
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+                <a href="/panels.html" class="theme-btn px-4" style="text-decoration:none">Wróć do Paneli</a>
+                <a href="/" class="theme-btn px-4" style="text-decoration:none">Strona Główna</a>
+
+                <!-- THEME SWITCHER (in flow) -->
+                <div class="switcher" x-data="{ open: false }">
+                    <button class="switcher-btn" @click="open = !open" :data-open="open" aria-label="Zmień motyw">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                    <div class="switcher-panel" x-show="open" @click.away="open = false" x-transition.origin.top.right style="display: none;">
+                        <div class="switcher-title">Styl strony:</div>
+                        <template x-for="t in themes" :key="t.key">
+                            <button class="switcher-item" :class="{ 'active': theme === t.key }" @click="setTheme(t.key); open = false">
+                                <span class="switcher-dot" :style="'background:' + t.color"></span>
+                                <span x-text="t.name"></span>
+                            </button>
+                        </template>
+                        <div class="switcher-sep"></div>
+                        <div class="switcher-title">Tryb:</div>
+                        <button class="switcher-item" :class="{ 'active': mode === 'light' }" @click="setMode('light'); open = false">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4"/></svg>
+                            Jasny
+                        </button>
+                        <button class="switcher-item" :class="{ 'active': mode === 'dark' }" @click="setMode('dark'); open = false">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="switcher-dot" style="background:none"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+                            Ciemny
+                        </button>
+                    </div>
+                </div>
             </div>
         </header>
 
         <!-- STATS CARDS -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- Total Days -->
             <div class="panel-card p-6">
-                <p class="stat-label mb-1 text-xs uppercase font-bold tracking-wider opacity-60">Zapisane Dni</p>
+                <p class="stat-label mb-1">Zapisane Dni</p>
                 <div class="flex items-baseline gap-1">
-                    <span class="stat-value text-3xl font-bold" x-text="Object.keys(history).length"></span>
+                    <span class="stat-value" x-text="Object.keys(history).length"></span>
                     <span class="text-xs opacity-60 uppercase font-bold">dni</span>
                 </div>
             </div>
-
-            <!-- Total Energy -->
             <div class="panel-card p-6">
-                <p class="stat-label mb-1 text-xs uppercase font-bold tracking-wider opacity-60">Łączna Energia</p>
+                <p class="stat-label mb-1">Łączna Energia</p>
                 <div class="flex items-baseline gap-1">
-                    <span class="stat-value text-3xl font-bold" x-text="getTotalEnergy()"></span>
+                    <span class="stat-value" x-text="getTotalEnergy()"></span>
                     <span class="text-xs opacity-60 uppercase font-bold">kWh</span>
                 </div>
             </div>
-
-            <!-- Average Daily Energy -->
             <div class="panel-card p-6">
-                <p class="stat-label mb-1 text-xs uppercase font-bold tracking-wider opacity-60">Średnia Dzienna</p>
+                <p class="stat-label mb-1">Średnia Dzienna</p>
                 <div class="flex items-baseline gap-1">
-                    <span class="stat-value text-3xl font-bold" x-text="getAverageEnergy()"></span>
+                    <span class="stat-value" x-text="getAverageEnergy()"></span>
                     <span class="text-xs opacity-60 uppercase font-bold">kWh</span>
                 </div>
             </div>
-
-            <!-- Record High -->
             <div class="panel-card p-6">
-                <p class="stat-label mb-1 text-xs uppercase font-bold tracking-wider opacity-60">Rekord Produkcji</p>
+                <p class="stat-label mb-1">Rekord Produkcji</p>
                 <div class="flex items-baseline gap-1">
-                    <span class="stat-value text-3xl font-bold" x-text="getRecordEnergy().energy"></span>
+                    <span class="stat-value" x-text="getRecordEnergy().energy"></span>
                     <span class="text-xs opacity-60 uppercase font-bold">kWh</span>
                 </div>
                 <p class="text-[10px] opacity-60 mt-1" x-text="'Dzień: ' + getRecordEnergy().date"></p>
@@ -415,15 +334,14 @@
         <!-- CONTROLS & ACTIONS BAR -->
         <div class="panel-card p-6 space-y-4">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <!-- Search & Filter -->
                 <div class="flex flex-wrap items-center gap-3 flex-1">
-                    <div class="relative min-w-[220px] flex-1 max-w-md">
-                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-xs opacity-50"></i>
-                        <input type="text" x-model="searchQuery" placeholder="Szukaj po dacie (np. 2026-07)..." class="theme-input pl-9 w-full text-sm">
+                    <div class="search-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" x-model="searchQuery" placeholder="Szukaj po dacie (np. 2026-07)..." class="theme-input text-sm">
                     </div>
                     <div class="flex items-center gap-2">
-                        <label class="text-xs uppercase font-bold opacity-60">Sortuj:</label>
-                        <select x-model="sortBy" class="theme-input text-sm py-2 px-3">
+                        <label class="label-tiny" style="margin-bottom:0">Sortuj:</label>
+                        <select x-model="sortBy" class="theme-input text-sm py-2 px-3" style="width:auto">
                             <option value="newest">Najnowsze najpierw</option>
                             <option value="oldest">Najstarsze najpierw</option>
                             <option value="energy_high">Najwyższa energia (kWh)</option>
@@ -432,18 +350,13 @@
                     </div>
                 </div>
 
-                <!-- Global Actions -->
                 <div class="flex flex-wrap items-center gap-2 select-none">
-                    <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn px-3 py-2 text-xs flex items-center gap-1.5">
-                        <i class="fas fa-file-export"></i> <span>Eksportuj JSON</span>
-                    </button>
-                    <label title="Importuj i scal z pliku JSON" class="theme-btn px-3 py-2 text-xs flex items-center gap-1.5 cursor-pointer">
-                        <i class="fas fa-file-import"></i> <span>Importuj / Scal JSON</span>
+                    <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn px-2.5 py-1 text-xs">Eksportuj JSON</button>
+                    <label title="Importuj i scal z pliku JSON" class="theme-btn px-2.5 py-1 text-xs cursor-pointer">
+                        Importuj / Scal JSON
                         <input type="file" accept=".json" @change="importHistory($event)" class="hidden">
                     </label>
-                    <button @click="clearAllHistory()" title="Wyczyść całą historię" class="theme-btn px-3 py-2 text-xs flex items-center gap-1.5 text-red-500 hover:text-red-400">
-                        <i class="fas fa-trash-alt"></i> <span>Wyczyść Całość</span>
-                    </button>
+                    <button @click="clearAllHistory()" title="Wyczyść całą historię" class="theme-btn danger-btn px-2.5 py-1 text-xs">Wyczyść Całość</button>
                 </div>
             </div>
         </div>
@@ -451,27 +364,24 @@
         <!-- HISTORY DATA LIST / TABLE -->
         <div class="panel-card overflow-hidden">
             <!-- Empty state -->
-            <div x-show="Object.keys(history).length === 0" class="p-12 text-center space-y-4">
-                <i class="fas fa-history text-5xl opacity-30"></i>
+            <div x-show="Object.keys(history).length === 0" class="p-12 text-center space-y-4" style="display: none;">
                 <h3 class="text-xl font-bold">Brak Zapisanej Historii</h3>
                 <p class="text-sm opacity-60 max-w-md mx-auto">
                     Nie znaleziono żadnych wpisów w historii. Możesz zaimportować plik JSON z historią lub przejść do paneli i pobrać świeże prognozy.
                 </p>
                 <div class="flex justify-center gap-3 pt-2">
-                    <a href="/panels.html" class="theme-btn px-4 py-2 text-sm flex items-center gap-2">
-                        <i class="fas fa-solar-panel"></i> Przejdź do Paneli
-                    </a>
-                    <label class="theme-btn px-4 py-2 text-sm flex items-center gap-2 cursor-pointer">
-                        <i class="fas fa-file-import"></i> Zaimportuj JSON
+                    <a href="/panels.html" class="theme-btn px-4 py-2 text-sm" style="text-decoration:none">Przejdź do Paneli</a>
+                    <label class="theme-btn px-4 py-2 text-sm cursor-pointer">
+                        Zaimportuj JSON
                         <input type="file" accept=".json" @change="importHistory($event)" class="hidden">
                     </label>
                 </div>
             </div>
 
             <!-- Data Table -->
-            <div x-show="Object.keys(history).length > 0" class="overflow-x-auto">
+            <div x-show="Object.keys(history).length > 0" class="overflow-x-auto" style="display: none;">
                 <table class="w-full text-left border-collapse">
-                    <thead class="text-xs uppercase opacity-70 border-b border-neutral-500/20">
+                    <thead class="text-xs uppercase">
                         <tr>
                             <th class="p-4">Data</th>
                             <th class="p-4">Energia Całkowita</th>
@@ -480,158 +390,53 @@
                             <th class="p-4 text-right">Akcje</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <template x-for="date in getFilteredDates()" :key="date">
-                            <template x-fragment>
-                                <tr class="transition text-sm border-b border-neutral-500/10 hover:bg-neutral-500/5">
-                                    <td class="p-4 font-bold font-mono" x-text="date"></td>
-                                    <td class="p-4 font-extrabold text-base">
-                                        <span x-text="history[date].energy + ' kWh'"
-                                              :class="{
-                                                'text-black': currentTheme === 'brutalist' && currentMode === 'light',
-                                                'text-white': currentTheme === 'brutalist' && currentMode === 'dark',
-                                                'text-cyan-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                                                'text-sky-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                                                'text-emerald-300': currentTheme === 'terminal' && currentMode === 'dark',
-                                                'text-[#047857]': currentTheme === 'terminal' && currentMode === 'light',
-                                                'text-purple-400': currentTheme === 'aurora' && currentMode === 'dark',
-                                                'text-indigo-600': currentTheme === 'aurora' && currentMode === 'light',
-                                                'text-zinc-200': currentTheme === 'editorial' && currentMode === 'dark',
-                                                'text-neutral-900': currentTheme === 'editorial' && currentMode === 'light'
-                                              }"></span>
-                                    </td>
-                                    <td class="p-4 font-mono" x-text="getDayPeakPower(date) + ' W'"></td>
-                                    <td class="p-4 text-xs opacity-70 font-mono">
-                                        <template x-if="history[date].params">
-                                            <span>
-                                                <span x-text="history[date].params.kwp + ' kWp'"></span> | 
-                                                <span x-text="'Limit: ' + history[date].params.limit + 'W'"></span> | 
-                                                <span x-text="'Dec: ' + history[date].params.dec + '°'"></span>
-                                            </span>
-                                        </template>
-                                        <template x-if="!history[date].params">
-                                            <span class="italic opacity-50">Domyślne</span>
-                                        </template>
-                                    </td>
-                                    <td class="p-4 text-right space-x-1.5 select-none">
-                                        <button @click="toggleExpand(date)" title="Pokaż godziny" class="theme-btn px-2.5 py-1 text-xs">
-                                            <i class="fas" :class="expandedDate === date ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                                        </button>
-                                        <a :href="'/panels.html?date=' + date" title="Otwórz w panelu" class="theme-btn px-2.5 py-1 text-xs inline-flex items-center gap-1">
-                                            <i class="fas fa-external-link-alt"></i> <span>Otwórz</span>
-                                        </a>
-                                        <button @click="deleteDate(date)" title="Usuń dzień" class="theme-btn px-2 py-1 text-xs text-red-400 hover:text-red-300">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Hourly Details Accordion Row -->
-                                <tr x-show="expandedDate === date" class="bg-neutral-500/5 border-b border-neutral-500/20">
-                                    <td colspan="5" class="p-4">
-                                        <div class="space-y-2">
-                                            <p class="text-xs font-bold uppercase tracking-wider opacity-70">Rozkład mocy godzinowej dla <span x-text="date"></span>:</p>
-                                            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-xs font-mono">
-                                                <template x-for="(w, time) in (history[date].watts || {})" :key="time">
-                                                    <div class="p-2 border border-neutral-500/20 rounded flex justify-between items-center bg-neutral-500/5">
-                                                        <span opacity-70 x-text="time.split(' ')[1]?.substring(0,5) || time"></span>
-                                                        <span class="font-bold" x-text="w + ' W'"></span>
-                                                    </div>
-                                                </template>
-                                            </div>
+                    <template x-for="date in getFilteredDates()" :key="date">
+                        <tbody>
+                            <tr class="text-sm">
+                                <td class="p-4 font-bold" style="font-family:'Space Mono',monospace" x-text="date"></td>
+                                <td class="p-4 energy-cell" x-text="history[date].energy + ' kWh'"></td>
+                                <td class="p-4" style="font-family:'Space Mono',monospace" x-text="getDayPeakPower(date) + ' W'"></td>
+                                <td class="p-4 text-xs opacity-70" style="font-family:'Space Mono',monospace">
+                                    <template x-if="history[date].params">
+                                        <span>
+                                            <span x-text="history[date].params.kwp + ' kWp'"></span> |
+                                            <span x-text="'Limit: ' + history[date].params.limit + 'W'"></span> |
+                                            <span x-text="'Dec: ' + history[date].params.dec + '°'"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="!history[date].params">
+                                        <span class="italic opacity-50">Domyślne</span>
+                                    </template>
+                                </td>
+                                <td class="p-4 text-right space-x-1.5 select-none">
+                                    <button @click="toggleExpand(date)" title="Pokaż godziny" class="theme-btn px-2.5 py-1 text-xs">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;display:inline" :style="expandedDate === date && 'transform: rotate(180deg)'"><path d="m6 9 6 6 6-6"/></svg>
+                                    </button>
+                                    <a :href="'/panels.html?date=' + date" title="Otwórz w panelu" class="theme-btn px-2.5 py-1 text-xs" style="text-decoration:none;display:inline-flex">Otwórz</a>
+                                    <button @click="deleteDate(date)" title="Usuń dzień" class="theme-btn danger-btn px-2.5 py-1 text-xs">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;display:inline"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr x-show="expandedDate === date" style="display: none;">
+                                <td colspan="5" class="p-4">
+                                    <div class="space-y-2">
+                                        <p class="text-xs font-bold uppercase tracking-wider opacity-70">Rozkład mocy godzinowej dla <span x-text="date"></span>:</p>
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                                            <template x-for="(w, time) in (history[date].watts || {})" :key="time">
+                                                <div class="hour-chip">
+                                                    <span class="opacity-70" x-text="time.split(' ')[1]?.substring(0,5) || time"></span>
+                                                    <span class="font-bold" x-text="w + ' W'"></span>
+                                                </div>
+                                            </template>
                                         </div>
-                                    </td>
-                                </tr>
-                            </template>
-                        </template>
-                    </tbody>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </template>
                 </table>
             </div>
-        </div>
-    </div>
-
-    <!-- GLOBAL FLOATING THEME SWITCHER -->
-    <div x-data="{ open: false }" class="fixed bottom-5 right-5 z-50 font-sans">
-        <button @click="open = !open" 
-                :class="{
-                  'border-4 border-black bg-yellow-300 text-black shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-                  'border-4 border-white bg-yellow-300 text-black shadow-[4px_4px_0_#fff] hover:shadow-[6px_6px_0_#fff]': currentTheme === 'brutalist' && currentMode === 'dark',
-                  'border border-cyan-400 bg-black text-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.5)] hover:border-fuchsia-400 hover:text-fuchsia-300': currentTheme === 'cyberpunk' && currentMode === 'dark',
-                  'border border-sky-400 bg-white text-sky-600 shadow-[0_0_10px_rgba(14,165,233,0.15)] hover:border-fuchsia-500 hover:text-fuchsia-600': currentTheme === 'cyberpunk' && currentMode === 'light',
-                  'border border-emerald-500 bg-black text-emerald-400 hover:bg-emerald-500/10': currentTheme === 'terminal' && currentMode === 'dark',
-                  'border border-emerald-600 bg-white text-emerald-600 hover:bg-emerald-50': currentTheme === 'terminal' && currentMode === 'light',
-                  'bg-white/5 border border-white/10 text-white shadow-lg backdrop-blur-md hover:bg-white/10': currentTheme === 'aurora' && currentMode === 'dark',
-                  'bg-white/70 border border-white/60 text-slate-700 shadow-lg backdrop-blur-md hover:bg-white': currentTheme === 'aurora' && currentMode === 'light',
-                  'border border-neutral-300 bg-white text-neutral-800 hover:bg-neutral-50': currentTheme === 'editorial' && currentMode === 'light',
-                  'border border-neutral-700 bg-[#1c1c1f] text-neutral-200 hover:bg-neutral-800': currentTheme === 'editorial' && currentMode === 'dark'
-                }"
-                class="w-12 h-12 flex items-center justify-center transition-all duration-200 text-lg rounded-full">
-            <i class="fas fa-cog" :class="open ? 'rotate-90 transition-transform duration-300' : ''"></i>
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div x-show="open" 
-             @click.outside="open = false"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-             x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-             :class="{
-               'border-4 border-black bg-white text-black shadow-[6px_6px_0_#000]': currentTheme === 'brutalist' && currentMode === 'light',
-               'border-4 border-white bg-[#18181b] text-white shadow-[6px_6px_0_#bef264]': currentTheme === 'brutalist' && currentMode === 'dark',
-               'bg-[#05010f]/95 border border-cyan-500/50 text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.2)] backdrop-blur-xl': currentTheme === 'cyberpunk' && currentMode === 'dark',
-               'bg-white/95 border border-sky-400 text-slate-800 shadow-[0_0_20px_rgba(14,165,233,0.15)] backdrop-blur-xl': currentTheme === 'cyberpunk' && currentMode === 'light',
-               'bg-black/95 border border-emerald-500/40 text-emerald-400 backdrop-blur-md': currentTheme === 'terminal' && currentMode === 'dark',
-               'bg-white/95 border border-emerald-600/30 text-emerald-900 shadow-xl backdrop-blur-md': currentTheme === 'terminal' && currentMode === 'light',
-               'bg-slate-900/90 border border-white/10 text-white shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'dark',
-               'bg-white/95 border border-white/60 text-slate-800 shadow-2xl backdrop-blur-xl rounded-2xl': currentTheme === 'aurora' && currentMode === 'light',
-               'border border-neutral-200 bg-white text-neutral-900 rounded-md': currentTheme === 'editorial' && currentMode === 'light',
-               'border border-neutral-800 bg-[#1c1c1f] text-neutral-200 rounded-md': currentTheme === 'editorial' && currentMode === 'dark'
-             }"
-             class="absolute bottom-16 right-0 w-64 p-3 select-none">
-            
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60">Motyw strony:</div>
-             <div class="space-y-1 mt-1">
-                 <template x-for="t in ['brutalist', 'cyberpunk', 'terminal', 'aurora', 'editorial']" :key="t">
-                     <button @click="setTheme(t)"
-                             :class="{
-                               'bg-black text-white border-2 border-black font-bold shadow-[2px_2px_0_#000] rounded-none': currentTheme === t && currentTheme === 'brutalist' && currentMode === 'light',
-                               'bg-[#bef264] text-black border-2 border-white font-bold shadow-[2px_2px_0_#bef264] rounded-none': currentTheme === t && currentTheme === 'brutalist' && currentMode === 'dark',
-                               'hover:bg-white/5 text-neutral-300': currentTheme !== t && currentMode === 'dark',
-                               'hover:bg-black/5 text-neutral-700': currentTheme !== t && currentMode === 'light',
-                               'bg-cyan-500/20 border border-cyan-400 text-cyan-300 font-bold': currentTheme === t && currentTheme === 'cyberpunk' && currentMode === 'dark',
-                               'bg-sky-500/10 border border-sky-400 text-sky-600 font-bold': currentTheme === t && currentTheme === 'cyberpunk' && currentMode === 'light',
-                               'bg-emerald-500/20 border border-emerald-400 text-emerald-300 font-bold': currentTheme === t && currentTheme === 'terminal' && currentMode === 'dark',
-                               'bg-emerald-600 text-white font-bold': currentTheme === t && currentTheme === 'terminal' && currentMode === 'light',
-                               'bg-purple-600 text-white font-bold rounded-xl': currentTheme === t && currentTheme === 'aurora' && currentMode === 'dark',
-                               'bg-indigo-600 text-white font-bold rounded-xl': currentTheme === t && currentTheme === 'aurora' && currentMode === 'light',
-                               'bg-neutral-900 text-white font-bold': currentTheme === t && currentTheme === 'editorial' && currentMode === 'light',
-                               'bg-neutral-200 text-black font-bold': currentTheme === t && currentTheme === 'editorial' && currentMode === 'dark'
-                             }"
-                             class="w-full text-left px-3 py-1.5 text-xs font-semibold flex items-center justify-between transition-all">
-                         <span x-text="t.charAt(0).toUpperCase() + t.slice(1)"></span>
-                         <i class="fas fa-check text-[10px]" x-show="currentTheme === t"></i>
-                     </button>
-                 </template>
-             </div>
-
-             <div class="border-t my-2 opacity-20"></div>
-
-             <div class="px-2 py-1 text-xs font-bold uppercase tracking-wider opacity-60">Tryb:</div>
-             <div class="flex p-0.5 mt-1 border border-neutral-500/20 rounded">
-                 <button @click="setMode('light')"
-                         class="flex-1 py-1 text-xs font-bold text-center transition-all"
-                         :class="currentMode === 'light' ? 'bg-neutral-500/30 text-current font-black' : 'opacity-50 hover:opacity-100'">
-                     Jasny
-                 </button>
-                 <button @click="setMode('dark')"
-                         class="flex-1 py-1 text-xs font-bold text-center transition-all"
-                         :class="currentMode === 'dark' ? 'bg-neutral-500/30 text-current font-black' : 'opacity-50 hover:opacity-100'">
-                     Ciemny
-                 </button>
-             </div>
         </div>
     </div>
 </body>

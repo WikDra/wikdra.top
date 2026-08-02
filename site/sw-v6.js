@@ -1,8 +1,10 @@
-const CACHE_NAME = 'solar-forecast-v5';
+const CACHE_NAME = 'solar-forecast-v6';
 const ASSETS = [
+    '/index.html',
     '/panels.html',
     '/history.html',
-    '/manifest.json'
+    '/manifest.json',
+    '/assets/css/app-v6.css'
 ];
 
 self.addEventListener('install', (event) => {
@@ -29,6 +31,11 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     if (!event.request.url.startsWith(self.location.origin)) {
+        return;
+    }
+
+    // Exclude stats.php and bichu.php from caching
+    if (event.request.url.includes('stats.php') || event.request.url.includes('bichu')) {
         return;
     }
 
