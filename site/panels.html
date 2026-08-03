@@ -595,7 +595,7 @@
                 <!-- TOP BAR: DAY SWITCHER & ACTIVE DATE -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 select-none">
                     <div class="tab-group">
-                        <div class="tab-slider" x-show="isDateSelected('today') || isDateSelected('tomorrow')" x-transition:enter="transition opacity ease-out duration-150" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition opacity ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" :style="isDateSelected('tomorrow') ? 'transform: translateX(100%);' : 'transform: translateX(0%);'"></div>
+                        <div class="tab-slider" :data-tab="isDateSelected('tomorrow') ? 'tomorrow' : 'today'" :data-visible="(isDateSelected('today') || isDateSelected('tomorrow')).toString()"></div>
                         <button @click="selectDateByDayType('today')" class="tab-btn" :class="{ 'active': isDateSelected('today') }">Dzisiaj</button>
                         <button @click="selectDateByDayType('tomorrow')" class="tab-btn" :class="{ 'active': isDateSelected('tomorrow') }">Jutro</button>
                     </div>
