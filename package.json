@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.17",
+    "puppeteer-core": "^25.4.0",
     "tailwindcss": "^4.1.17"
   }
 }
