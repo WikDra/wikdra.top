@@ -730,10 +730,13 @@ html[data-theme="terminal"] .project-badge { border-radius: 0.125rem; border-col
 html[data-theme="aurora"] .project-badge { border-radius: 9999px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); color: #10b981; }
 html[data-theme="editorial"] .project-badge { border-radius: 9999px; border-color: var(--line); color: var(--muted); }
 
-.project-title { margin-top: 1rem; font-size: 1.25rem; font-weight: 800; }
+.project-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
+html[data-theme="terminal"] .project-head { justify-content: flex-start; gap: 0.35rem; }
+
+.project-title { margin-top: 0.75rem; font-size: 1.25rem; font-weight: 800; }
 html[data-theme="brutalist"] .project-title { font-size: 1.5rem; text-transform: uppercase; }
 html[data-theme="cyberpunk"] .project-title { font-family: var(--font-heading); font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.05em; }
-html[data-theme="terminal"] .project-title { margin-top: 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
+html[data-theme="terminal"] .project-title { margin-top: 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; display: inline; }
 html[data-theme="aurora"] .project-title { font-size: 1.1rem; font-weight: 600; }
 html[data-theme="editorial"] .project-title { margin-top: 0; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; }
 .project-desc { margin-top: 0.5rem; font-size: 0.875rem; line-height: 1.6; color: var(--muted); }
