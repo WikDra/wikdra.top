@@ -427,7 +427,7 @@ html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,25
    5. THEME SWITCHER (in header, in flow)
    ============================================================ */
 
-.switcher { position: relative; flex-shrink: 0; z-index: 10; margin-left: 0.35rem; }
+.switcher { position: relative; flex-shrink: 0; z-index: 10; margin-left: auto; }
 .switcher-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.3rem; width: 2.3rem; border-radius: 9999px; cursor: pointer;
