@@ -113,7 +113,7 @@
                     this.loadFromStorage();
                     const urlParams = new URLSearchParams(window.location.search);
                     const dateParam = urlParams.get('date');
-                    const today = new Date().toISOString().split('T')[0];
+                    const today = this.formatLocalDate(new Date());
                     if (dateParam && this.history[dateParam]) {
                         this.selectedDate = dateParam;
                     } else if (!this.selectedDate) {
@@ -342,6 +342,13 @@
                     }, [times, values, limitArr], el);
                 },
 
+                formatLocalDate(d) {
+                    const year = d.getFullYear();
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+
                 selectDate(date) {
                     this.selectedDate = date;
                     this.refreshView();
@@ -350,13 +357,13 @@
                 selectDateByDayType(dayType) {
                     const d = new Date();
                     if (dayType === 'tomorrow') d.setDate(d.getDate() + 1);
-                    this.selectDate(d.toISOString().split('T')[0]);
+                    this.selectDate(this.formatLocalDate(d));
                 },
 
                 isDateSelected(dayType) {
                     const d = new Date();
                     if (dayType === 'tomorrow') d.setDate(d.getDate() + 1);
-                    return this.selectedDate === d.toISOString().split('T')[0];
+                    return this.selectedDate === this.formatLocalDate(d);
                 },
 
                 getSortedHistoryDates() {
