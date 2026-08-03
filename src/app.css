@@ -67,7 +67,7 @@ html[data-theme="cyberpunk"][data-mode="light"] {
 /* Dev Terminal */
 html[data-theme="terminal"][data-mode="dark"] {
     --bg-main: #000000; --text-main: #34d399;
-    --font-heading: 'Space Mono', monospace; --font-body: 'Space Mono', monospace;
+    --font-heading: 'Consolas', 'Space Mono', monospace; --font-body: 'Consolas', 'Space Mono', monospace;
     --card-bg: transparent; --card-border: 1px solid rgba(52, 211, 153, 0.2);
     --card-shadow: none; --card-shadow-hover: 0 0 10px rgba(52, 211, 153, 0.15);
     --accent: #10b981; --accent-2: #6ee7b7; --accent-contrast: #000000;
@@ -76,7 +76,7 @@ html[data-theme="terminal"][data-mode="dark"] {
 }
 html[data-theme="terminal"][data-mode="light"] {
     --bg-main: #f6f8fa; --text-main: #0a5c36;
-    --font-heading: 'Space Mono', monospace; --font-body: 'Space Mono', monospace;
+    --font-heading: 'Consolas', 'Space Mono', monospace; --font-body: 'Consolas', 'Space Mono', monospace;
     --card-bg: #ffffff; --card-border: 1px solid #d1e7db;
     --card-shadow: none; --card-shadow-hover: 0 0 10px rgba(10, 92, 54, 0.12);
     --accent: #0a5c36; --accent-2: #c2410c; --accent-contrast: #ffffff;
@@ -591,7 +591,7 @@ html[data-theme="cyberpunk"][data-mode="dark"] .hero-title {
     text-shadow: 0 0 18px rgba(34,211,238,0.6), 0 0 40px rgba(217,70,239,0.4);
     animation: neon-flicker 6s linear infinite;
 }
-html[data-theme="terminal"] .hero-title { font-family: 'Space Mono', monospace; font-weight: 700; text-shadow: none !important; }
+html[data-theme="terminal"] .hero-title { font-family: var(--font-heading); font-weight: 700; text-shadow: none !important; }
 html[data-theme="terminal"] .hero-title::before { content: '> '; }
 html[data-theme="terminal"] .hero-title::after { content: '_'; animation: blink 1s steps(1) infinite; }
 html[data-theme="aurora"] .hero-title { text-align: center; }
@@ -730,7 +730,7 @@ html[data-theme="editorial"] .project-badge { border-radius: 9999px; border-colo
 .project-title { margin-top: 1rem; font-size: 1.25rem; font-weight: 800; }
 html[data-theme="brutalist"] .project-title { font-size: 1.5rem; text-transform: uppercase; }
 html[data-theme="cyberpunk"] .project-title { font-family: var(--font-heading); font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.05em; }
-html[data-theme="terminal"] .project-title { margin-top: 0; font-family: 'Space Mono', monospace; font-size: 1.05rem; font-weight: 700; }
+html[data-theme="terminal"] .project-title { margin-top: 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; }
 html[data-theme="aurora"] .project-title { font-size: 1.1rem; font-weight: 600; }
 html[data-theme="editorial"] .project-title { margin-top: 0; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; }
 .project-desc { margin-top: 0.5rem; font-size: 0.875rem; line-height: 1.6; color: var(--muted); }
