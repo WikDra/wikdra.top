@@ -408,14 +408,16 @@
                                         <span class="italic opacity-50">Domyślne</span>
                                     </template>
                                 </td>
-                                <td class="p-4 text-right space-x-1.5 select-none">
-                                    <button @click="toggleExpand(date)" title="Pokaż godziny" class="theme-btn px-2.5 py-1 text-xs">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;display:inline" :style="expandedDate === date && 'transform: rotate(180deg)'"><path d="m6 9 6 6 6-6"/></svg>
-                                    </button>
-                                    <a :href="'/panels.html?date=' + date" title="Otwórz w panelu" class="theme-btn px-2.5 py-1 text-xs" style="text-decoration:none;display:inline-flex">Otwórz</a>
-                                    <button @click="deleteDate(date)" title="Usuń dzień" class="theme-btn danger-btn px-2.5 py-1 text-xs">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;display:inline"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    </button>
+                                <td class="p-4 text-right select-none whitespace-nowrap">
+                                    <div class="inline-flex items-center justify-end gap-1.5">
+                                        <button @click="toggleExpand(date)" title="Pokaż godziny" class="theme-btn px-2.5 py-1 text-xs inline-flex items-center justify-center h-7">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-3.5 h-3.5" :style="expandedDate === date && 'transform: rotate(180deg)'"><path d="m6 9 6 6 6-6"/></svg>
+                                        </button>
+                                        <a :href="'/panels.html?date=' + date" title="Otwórz w panelu" class="theme-btn px-2.5 py-1 text-xs inline-flex items-center justify-center h-7" style="text-decoration:none">Otwórz</a>
+                                        <button @click="deleteDate(date)" title="Usuń dzień" class="theme-btn danger-btn px-2.5 py-1 text-xs inline-flex items-center justify-center h-7">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-3.5 h-3.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                             <tr x-show="expandedDate === date" style="display: none;">
