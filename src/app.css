@@ -698,8 +698,8 @@ html[data-theme="aurora"][data-mode="light"] .hero-section {
 
 .project-num { display: none; font-family: 'Space Mono', monospace; color: var(--muted); }
 html[data-theme="terminal"] .project-num { display: inline; }
-html[data-theme="editorial"] .project-num { display: block; font-family: 'Playfair Display', serif; font-size: 1.875rem; color: #d4d4d4; transition: color 0.2s; }
-html[data-theme="editorial"][data-mode="dark"] .project-num { color: #52525b; }
+html[data-theme="editorial"] .project-num { display: block; font-family: 'Playfair Display', serif; font-size: 1.875rem; color: #a3a3a3; transition: color 0.2s; }
+html[data-theme="editorial"][data-mode="dark"] .project-num { color: #71717a; }
 html[data-theme="editorial"] .project-card:hover .project-num { color: var(--text-main); }
 
 .project-badge {
