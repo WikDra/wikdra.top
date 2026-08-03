@@ -67,7 +67,7 @@ html[data-theme="cyberpunk"][data-mode="light"] {
 /* Dev Terminal */
 html[data-theme="terminal"][data-mode="dark"] {
     --bg-main: #000000; --text-main: #34d399;
-    --font-heading: 'Space Mono', monospace; --font-body: 'Space Mono', monospace;
+    --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Space Mono', monospace;
     --card-bg: transparent; --card-border: 1px solid rgba(52, 211, 153, 0.2);
     --card-shadow: none; --card-shadow-hover: 0 0 10px rgba(52, 211, 153, 0.15);
     --accent: #10b981; --accent-2: #6ee7b7; --accent-contrast: #000000;
@@ -76,7 +76,7 @@ html[data-theme="terminal"][data-mode="dark"] {
 }
 html[data-theme="terminal"][data-mode="light"] {
     --bg-main: #f6f8fa; --text-main: #0a5c36;
-    --font-heading: 'Space Mono', monospace; --font-body: 'Space Mono', monospace;
+    --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Space Mono', monospace;
     --card-bg: #ffffff; --card-border: 1px solid #d1e7db;
     --card-shadow: none; --card-shadow-hover: 0 0 10px rgba(10, 92, 54, 0.12);
     --accent: #0a5c36; --accent-2: #c2410c; --accent-contrast: #ffffff;
