@@ -225,13 +225,16 @@
                     const muted = styles.getPropertyValue('--muted').trim() || '#64748b';
                     const line = styles.getPropertyValue('--line').trim() || 'rgba(128,128,128,0.2)';
                     const font = styles.getPropertyValue('--font-body').trim() || 'sans-serif';
+                    const isLight = this.mode === 'light';
                     return {
                         line: accent,
                         fillTop: accent.startsWith('#') ? accent + '44' : 'rgba(34,211,238,0.25)',
                         grid: line,
                         tick: muted,
                         limit: accent2,
-                        font: font
+                        font: font,
+                        pointFill: isLight ? accent : '#ffffff',
+                        pointStroke: isLight ? (this.theme === 'brutalist' ? '#000000' : '#ffffff') : accent
                     };
                 },
 
@@ -328,10 +331,10 @@
                                 },
                                 points: {
                                     show: (u, seriesIdx, idx) => u.cursor.idx === idx,
-                                    size: 8,
-                                    width: 2,
-                                    stroke: c.line,
-                                    fill: '#ffffff'
+                                    size: 9,
+                                    width: 2.5,
+                                    stroke: c.pointStroke,
+                                    fill: c.pointFill
                                 }
                             },
                             { label: 'Limit', stroke: c.limit, width: 1.5, dash: [6, 4], points: { show: false } }
