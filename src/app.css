@@ -990,9 +990,9 @@ html[data-theme="cyberpunk"][data-mode="dark"] .dot:not(.loading) { background: 
     transition: color 0.2s ease, transform 0.2s ease, text-shadow 0.2s ease;
     user-select: none; -webkit-user-select: none;
 }
-.tab-btn:hover { color: var(--text-main); transform: translateY(-1px); }
+.tab-btn:hover:not(.active) { color: var(--text-main); transform: translateY(-1px); }
 .tab-btn:active { transform: translateY(0); }
-.tab-btn.active { color: var(--accent-contrast); }
+.tab-btn.active { color: var(--accent-contrast) !important; }
 
 html[data-theme="brutalist"] .tab-group {
     border: 3px solid #000; box-shadow: 3px 3px 0 #000; background: #fff; border-radius: 0;
@@ -1006,13 +1006,14 @@ html[data-theme="brutalist"] .tab-slider {
 html[data-theme="brutalist"][data-mode="dark"] .tab-slider {
     background: #bef264; border-radius: 0; border: none; box-shadow: none;
 }
-html[data-theme="brutalist"] .tab-btn.active { color: #000; font-weight: 900; }
-html[data-theme="brutalist"] .tab-btn:hover { transform: translate(-2px, -2px); }
+html[data-theme="brutalist"] .tab-btn.active { color: #000 !important; font-weight: 900; }
+html[data-theme="brutalist"] .tab-btn:hover:not(.active) { transform: translate(-2px, -2px); }
 
 html[data-theme="terminal"] .tab-group { border-radius: 4px; }
 html[data-theme="terminal"] .tab-slider { border-radius: 3px; box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent); }
 html[data-theme="terminal"] .tab-btn { font-family: var(--font-body); }
-html[data-theme="terminal"] .tab-btn:hover { color: var(--accent); }
+html[data-theme="terminal"] .tab-btn:hover:not(.active) { color: var(--accent); }
+html[data-theme="terminal"] .tab-btn.active { color: #022c22 !important; font-weight: 800; }
 
 html[data-theme="aurora"] .tab-group { border-radius: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 html[data-theme="aurora"] .tab-slider { border-radius: 0.75rem; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 45%, transparent); }
@@ -1020,8 +1021,8 @@ html[data-theme="aurora"] .tab-slider { border-radius: 0.75rem; box-shadow: 0 6p
 html[data-theme="cyberpunk"] .tab-group { border-radius: 0; }
 html[data-theme="cyberpunk"] .tab-slider { border-radius: 0; box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent); }
 html[data-theme="cyberpunk"] .tab-btn { font-family: 'Space Mono', monospace; }
-html[data-theme="cyberpunk"] .tab-btn:hover { color: var(--accent-2); text-shadow: 0 0 5px currentColor; }
-html[data-theme="cyberpunk"] .tab-btn.active { color: #05010f; font-weight: 800; text-shadow: none; }
+html[data-theme="cyberpunk"] .tab-btn:hover:not(.active) { color: var(--accent-2); text-shadow: 0 0 5px currentColor; }
+html[data-theme="cyberpunk"] .tab-btn.active { color: #05010f !important; font-weight: 800; text-shadow: none; }
 html[data-theme="editorial"] .tab-group { border-radius: 0; }
 html[data-theme="editorial"] .tab-slider { border-radius: 0; box-shadow: none; border: 1px solid var(--line); }
 html[data-theme="editorial"] .tab-btn { font-family: 'Playfair Display', serif; }
