@@ -434,12 +434,17 @@ html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,25
     border: var(--card-border); background: var(--card-bg); color: var(--text-main);
     box-shadow: var(--card-shadow); transition: transform 0.2s ease, box-shadow 0.2s ease; flex-shrink: 0;
 }
-.switcher-btn svg { height: 1.15rem; width: 1.15rem; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.switcher-btn svg, .site-header .switcher-btn svg {
+    height: 1.15rem; width: 1.15rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
 header .theme-btn {
     height: 2.3rem; display: inline-flex; align-items: center; justify-content: center;
     padding-top: 0; padding-bottom: 0;
 }
-.switcher-btn[data-open="true"] svg { transform: rotate(180deg); }
+.switcher-btn[data-open="true"] svg, .site-header .switcher-btn[data-open="true"] svg {
+    transform: rotate(180deg) !important;
+}
 html[data-theme="cyberpunk"] .switcher-btn { border-radius: 0; }
 html[data-theme="terminal"] .switcher-btn { border-radius: 4px; }
 html[data-theme="brutalist"] .switcher-btn {
