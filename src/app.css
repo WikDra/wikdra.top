@@ -974,11 +974,10 @@ html[data-theme="cyberpunk"][data-mode="dark"] .dot:not(.loading) { background: 
 .tab-group { display: flex; width: fit-content; padding: 0.25rem; border: var(--card-border); background: var(--card-bg); }
 .tab-btn {
     padding: 0.5rem 1.5rem; font-size: 0.875rem; font-weight: 700; color: var(--muted); cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
     user-select: none; -webkit-user-select: none;
 }
 .tab-btn:hover { color: var(--text-main); }
-.tab-btn:active { transform: scale(0.96); }
 .tab-btn.active { background: var(--accent); color: var(--accent-contrast); }
 html[data-theme="brutalist"] .tab-group {
     border: 3px solid #000; box-shadow: 3px 3px 0 #000; background: #fff;
