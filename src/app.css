@@ -232,7 +232,7 @@ html[data-theme="aurora"] .theme-btn {
 }
 html[data-theme="aurora"] .theme-btn:hover:not(:disabled) { transform: translateY(-1px); }
 
-html[data-theme="editorial"] .theme-btn { border-radius: 0; transition: none; }
+html[data-theme="editorial"] .theme-btn { border-radius: 0; }
 .theme-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 /* Secondary button variant */
@@ -886,15 +886,6 @@ html[data-theme="cyberpunk"][data-mode="dark"] .glitch::after {
 html[data-theme="cyberpunk"][data-mode="dark"] .glitch::before { color: #22d3ee; z-index: -1; transform: translate(2px, 0); opacity: 0.7; }
 html[data-theme="cyberpunk"][data-mode="dark"] .glitch::after { color: #e879f9; z-index: -2; transform: translate(-2px, 0); opacity: 0.7; }
 
-/* editorial: zero decorative motion */
-html[data-theme="editorial"] *, html[data-theme="editorial"] *::before, html[data-theme="editorial"] *::after {
-    animation-duration: 0s !important; transition-duration: 0s !important;
-}
-html[data-theme="editorial"] .switcher-btn svg,
-html[data-theme="editorial"] .site-header .switcher-btn svg {
-    transition-duration: 0.3s !important;
-}
-
 /* terminal dark: subtle green glow on headings */
 html[data-theme="terminal"][data-mode="dark"] h1, html[data-theme="terminal"][data-mode="dark"] h2 {
     text-shadow: 0 0 8px rgba(52, 211, 153, 0.35);
@@ -1031,7 +1022,9 @@ html[data-theme="cyberpunk"] .tab-slider { border-radius: 0; box-shadow: 0 0 12p
 html[data-theme="cyberpunk"] .tab-btn { font-family: 'Space Mono', monospace; }
 html[data-theme="cyberpunk"] .tab-btn:hover { color: var(--accent-2); text-shadow: 0 0 5px currentColor; }
 html[data-theme="cyberpunk"] .tab-btn.active { color: #05010f; font-weight: 800; text-shadow: none; }
-html[data-theme="editorial"] .tab-btn { transition: none; }
+html[data-theme="editorial"] .tab-group { border-radius: 0; }
+html[data-theme="editorial"] .tab-slider { border-radius: 0; box-shadow: none; border: 1px solid var(--line); }
+html[data-theme="editorial"] .tab-btn { font-family: 'Playfair Display', serif; }
 
 /* history list buttons */
 .history-actions-row .theme-btn { padding: 0.25rem 0.2rem; font-size: 0.68rem; }
