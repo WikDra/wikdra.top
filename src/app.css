@@ -323,7 +323,7 @@ html[data-theme="terminal"] .stat-value { color: var(--text-main); font-family: 
 html[data-theme="editorial"] .stat-value { font-family: 'Playfair Display', serif; }
 
 /* Tables */
-table th { text-align: left; }
+table th:not(.text-right) { text-align: left; }
 html[data-theme="brutalist"] table th { background: #000; color: #fff; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #000; }
 html[data-theme="brutalist"] table td { color: #000; border-bottom: 2px solid #000; }
 html[data-theme="brutalist"][data-mode="dark"] table th { background: var(--accent); color: #000; border-bottom-color: #fff; }
