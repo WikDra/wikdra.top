@@ -971,6 +971,14 @@ html[data-theme="cyberpunk"] .tab-btn:hover { color: var(--accent-2); text-shado
 html[data-theme="editorial"] .tab-btn { transition: none; }
 
 /* history list buttons */
+.history-actions-row .theme-btn { padding: 0.25rem 0.2rem; font-size: 0.68rem; }
+html[data-theme="brutalist"] .history-actions-row .theme-btn {
+    border: 2px solid #000; box-shadow: 2px 2px 0 #000; padding: 0.25rem 0.1rem; font-size: 0.65rem; font-weight: 800;
+}
+html[data-theme="brutalist"][data-mode="dark"] .history-actions-row .theme-btn {
+    border: 2px solid #fff; box-shadow: 2px 2px 0 #bef264;
+}
+
 .history-list { display: flex; flex-direction: column; gap: 0.65rem; max-height: 320px; overflow-y: auto; padding: 0.25rem 0.5rem 0.5rem 0.25rem; }
 .list-btn {
     display: flex; justify-content: space-between; align-items: center; width: 100%;

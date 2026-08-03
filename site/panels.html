@@ -558,13 +558,13 @@
                 <div class="panel-card p-6">
                     <div class="flex flex-col gap-2.5 mb-4">
                         <h2 class="text-lg font-bold">Historia Dni</h2>
-                        <div class="flex items-center gap-1.5 select-none w-full">
-                            <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn flex-1 text-center justify-center px-1.5 py-1 text-xs whitespace-nowrap min-w-0">Eksport</button>
-                            <label title="Importuj i scal historię z pliku JSON" class="theme-btn flex-1 text-center justify-center px-1.5 py-1 text-xs cursor-pointer whitespace-nowrap min-w-0">
+                        <div class="flex items-center gap-1.5 select-none w-full history-actions-row">
+                            <button @click="exportHistory()" title="Eksportuj historię do pliku JSON" class="theme-btn flex-1 text-center justify-center px-1 py-1 text-[0.65rem] tracking-tight whitespace-nowrap min-w-0">Eksport</button>
+                            <label title="Importuj i scal historię z pliku JSON" class="theme-btn flex-1 text-center justify-center px-1 py-1 text-[0.65rem] tracking-tight cursor-pointer whitespace-nowrap min-w-0">
                                 Import
                                 <input type="file" accept=".json" @change="importHistory($event)" class="hidden">
                             </label>
-                            <a href="/history.html" title="Zobacz pełną historię i archiwum wpisów" class="theme-btn flex-1 text-center justify-center px-1.5 py-1 text-xs whitespace-nowrap min-w-0" style="text-decoration:none">Wszystkie</a>
+                            <a href="/history.html" title="Zobacz pełną historię i archiwum wpisów" class="theme-btn flex-1 text-center justify-center px-1 py-1 text-[0.65rem] tracking-tight whitespace-nowrap min-w-0" style="text-decoration:none">Wszystkie</a>
                         </div>
                     </div>
 
