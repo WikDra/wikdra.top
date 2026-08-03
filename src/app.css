@@ -301,6 +301,11 @@ html[data-theme="editorial"] .theme-input:focus { border-color: #171717; backgro
 html[data-theme="editorial"][data-mode="dark"] .theme-input { background: #1c1c1f; border-color: var(--line); color: var(--text-main); }
 html[data-theme="editorial"][data-mode="dark"] .theme-input:focus { border-color: var(--text-main); background: var(--bg-main); }
 
+/* Perfect height & vertical alignment matching for search input and button */
+.search-box-row { display: flex; align-items: stretch; gap: 0.5rem; }
+.search-box-row .theme-input { flex: 1; min-width: 0; box-sizing: border-box; height: 2.5rem; }
+.search-box-row .theme-btn { display: inline-flex; align-items: center; justify-content: center; height: 2.5rem; box-sizing: border-box; flex-shrink: 0; }
+
 .theme-input option { background-color: var(--card-bg); color: var(--text-main); }
 html[data-theme="terminal"][data-mode="dark"] .theme-input option { background: #000; color: #34d399; }
 html[data-theme="cyberpunk"][data-mode="dark"] .theme-input option { background: #0d081e; color: #22d3ee; }
@@ -619,6 +624,11 @@ html[data-theme="editorial"] .project-card {
     flex-direction: row; align-items: center; justify-content: space-between; gap: 1rem;
     padding: 2rem 0; border: none !important; border-bottom: 1px solid var(--line) !important;
     background: transparent !important; box-shadow: none !important;
+}
+
+@media (max-width: 640px) {
+    html[data-theme="editorial"] .project-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1.25rem 0; }
+    html[data-theme="terminal"] .project-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
 }
 
 /* cyberpunk corner brackets via CSS only */

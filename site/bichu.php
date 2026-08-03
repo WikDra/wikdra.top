@@ -125,9 +125,9 @@ if (isset($_GET['api'])) {
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="/" class="theme-btn px-4 text-sm" style="text-decoration:none">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-                    Powrót
+                <a href="/" class="theme-btn px-3 sm:px-4 text-xs sm:text-sm inline-flex items-center gap-1.5" style="text-decoration:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 shrink-0" style="height:0.9em;width:0.9em"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    <span>Powrót</span>
                 </a>
 
                 <!-- THEME SWITCHER (in flow) -->
@@ -161,7 +161,7 @@ if (isset($_GET['api'])) {
         <main class="w-full relative">
             <!-- View Mode -->
             <div x-show="!editMode" x-cloak class="panel-card p-8 min-h-[300px] relative group">
-                <div class="whitespace-pre-wrap text-base leading-relaxed"
+                <div class="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-base leading-relaxed"
                      x-text="content || 'Brak treści...'"></div>
 
                 <button @click="openEditor()"
