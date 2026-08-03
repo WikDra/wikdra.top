@@ -124,7 +124,7 @@ if (isset($_GET['api'])) {
                 </a>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
                 <a href="/" class="theme-btn px-3 sm:px-4 text-xs sm:text-sm inline-flex items-center gap-1.5" style="text-decoration:none">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 shrink-0" style="height:0.9em;width:0.9em"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                     <span>Powrót</span>
