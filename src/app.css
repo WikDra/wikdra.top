@@ -890,6 +890,10 @@ html[data-theme="cyberpunk"][data-mode="dark"] .glitch::after { color: #e879f9; 
 html[data-theme="editorial"] *, html[data-theme="editorial"] *::before, html[data-theme="editorial"] *::after {
     animation-duration: 0s !important; transition-duration: 0s !important;
 }
+html[data-theme="editorial"] .switcher-btn svg,
+html[data-theme="editorial"] .site-header .switcher-btn svg {
+    transition-duration: 0.3s !important;
+}
 
 /* terminal dark: subtle green glow on headings */
 html[data-theme="terminal"][data-mode="dark"] h1, html[data-theme="terminal"][data-mode="dark"] h2 {
