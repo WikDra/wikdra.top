@@ -657,9 +657,12 @@ html[data-theme="cyberpunk"] .project-card::after { bottom: 0; right: 0; border-
     border: var(--card-border); background: var(--accent); color: var(--accent-contrast);
 }
 .project-icon svg { height: 1.1rem; width: 1.1rem; }
-html[data-theme="cyberpunk"] .project-icon { border-radius: 0.375rem; box-shadow: 0 0 12px color-mix(in srgb, var(--accent-2) 50%, transparent); background: transparent; color: var(--accent-2); border: 1px solid color-mix(in srgb, var(--accent-2) 50%, transparent); }
-html[data-theme="aurora"] .project-icon { border-radius: 1rem; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); border: 1px solid var(--line); }
-html[data-theme="terminal"] .project-icon { display: none; }
+html[data-theme="terminal"] .project-icon {
+    display: inline-flex !important; align-items: center; justify-content: center;
+    width: 1.1rem; height: 1.1rem; border: none !important; background: transparent !important; color: var(--accent);
+    margin-right: 0.35rem; box-shadow: none !important; flex: none; vertical-align: middle;
+}
+html[data-theme="terminal"] .project-icon svg { width: 0.95rem; height: 0.95rem; }
 html[data-theme="editorial"] .project-icon { display: none; }
 
 /* Brutalist: hero as card */
