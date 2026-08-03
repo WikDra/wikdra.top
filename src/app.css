@@ -241,15 +241,23 @@ html[data-theme="editorial"] .theme-btn { border-radius: 0; }
 }
 html[data-theme="brutalist"] .theme-btn-secondary {
     background: #ffffff; color: #000000; border: 3px solid #000000; box-shadow: 3px 3px 0 #000000;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
-html[data-theme="brutalist"]:hover:not(:disabled) .theme-btn-secondary {
+html[data-theme="brutalist"] .theme-btn-secondary:hover:not(:disabled) {
     background: #f3f4f6; color: #000000; box-shadow: 5px 5px 0 #000000; transform: translate(-2px, -2px);
+}
+html[data-theme="brutalist"] .theme-btn-secondary:active:not(:disabled) {
+    transform: translate(1px, 1px); box-shadow: 2px 2px 0 #000000;
 }
 html[data-theme="brutalist"][data-mode="dark"] .theme-btn-secondary {
     background: #1c1c1f; color: #ffffff; border: 3px solid #ffffff; box-shadow: 3px 3px 0 #bef264;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
-html[data-theme="brutalist"][data-mode="dark"]:hover:not(:disabled) .theme-btn-secondary {
+html[data-theme="brutalist"][data-mode="dark"] .theme-btn-secondary:hover:not(:disabled) {
     background: #27272a; color: #ffffff; box-shadow: 5px 5px 0 #bef264; transform: translate(-2px, -2px);
+}
+html[data-theme="brutalist"][data-mode="dark"] .theme-btn-secondary:active:not(:disabled) {
+    transform: translate(1px, 1px); box-shadow: 2px 2px 0 #bef264;
 }
 html[data-theme="cyberpunk"] .theme-btn-secondary {
     background: transparent; border: 1px solid var(--line); color: var(--text-main); text-shadow: none; box-shadow: none;
