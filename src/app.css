@@ -369,7 +369,7 @@ html[data-theme="cyberpunk"] .site-name { color: var(--accent); letter-spacing: 
 html[data-theme="cyberpunk"][data-mode="dark"] .site-name { text-shadow: 0 0 8px rgba(34,211,238,0.6); }
 
 /* Stats widget: single markup, per-theme presentation */
-.stats { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; flex-shrink: 1; min-width: 0; margin-left: auto; }
+.stats { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; flex-shrink: 1; min-width: 0; margin-left: auto; margin-right: 0.25rem; }
 @media (max-width: 480px) {
     .stats { gap: 0.25rem; font-size: 0.62rem; }
     .site-header { padding: 0.35rem 0.4rem; gap: 0.3rem; }
