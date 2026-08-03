@@ -434,12 +434,12 @@ html[data-theme="aurora"][data-mode="light"] .stat { background: rgba(255,255,25
     border: var(--card-border); background: var(--card-bg); color: var(--text-main);
     box-shadow: var(--card-shadow); transition: transform 0.2s ease, box-shadow 0.2s ease; flex-shrink: 0;
 }
-.switcher-btn svg { height: 1.15rem; width: 1.15rem; }
+.switcher-btn svg { height: 1.15rem; width: 1.15rem; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 header .theme-btn {
     height: 2.3rem; display: inline-flex; align-items: center; justify-content: center;
     padding-top: 0; padding-bottom: 0;
 }
-.switcher-btn[data-open="true"] svg { transform: rotate(90deg); }
+.switcher-btn[data-open="true"] svg { transform: rotate(180deg); }
 html[data-theme="cyberpunk"] .switcher-btn { border-radius: 0; }
 html[data-theme="terminal"] .switcher-btn { border-radius: 4px; }
 html[data-theme="brutalist"] .switcher-btn {
@@ -849,6 +849,11 @@ html[data-theme="cyberpunk"][data-mode="light"] .cyber-sun {
 
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 .cursor-blink { animation: blink 1s steps(1) infinite; }
+@keyframes fadeInUp {
+    from { opacity: 0.65; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.tab-content-animate { animation: fadeInUp 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
 
 @keyframes drift {
     0% { transform: translate(0, 0); }
@@ -1087,6 +1092,7 @@ html[data-theme="terminal"] .status-ok-badge { border-radius: 2px; background: r
     border-radius: 6px;
     pointer-events: none;
     box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    transition: opacity 0.15s ease, transform 0.15s ease;
 }
 html[data-theme="terminal"] .uplot-tooltip { font-family: var(--font-body); font-size: 0.7rem; border-color: var(--accent); border-radius: 4px; box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent); }
 html[data-theme="brutalist"] .uplot-tooltip { border: 2px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 0; font-weight: 700; background: #fff; color: #000; }
