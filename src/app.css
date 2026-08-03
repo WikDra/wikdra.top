@@ -970,33 +970,58 @@ html[data-theme="editorial"] .pill { border-radius: 0; font-family: 'Playfair Di
 .dot.loading { background: #eab308; animation: blink 1s steps(1) infinite; }
 html[data-theme="cyberpunk"][data-mode="dark"] .dot:not(.loading) { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
 
-/* tabs (day switcher) */
-.tab-group { display: flex; width: fit-content; padding: 0.25rem; border: var(--card-border); background: var(--card-bg); }
+/* tabs (day switcher with sliding active pill) */
+.tab-group {
+    position: relative; display: inline-flex; align-items: center; padding: 0.25rem;
+    border: var(--card-border); background: var(--card-bg); box-shadow: var(--card-shadow);
+}
+.tab-slider {
+    position: absolute; top: 0.25rem; bottom: 0.25rem; left: 0.25rem;
+    width: calc(50% - 0.25rem); border-radius: 0.35rem;
+    background: var(--accent);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+    transition: transform 0.25s cubic-bezier(0.34, 1.35, 0.64, 1), background-color 0.2s ease, box-shadow 0.2s ease;
+    z-index: 0; pointer-events: none;
+}
 .tab-btn {
-    padding: 0.5rem 1.5rem; font-size: 0.875rem; font-weight: 700; color: var(--muted); cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    position: relative; z-index: 1; flex: 1; padding: 0.5rem 1.5rem;
+    font-size: 0.875rem; font-weight: 700; color: var(--muted); cursor: pointer; text-align: center;
+    background: transparent !important; border: none !important; box-shadow: none !important;
+    transition: color 0.2s ease, transform 0.2s ease, text-shadow 0.2s ease;
     user-select: none; -webkit-user-select: none;
 }
-.tab-btn:hover { color: var(--text-main); }
-.tab-btn.active { background: var(--accent); color: var(--accent-contrast); }
+.tab-btn:hover { color: var(--text-main); transform: translateY(-1px); }
+.tab-btn:active { transform: translateY(0); }
+.tab-btn.active { color: var(--accent-contrast); }
+
 html[data-theme="brutalist"] .tab-group {
-    border: 3px solid #000; box-shadow: 3px 3px 0 #000; background: #fff;
+    border: 3px solid #000; box-shadow: 3px 3px 0 #000; background: #fff; border-radius: 0;
 }
 html[data-theme="brutalist"][data-mode="dark"] .tab-group {
     border: 3px solid #fff; box-shadow: 3px 3px 0 #bef264; background: #1c1c1f;
 }
-html[data-theme="brutalist"] .tab-btn.active { background: #bef264; color: #000; font-weight: 900; }
-html[data-theme="brutalist"][data-mode="dark"] .tab-btn.active { background: #bef264; color: #000; font-weight: 900; }
+html[data-theme="brutalist"] .tab-slider {
+    background: #bef264; border-radius: 0; border: 2px solid #000; box-shadow: 2px 2px 0 #000;
+}
+html[data-theme="brutalist"][data-mode="dark"] .tab-slider {
+    background: #bef264; border-radius: 0; border: 2px solid #000; box-shadow: 2px 2px 0 #000;
+}
+html[data-theme="brutalist"] .tab-btn.active { color: #000; font-weight: 900; }
+html[data-theme="brutalist"] .tab-btn:hover { transform: translate(-2px, -2px); }
+
 html[data-theme="terminal"] .tab-group { border-radius: 4px; }
-html[data-theme="terminal"] .tab-btn { border-radius: 3px; font-family: var(--font-body); }
+html[data-theme="terminal"] .tab-slider { border-radius: 3px; box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 30%, transparent); }
+html[data-theme="terminal"] .tab-btn { font-family: var(--font-body); }
 html[data-theme="terminal"] .tab-btn:hover { color: var(--accent); }
+
 html[data-theme="aurora"] .tab-group { border-radius: 1rem; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-html[data-theme="aurora"] .tab-btn { border-radius: 0.75rem; }
-html[data-theme="aurora"] .tab-btn:hover { transform: translateY(-1px); }
-html[data-theme="aurora"] .tab-btn.active { box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 45%, transparent); }
+html[data-theme="aurora"] .tab-slider { border-radius: 0.75rem; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 45%, transparent); }
+
+html[data-theme="cyberpunk"] .tab-group { border-radius: 0; }
+html[data-theme="cyberpunk"] .tab-slider { border-radius: 0; box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent); }
 html[data-theme="cyberpunk"] .tab-btn { font-family: 'Space Mono', monospace; }
 html[data-theme="cyberpunk"] .tab-btn:hover { color: var(--accent-2); text-shadow: 0 0 5px currentColor; }
-html[data-theme="cyberpunk"] .tab-btn.active { box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent); text-shadow: 0 0 6px currentColor; }
+html[data-theme="cyberpunk"] .tab-btn.active { color: #05010f; font-weight: 800; text-shadow: none; }
 html[data-theme="editorial"] .tab-btn { transition: none; }
 
 /* history list buttons */
