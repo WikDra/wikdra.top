@@ -584,7 +584,7 @@ html[data-theme="terminal"] .hero-prompt { display: block; }
 html[data-theme="editorial"] .hero-label { display: block; }
 
 .hero-title { font-size: clamp(2rem, 5.5vw, 3.75rem); font-weight: 800; line-height: 1.05; }
-html[data-theme="brutalist"] .hero-title { font-weight: 900; text-transform: uppercase; font-size: clamp(1.6rem, 7vw, 3.75rem); white-space: nowrap; max-width: 100%; display: block; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.75rem; }
+html[data-theme="brutalist"] .hero-title { font-weight: 800; text-transform: uppercase; font-size: clamp(1.2rem, 6.2vw, 3.5rem); white-space: nowrap; max-width: 100%; display: block; overflow: hidden; text-overflow: ellipsis; }
 html[data-theme="brutalist"] .hero-title::after { content: '!'; }
 html[data-theme="cyberpunk"] .hero-title { text-transform: uppercase; text-align: center; }
 html[data-theme="cyberpunk"][data-mode="dark"] .hero-title {
@@ -607,7 +607,7 @@ html[data-theme="aurora"][data-mode="light"] .hero-title {
 html[data-theme="editorial"] .hero-title { font-weight: 700; }
 
 .hero-lead { margin-top: 1rem; line-height: 1.625; color: var(--muted); max-width: 36rem; }
-html[data-theme="brutalist"] .hero-lead { color: var(--text-main); font-weight: 700; font-size: 1.125rem; line-height: 1.6; max-width: 42rem; }
+html[data-theme="brutalist"] .hero-lead { color: var(--text-main); font-weight: 600; font-size: 1.05rem; }
 @media (max-width: 480px) {
     html[data-theme="brutalist"] .hero-lead { font-size: 0.875rem; line-height: 1.5; margin-top: 0.6rem; }
 }
@@ -664,10 +664,10 @@ html[data-theme="editorial"] .project-icon { display: none; }
 /* Brutalist: hero as card */
 html[data-theme="brutalist"] .hero-section {
     border: var(--card-border); background: var(--card-bg); box-shadow: var(--card-shadow);
-    padding: 2.25rem 2.5rem;
+    padding: 1.5rem 2rem;
 }
 @media (max-width: 480px) {
-    html[data-theme="brutalist"] .hero-section { padding: 1.5rem 1.25rem; }
+    html[data-theme="brutalist"] .hero-section { padding: 1.25rem 1rem; }
 }
 
 /* Brutalist: per-card icon colors */
