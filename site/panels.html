@@ -468,7 +468,7 @@
             </div>
 
             <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 flex-nowrap w-full sm:w-auto shrink-0">
-                <div class="pill">
+                <div class="pill" x-data="{ expanded: false }" @click="expanded = !expanded" :class="{ 'expanded': expanded }" title="Kliknij, aby rozwinąć / zwinąć">
                     <span class="dot" :class="{ 'loading': loading }"></span>
                     <span x-text="loading ? 'Pobieranie danych...' : 'Aktualizacja: ' + stats.lastUpdate"></span>
                 </div>
