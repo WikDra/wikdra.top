@@ -501,12 +501,12 @@ html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn {
 }
 html[data-theme="brutalist"] .site-header .switcher-btn:hover,
 html[data-theme="brutalist"] .site-header .switcher-btn[data-open="true"] {
-    background: #a3e635; color: #000; border-color: #000;
+    background: #ffffff; color: #000000; border-color: #000000;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn:hover,
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn[data-open="true"] {
-    background: #bef264; color: #000; border-color: #fff;
+    background: #1c1c1f; color: #ffffff; border-color: #ffffff;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="cyberpunk"] .site-header .switcher-btn {
