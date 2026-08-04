@@ -327,7 +327,7 @@ html[data-theme="aurora"][data-mode="dark"] .theme-input option { background: #0
 html[data-theme="brutalist"] .stat-value { font-weight: 900; }
 html[data-theme="cyberpunk"][data-mode="dark"] .stat-value { color: var(--accent); text-shadow: 0 0 8px rgba(34,211,238,0.5); }
 html[data-theme="cyberpunk"][data-mode="light"] .stat-value { color: var(--accent); }
-html[data-theme="terminal"] .stat-value { color: var(--text-main); font-family: 'Space Mono', monospace; }
+html[data-theme="terminal"] .stat-value { color: var(--text-main); font-family: var(--font-body); }
 html[data-theme="editorial"] .stat-value { font-family: 'Playfair Display', serif; }
 
 /* Tables */
