@@ -1007,10 +1007,11 @@ html[data-theme="terminal"] .page-subtitle::before { content: '# '; }
 
 /* pill (status / date indicator) */
 .pill {
-    display: inline-flex; align-items: center; gap: 0.5rem; width: fit-content;
+    display: inline-flex; align-items: center; gap: 0.5rem; width: fit-content; max-width: 100%;
     height: 2.3rem; padding: 0 0.85rem; border: var(--card-border); background: var(--card-bg);
-    font-size: 0.78rem; box-shadow: var(--card-shadow);
+    font-size: 0.78rem; box-shadow: var(--card-shadow); flex-shrink: 1; min-width: 0;
 }
+.pill span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 html[data-theme="brutalist"] .pill {
     border: 3px solid #000; background: #fff; color: #000;
     box-shadow: 3px 3px 0 #000; border-radius: 0; font-weight: 700;
