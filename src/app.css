@@ -581,8 +581,10 @@ html[data-theme="aurora"] .site-header .switcher-btn {
 html[data-theme="aurora"][data-mode="light"] .site-header .switcher-btn {
     background: rgba(255,255,255,0.5);
 }
-html[data-theme="aurora"] .site-header .switcher-btn:hover {
-    background: rgba(255,255,255,0.2); transform: scale(1.05);
+html[data-theme="aurora"] .site-header .switcher-btn:hover,
+html[data-theme="aurora"] .site-header .switcher-btn[data-open="true"] {
+    background: rgba(255,255,255,0.25); border-color: var(--accent); color: var(--accent);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 35%, transparent); transform: scale(1.06);
 }
 
 .switcher-panel {
