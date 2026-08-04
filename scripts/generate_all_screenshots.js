@@ -1,11 +1,38 @@
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const BASE_OUT_DIR = 'D:\\wysypisko\\mikrus\\aktualny_wygląd_03.08';
+const WORKSPACE_DIR = path.resolve(__dirname, '..'); // d:\wysypisko\mikrus\wikdra.top
+const MIKRUS_PARENT_DIR = path.resolve(WORKSPACE_DIR, '..'); // d:\wysypisko\mikrus
+
 const DESKTOP_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 const MOBILE_UA = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36';
+
+function getGitDetails() {
+  try {
+    const branch = execSync('git branch --show-current', { cwd: WORKSPACE_DIR }).toString().trim() || 'unknown-branch';
+    const shortHash = execSync('git rev-parse --short HEAD', { cwd: WORKSPACE_DIR }).toString().trim() || 'unknown-hash';
+    const fullHash = execSync('git rev-parse HEAD', { cwd: WORKSPACE_DIR }).toString().trim() || 'unknown-full-hash';
+    const commitMsg = execSync('git log -1 --format="%s"', { cwd: WORKSPACE_DIR }).toString().trim() || '';
+    const commitDate = execSync('git log -1 --format="%ci"', { cwd: WORKSPACE_DIR }).toString().trim() || '';
+    return { branch, shortHash, fullHash, commitMsg, commitDate };
+  } catch (e) {
+    return {
+      branch: 'modernize',
+      shortHash: 'HEAD',
+      fullHash: 'HEAD',
+      commitMsg: 'Local working copy',
+      commitDate: new Date().toISOString()
+    };
+  }
+}
+
+const gitInfo = getGitDetails();
+const dateStr = new Date().toISOString().split('T')[0];
+const defaultFolderName = `screenshots_${gitInfo.branch}_${gitInfo.shortHash}_${dateStr}`;
+const targetOutDir = process.argv[2] ? path.resolve(process.argv[2]) : path.join(MIKRUS_PARENT_DIR, defaultFolderName);
 
 const devices = [
   {
@@ -46,8 +73,49 @@ const pages = [
   { name: 'bichu', url: 'https://panele.wikdra.top/bichu.php' }
 ];
 
+function createReadme(outDir) {
+  const content = `# Zrzuty Ekranu: ${gitInfo.branch} (${gitInfo.shortHash})
+
+Ten katalog zawiera automatycznie wygenerowany zestaw zrzutów ekranu serwisu **wikdra.top** dla różnych urządzeń oraz wszystkich 5 motywów v6 (w trybie jasnym i ciemnym).
+
+## Informacje o Commicie
+
+- **Gałąź (Branch):** \`${gitInfo.branch}\`
+- **Short Hash:** \`${gitInfo.shortHash}\`
+- **Full Commit Hash:** \`${gitInfo.fullHash}\`
+- **Tytuł Commita:** \`${gitInfo.commitMsg}\`
+- **Data Commita:** \`${gitInfo.commitDate}\`
+- **Data Generowania:** \`${new Date().toLocaleString('pl-PL')}\`
+
+> [!NOTE]
+> **Uwaga dotycząca wykresów fotowoltaiki na podstronie Paneli (\`panels.png\`):**
+> Ewentualny brak wykresu na niektórych zrzutach wynika wyłącznie z przekroczenia limitu zapytań (rate limit) zewnętrznego API (\`forecast.solar\`). Kod renderujący uPlot działa w 100% poprawnie.
+
+---
+
+## 📁 Struktura Urządzeń
+
+- \`1_desktop_1080p/\`: Widok komputerowy (1920x1080 px)
+- \`2_pixel7_412x915/\`: Widok telefonu Google Pixel 7 (viewport 412x740 px z uwzględnieniem paska adresu Chrome)
+- \`3_small_phone_360x640/\`: Widok małego telefonu mobilnego (viewport 360x610 px)
+
+Dla każdego urządzenia wygenerowano podkatalogi dla 10 kombinacji motywów (5 motywów x 2 tryby: light/dark).
+`;
+
+  fs.writeFileSync(path.join(outDir, 'README.md'), content, 'utf8');
+}
+
 (async () => {
-  console.log('Starting full multi-theme, multi-device screenshot generation...');
+  console.log(`Starting automated screenshot generator...`);
+  console.log(`Git Branch: ${gitInfo.branch}`);
+  console.log(`Git Commit: ${gitInfo.shortHash} (${gitInfo.commitMsg})`);
+  console.log(`Target Folder: ${targetOutDir}\n`);
+
+  if (!fs.existsSync(targetOutDir)) {
+    fs.mkdirSync(targetOutDir, { recursive: true });
+  }
+
+  createReadme(targetOutDir);
 
   const browser = await puppeteer.launch({
     executablePath: CHROME_PATH,
@@ -64,12 +132,12 @@ const pages = [
   const page = await browser.newPage();
 
   for (const dev of devices) {
-    const devDir = path.join(BASE_OUT_DIR, dev.folder);
+    const devDir = path.join(targetOutDir, dev.folder);
     if (!fs.existsSync(devDir)) {
       fs.mkdirSync(devDir, { recursive: true });
     }
 
-    console.log(`\n=== Processing Device: ${dev.folder} ===`);
+    console.log(`=== Processing Device: ${dev.folder} ===`);
     await page.setViewport(dev.viewport);
     await page.setUserAgent(dev.ua);
 
@@ -84,7 +152,6 @@ const pages = [
       for (const p of pages) {
         await page.goto(p.url, { waitUntil: 'networkidle2' });
 
-        // Apply theme directly into documentElement dataset & localStorage
         await page.evaluate(({ theme, mode }) => {
           document.documentElement.dataset.theme = theme;
           document.documentElement.dataset.mode = mode;
@@ -94,8 +161,7 @@ const pages = [
           document.cookie = `global_mode=${mode};path=/;max-age=31536000`;
         }, combo);
 
-        // Wait a short moment for CSS transitions and fonts
-        await page.evaluate(() => new Promise(r => setTimeout(r, 400)));
+        await page.evaluate(() => new Promise(r => setTimeout(r, 350)));
 
         const filePath = path.join(themeDir, `${p.name}.png`);
         await page.screenshot({ path: filePath, fullPage: false });
@@ -104,5 +170,5 @@ const pages = [
   }
 
   await browser.close();
-  console.log('\n✅ All screenshots generated cleanly into structured folders!');
+  console.log(`\n✅ Screenshots generated successfully into:\n${targetOutDir}`);
 })();
