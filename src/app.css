@@ -536,7 +536,7 @@ html[data-theme="brutalist"] .site-header .switcher-btn {
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn {
-    border: 2px solid #fff; background: #fff; color: #000;
+    border: 2px solid #bef264; background: #bef264; color: #000000;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="brutalist"] .site-header .switcher-btn:hover,
@@ -546,7 +546,7 @@ html[data-theme="brutalist"] .site-header .switcher-btn[data-open="true"] {
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn:hover,
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn[data-open="true"] {
-    background: #1c1c1f; color: #ffffff; border-color: #ffffff;
+    background: #ffffff; color: #000000; border-color: #ffffff;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="cyberpunk"] .site-header .switcher-btn {
