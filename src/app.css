@@ -546,7 +546,7 @@ html[data-theme="brutalist"] .site-header .switcher-btn[data-open="true"] {
 }
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn:hover,
 html[data-theme="brutalist"][data-mode="dark"] .site-header .switcher-btn[data-open="true"] {
-    background: #ffffff; color: #000000; border-color: #ffffff;
+    background: #eab308; color: #000000; border-color: #eab308;
     box-shadow: none !important; transform: none !important;
 }
 html[data-theme="cyberpunk"] .site-header .switcher-btn {
