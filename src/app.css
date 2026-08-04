@@ -489,7 +489,7 @@ html[data-theme="cyberpunk"] .switcher-btn {
 html[data-theme="cyberpunk"] .switcher-btn:hover,
 html[data-theme="cyberpunk"] .switcher-btn[data-open="true"] {
     border-color: var(--accent-2); color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 20%, transparent);
-    box-shadow: 0 0 16px color-mix(in srgb, var(--accent-2) 60%, transparent); transform: translateY(-1.5px);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent-2) 60%, transparent);
 }
 
 html[data-theme="terminal"] .switcher-btn {
@@ -499,7 +499,7 @@ html[data-theme="terminal"] .switcher-btn {
 html[data-theme="terminal"] .switcher-btn:hover,
 html[data-theme="terminal"] .switcher-btn[data-open="true"] {
     background: color-mix(in srgb, var(--accent) 25%, transparent); color: var(--accent);
-    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 50%, transparent); transform: translateY(-1.5px);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 html[data-theme="aurora"] .switcher-btn {
@@ -521,7 +521,7 @@ html[data-theme="editorial"] .switcher-btn {
 }
 html[data-theme="editorial"] .switcher-btn:hover,
 html[data-theme="editorial"] .switcher-btn[data-open="true"] {
-    border-color: var(--text-main); transform: translateY(-1.5px);
+    border-color: var(--text-main);
 }
 
 /* Switcher button inside .site-header (main page header bar) */
