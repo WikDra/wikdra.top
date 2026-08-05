@@ -35,8 +35,7 @@
 
             setStatus: function (message, kind) {
                 this.status = { message: message, kind: kind || 'info' };
-                // informacje same znikaja, ostrzezenia i bledy zostaja
-                if (this.statusTimer) { clearTimeout(this.statusTimer); this.statusTimer = null; }
+                // informacje same znikają, ostrzeżenia i błędy zostają
                 if ((kind || 'info') === 'info') {
                     this.statusTimer = setTimeout(function () {
                         this.status = { message: '', kind: 'info' };
