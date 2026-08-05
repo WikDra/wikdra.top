@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Jeden adres na stronę — zgodny z <link rel="canonical"> w dokumentach.
+  Portfolio żyje na wikdra.top, dashboard i archiwum na panele.wikdra.top.
+  Bichu i offline.html są celowo pominięte (noindex).
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://wikdra.top/</loc>
-        <lastmod>2026-06-16</lastmod>
+        <lastmod>2026-08-05</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://panele.wikdra.top/</loc>
-        <lastmod>2026-06-16</lastmod>
+        <loc>https://panele.wikdra.top/panels.html</loc>
+        <lastmod>2026-08-05</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://wikdra.top/bichu</loc>
-        <lastmod>2026-06-17</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
+        <loc>https://panele.wikdra.top/history.html</loc>
+        <lastmod>2026-08-05</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
     </url>
 </urlset>

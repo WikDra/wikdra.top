@@ -65,13 +65,28 @@ const themeCombos = [
   { theme: 'editorial', mode: 'dark' }
 ];
 
+// Adres bazowy: domyślnie produkcja, ale można wskazać lokalny build.
+// UWAGA: zrzuty z produkcji dokumentują to, co JEST WDROŻONE — nie to, co leży
+// w bieżącym commicie. Dla weryfikacji zmian przed wdrożeniem:
+//   npm run serve                                   (w drugim terminalu)
+//   $env:BASE_URL="http://127.0.0.1:8790"; npm run screenshots
+const BASE_URL = (process.env.BASE_URL || 'https://panele.wikdra.top').replace(/\/+$/, '');
+const IS_LOCAL = /127\.0\.0\.1|localhost/.test(BASE_URL);
+
+// Opcjonalne filtry (listy po przecinku), np. ONLY_THEMES=aurora,brutalist
+const ONLY_THEMES = (process.env.ONLY_THEMES || '').split(',').filter(Boolean);
+const ONLY_PAGES = (process.env.ONLY_PAGES || '').split(',').filter(Boolean);
+const ONLY_DEVICES = (process.env.ONLY_DEVICES || '').split(',').filter(Boolean);
+
 const pages = [
-  { name: 'index', url: 'https://panele.wikdra.top/index.html' },
-  { name: 'panels', url: 'https://panele.wikdra.top/panels.html' },
-  { name: 'history', url: 'https://panele.wikdra.top/history.html' },
-  { name: '404', url: 'https://panele.wikdra.top/404.html' },
-  { name: 'bichu', url: 'https://panele.wikdra.top/bichu.php' }
-];
+  { name: 'index', url: BASE_URL + '/index.html' },
+  { name: 'panels', url: BASE_URL + '/panels.html' },
+  { name: 'history', url: BASE_URL + '/history.html' },
+  { name: '404', url: BASE_URL + '/404.html' },
+  { name: 'offline', url: BASE_URL + '/offline.html' },
+  // bichu.php wymaga PHP — przy serwerze lokalnym bez PHP jest pomijane
+  { name: 'bichu', url: BASE_URL + '/bichu.php', skipLocal: true }
+].filter((p) => (ONLY_PAGES.length === 0 || ONLY_PAGES.includes(p.name)) && !(IS_LOCAL && p.skipLocal));
 
 function createReadme(outDir) {
   const content = `# Zrzuty Ekranu: ${gitInfo.branch} (${gitInfo.shortHash})
@@ -86,6 +101,7 @@ Ten katalog zawiera automatycznie wygenerowany zestaw zrzutów ekranu serwisu **
 - **Tytuł Commita:** \`${gitInfo.commitMsg}\`
 - **Data Commita:** \`${gitInfo.commitDate}\`
 - **Data Generowania:** \`${new Date().toLocaleString('pl-PL')}\`
+- **Adres bazowy:** \`${BASE_URL}\`${IS_LOCAL ? ' (lokalny build — odpowiada temu commitowi)' : '\n\n> [!WARNING]\n> Zrzuty pochodzą z PRODUKCJI. Sam URL nie gwarantuje, że produkcja odpowiada bieżącemu commitowi — sprawdź, co jest wdrożone.'}
 
 > [!NOTE]
 > **Uwaga dotycząca wykresów fotowoltaiki na podstronie Paneli (\`panels.png\`):**
@@ -131,7 +147,7 @@ Dla każdego urządzenia wygenerowano podkatalogi dla 10 kombinacji motywów (5 
 
   const page = await browser.newPage();
 
-  for (const dev of devices) {
+  for (const dev of devices.filter((d) => ONLY_DEVICES.length === 0 || ONLY_DEVICES.includes(d.folder))) {
     const devDir = path.join(targetOutDir, dev.folder);
     if (!fs.existsSync(devDir)) {
       fs.mkdirSync(devDir, { recursive: true });
@@ -141,7 +157,7 @@ Dla każdego urządzenia wygenerowano podkatalogi dla 10 kombinacji motywów (5 
     await page.setViewport(dev.viewport);
     await page.setUserAgent(dev.ua);
 
-    for (const combo of themeCombos) {
+    for (const combo of themeCombos.filter((c) => ONLY_THEMES.length === 0 || ONLY_THEMES.includes(c.theme))) {
       const themeDir = path.join(devDir, `${combo.theme}_${combo.mode}`);
       if (!fs.existsSync(themeDir)) {
         fs.mkdirSync(themeDir, { recursive: true });
