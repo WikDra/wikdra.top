@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
+
+# Panel administracyjny nie ma czego szukać w indeksie.
+Disallow: /bichu
+Disallow: /bichu.php
+Disallow: /offline.html
+
 Sitemap: https://wikdra.top/sitemap.xml

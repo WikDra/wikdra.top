@@ -6,6 +6,11 @@ deploy_config.bat
 SECRETS*
 *.local.*
 
+# Bichu runtime data (tworzone przez PHP na serwerze — nigdy nie commitować
+# i nigdy nie wysyłać z lokalnej kopii, bo nadpisałoby treść na produkcji)
+bichu_content.txt
+bichu_attempts.json
+
 # Build/temporary/base64/hex artifacts
 *.b64
 *.hex

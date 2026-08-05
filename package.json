@@ -1,0 +1,24 @@
+{
+  "name": "wikdra.top",
+  "private": true,
+  "version": "6.1.0",
+  "description": "wikdra.top / panele.wikdra.top - static site, built CSS via Tailwind CLI",
+  "scripts": {
+    "build:css": "tailwindcss -i src/app.css -o site/assets/css/app-v6.css --minify",
+    "watch:css": "tailwindcss -i src/app.css -o site/assets/css/app-v6.css --watch",
+    "check": "node scripts/check.js",
+    "icons": "node scripts/generate_icons.js",
+    "serve": "node scripts/serve.js",
+    "smoke": "node scripts/smoke.js",
+    "test:php": "pwsh -NoProfile -File scripts/test_php_api.ps1",
+    "screenshots": "node scripts/generate_all_screenshots.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.17",
+    "puppeteer-core": "^25.4.0",
+    "tailwindcss": "^4.1.17"
+  }
+}
