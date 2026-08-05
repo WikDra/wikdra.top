@@ -119,7 +119,7 @@ async function handleNavigation(request) {
     } catch (e) { /* brak sieci → niżej */ }
 
     const cache = await caches.open(SHELL_CACHE);
-    const cached = await cache.match(url.pathname) || await cache.match(url.pathname + 'index.html');
+    const cached = await cache.match(url.pathname) || (url.pathname.endsWith('/') ? await cache.match(url.pathname + 'index.html') : null);
     if (cached) return cached;
     const offline = await cache.match('/offline.html');
     return offline || new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
