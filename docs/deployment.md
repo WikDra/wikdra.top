@@ -11,6 +11,9 @@ Serwer: Alpine Linux + Nginx na VPS Mikrus. Katalog WWW: `/var/lib/nginx/html/`.
    @set MIKRUS_USER=YOUR_USER
    @set MIKRUS_HOST=YOUR_HOST
    ```
+   Realne wartości hosta/portu/loginu **nie trafiają do repo** — trzymaj je
+   wyłącznie w `config.bat` oraz w lokalnych, ignorowanych przez Gita plikach
+   (`*.local.*`, np. `AGENTS.local.md`).
 
 2. **`site/bichu_config.php` jest WYMAGANY, jeśli edycja Bichu ma działać.**
    Bez niego `bichu.php` odpowiada `503` i nie zapisuje niczego (fail-closed) —
@@ -118,7 +121,7 @@ zachowując istniejący crontab i tworząc jego kopię w `/tmp`. Nie używaj
 
 ## Uwagi
 
-- Połączenie: `ssh -p YOUR_PORT YOUR_USER@YOUR_HOST`.
+- Połączenie: `ssh -p YOUR_PORT YOUR_USER@YOUR_HOST` (wartości z `config.bat`).
 - **Znane ograniczenie:** hasło SSH trafia do argumentów procesu (`plink -pw`,
   `echo … | sudo -S`). Docelowo klucz SSH (`plink -i`) + `sudoers` z `NOPASSWD`
   dla `cp`/`rc-service`.

@@ -24,7 +24,7 @@ set "WITH_NGINX=0"
 if /I "%~1"=="--with-nginx" set "WITH_NGINX=1"
 
 if not exist "%REPO_ROOT%\config.bat" (
-    echo @set MIKRUS_PW=YOUR_PASSWORD_HERE> "%REPO_ROOT%\config.bat"
+    echo @set MIKRUS_PW=YOUR_PASSWORD> "%REPO_ROOT%\config.bat"
     echo @set MIKRUS_PORT=YOUR_PORT>> "%REPO_ROOT%\config.bat"
     echo @set MIKRUS_USER=YOUR_USER>> "%REPO_ROOT%\config.bat"
     echo @set MIKRUS_HOST=YOUR_HOST>> "%REPO_ROOT%\config.bat"
