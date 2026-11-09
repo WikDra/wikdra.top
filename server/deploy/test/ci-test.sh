@@ -22,8 +22,9 @@ check() { # check <opis> <polecenie…>
 	fi
 }
 pack() { gzip -9 -n -c "$1" >"$1.gz" && sha256sum "$1.gz" | cut -d' ' -f1; }
-# pomocnicze polecenia (używane także w sh -c): curl przez nginx z Host strony głównej, wdrożenie paczki
-printf '#!/bin/sh\nexec curl -s -H "Host: wikdra.top" "$@"\n' >/usr/local/bin/web
+# pomocnicze polecenia (używane także w sh -c): curl przez nginx z Host strony głównej (z odstępem
+# 0,25 s — nginx przepuszcza 5 żądań/s z adresu, a test nie sprawdza tu limit_req), wdrożenie paczki
+printf '#!/bin/sh\nsleep 0.25\nexec curl -s -H "Host: wikdra.top" "$@"\n' >/usr/local/bin/web
 printf '#!/bin/sh\nexec /usr/local/sbin/wikdra-deploy "$1" <"$2"\n' >/usr/local/bin/deploy
 chmod +x /usr/local/bin/web /usr/local/bin/deploy
 
@@ -132,7 +133,7 @@ S4=$(pack /tmp/w4)
 check "deploy ci-3, ci-4" sh -c "sleep 1; deploy $S3 /tmp/w3.gz | tail -n 1 | grep -q 'OK: ci-3' && sleep 1 && deploy $S4 /tmp/w4.gz | tail -n 1 | grep -q 'OK: ci-4'"
 check "zostają 3 wydania (ci-4, ci-3, ci-2)" sh -c '[ "$(ls -1t /srv/wikdra/releases | tr "\n" " ")" = "ci-4 ci-3 ci-2 " ]'
 check "restart po awarii procesu (respawn)" sh -c 'kill -9 $(pgrep -f "wikdra/current/wikdra serve" | head -1); sleep 4; wget -q -O - http://127.0.0.1:8092/healthz | grep -q "\"version\":\"ci-4\""'
-check "dziennik wdrożeń" sh -c 'grep -c "OK: ci-" /var/log/wikdra/deploy.log | grep -qx 4'
+check "dziennik wdrożeń (ci-1, ci-2, ci-2 bez zmian, ci-3, ci-4)" sh -c 'grep -c "OK: ci-" /var/log/wikdra/deploy.log | grep -qx 5'
 check "binarka jako root odmawia" sh -c '! /srv/wikdra/current/wikdra serve --addr 127.0.0.1:1 2>/tmp/err; grep -q "nie działa jako root" /tmp/err'
 
 echo

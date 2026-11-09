@@ -53,6 +53,7 @@ ensure_dir /srv/wikdra 0755 root:root
 ensure_dir /srv/wikdra/releases 0755 root:root
 ensure_dir /var/lib/wikdra 0750 wikdra:wikdra
 ensure_dir /var/log/wikdra 0755 root:root
+ensure_dir /usr/local/sbin 0755 root:root
 ensure_dir /usr/local/lib/wikdra 0755 root:root
 
 ensure_file() { # ensure_file <źródło> <cel> <tryb>
