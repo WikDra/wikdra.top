@@ -10,7 +10,7 @@
     "icons": "node scripts/generate_icons.js",
     "serve": "node scripts/serve.js",
     "smoke": "node scripts/smoke.js",
-    "test:php": "pwsh -NoProfile -File scripts/test_php_api.ps1",
+    "test:server": "cd server && go vet ./... && go test -count=1 ./...",
     "screenshots": "node scripts/generate_all_screenshots.js"
   },
   "engines": {

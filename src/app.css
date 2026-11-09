@@ -7,7 +7,7 @@
 @import "tailwindcss" source(none);
 
 @source "../site/*.html";
-@source "../site/*.php";
+@source "../server/*.html"; /* strona Bichu (renderuje usługa Go) */
 @source "../site/assets/js/theme.js";
 @source "../site/assets/js/storage.js";
 @source "../site/assets/js/solar.js";

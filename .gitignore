@@ -19,6 +19,10 @@ bichu_attempts.json
 node_modules/
 dist/
 
+# Usługa Go (server/): buildy lokalne i dane do pracy lokalnej
+server/.build/
+.dev-wikdra*/
+
 # Python caches
 __pycache__/
 *.py[cod]

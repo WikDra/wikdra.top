@@ -5,9 +5,8 @@
  *   1. składnia wszystkich własnych plików JS (node --check),
  *   2. build CSS jest deterministyczny (artefakt zgodny ze źródłem),
  *   3. poprawność JSON-ów (manifest, package),
- *   4. brak prywatnych współrzędnych i typowych wpadek w plikach site/,
- *   5. `php -l` dla plików PHP — tylko jeśli PHP jest dostępne w PATH
- *      (na Windowsie zwykle nie jest; wtedy krok jest pomijany z ostrzeżeniem).
+ *   4. brak prywatnych współrzędnych i typowych wpadek w plikach site/ (i stronie Bichu z server/).
+ * Kod Go (server/) sprawdzają osobno `go vet` i `go test` (w CI job „serwer Go”).
  */
 const { execFileSync, spawnSync } = require('child_process');
 const fs = require('fs');
@@ -24,7 +23,7 @@ function warn(msg) { console.warn('  ! ' + msg); warnings++; }
 function section(name) { console.log('\n' + name); }
 
 // ——— 1. składnia JS ———
-section('[1/5] Skladnia JS');
+section('[1/4] Skladnia JS');
 const ownJs = [
     'assets/js/theme.js',
     'assets/js/solar.js',
@@ -46,7 +45,7 @@ for (const file of ownJs.concat(scriptJs)) {
 }
 
 // ——— 2. build CSS deterministyczny ———
-section('[2/5] Build CSS');
+section('[2/4] Build CSS');
 const cssArtifact = path.join(SITE, 'assets/css/app-v6.css');
 const tailwindCli = path.join(ROOT, 'node_modules', '@tailwindcss', 'cli', 'dist', 'index.mjs');
 const tmpOut = path.join(ROOT, 'src', '_check-build.css');
@@ -68,7 +67,7 @@ try {
 }
 
 // ——— 3. JSON-y ———
-section('[3/5] Pliki JSON');
+section('[3/4] Pliki JSON');
 for (const rel of ['site/manifest-solar.json', 'package.json']) {
     try {
         JSON.parse(fs.readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -79,7 +78,7 @@ for (const rel of ['site/manifest-solar.json', 'package.json']) {
 }
 
 // ——— 4. reguły treści ———
-section('[4/5] Reguly tresci');
+section('[4/4] Reguly tresci');
 function walk(dir, out = []) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         const full = path.join(dir, entry.name);
@@ -88,7 +87,7 @@ function walk(dir, out = []) {
     }
     return out;
 }
-const textFiles = walk(SITE).concat(walk(path.join(ROOT, 'scripts')))
+const textFiles = walk(SITE).concat(walk(path.join(ROOT, 'scripts')), [path.join(ROOT, 'server', 'bichu.html')])
     .filter((f) => /\.(html|php|js|json|txt|xml|sh|bat|conf)$/i.test(f))
     .filter((f) => !/alpine\.min\.js|uPlot\.iife\.min\.js|uplot\.min\.css|app-v6\.css/.test(f))
     // pliki weryfikujące zawierają same wzorce kontrolne, więc pasowałyby do reguł
@@ -115,25 +114,21 @@ for (const file of textFiles) {
 if (contentIssues === 0) ok('brak zakazanych wzorcow w ' + textFiles.length + ' plikach');
 
 // każda strona musi mieć dokładnie jeden <h1>
-for (const page of ['index.html', 'panels.html', 'history.html', '404.html', 'offline.html']) {
+for (const page of ['index.html', 'panels.html', 'history.html', '404.html', 'offline.html', '../server/bichu.html']) {
     const text = fs.readFileSync(path.join(SITE, page), 'utf8');
     const count = (text.match(/<h1[\s>]/g) || []).length;
     if (count === 1) ok(page + ': jeden <h1>');
     else fail(page + ': liczba <h1> = ' + count);
 }
 
-// ——— 5. PHP ———
-section('[5/5] Skladnia PHP');
-const phpCmd = spawnSync(process.platform === 'win32' ? 'where' : 'which', ['php'], { encoding: 'utf8' });
-if (phpCmd.status !== 0) {
-    warn('PHP nie jest w PATH — pominieto `php -l` (uruchom na serwerze: php -l bichu.php stats.php)');
-} else {
-    for (const rel of ['site/bichu.php', 'site/stats.php']) {
-        const res = spawnSync('php', ['-l', path.join(ROOT, rel)], { encoding: 'utf8' });
-        if (res.status === 0) ok(rel);
-        else fail(rel + ': ' + (res.stdout || res.stderr || '').trim().split('\n')[0]);
-    }
-}
+// PHP zniknął ze strony (stats i Bichu obsługuje usługa Go) — nowy plik .php w repo pod site/ to
+// pomyłka, a nginx i tak zwraca dla niego 404. Liczą się pliki śledzone przez Gita (lokalny,
+// ignorowany bichu_config.php z dawnych czasów nie psuje kontroli).
+const tracked = spawnSync('git', ['ls-files', '-z', '--', 'site'], { cwd: ROOT, encoding: 'utf8' });
+const phpLeft = (tracked.status === 0 ? tracked.stdout.split('\0') : []).filter((f) => /\.php$/i.test(f));
+if (tracked.status !== 0) warn('git niedostepny — pominieto kontrole plikow .php');
+else if (phpLeft.length === 0) ok('brak plikow .php w site/');
+else fail('pliki .php w site/: ' + phpLeft.join(', '));
 
 console.log('\n' + (failures === 0
     ? 'WYNIK: OK' + (warnings ? ' (ostrzezenia: ' + warnings + ')' : '')

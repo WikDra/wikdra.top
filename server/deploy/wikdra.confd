@@ -1,0 +1,6 @@
+# /etc/conf.d/wikdra — usługa /etc/init.d/wikdra (server/deploy/wikdra.initd)
+wikdra_user=wikdra
+wikdra_home=/srv/wikdra
+wikdra_data=/var/lib/wikdra
+wikdra_addr=127.0.0.1:8092
+wikdra_memlimit=32MiB

@@ -84,8 +84,8 @@ const pages = [
   { name: 'history', url: BASE_URL + '/history.html' },
   { name: '404', url: BASE_URL + '/404.html' },
   { name: 'offline', url: BASE_URL + '/offline.html' },
-  // bichu.php wymaga PHP — przy serwerze lokalnym bez PHP jest pomijane
-  { name: 'bichu', url: BASE_URL + '/bichu.php', skipLocal: true }
+  // Bichu renderuje usługa Go (server/) — lokalnie tylko z `WIKDRA_API=… npm run serve`, więc pomijane
+  { name: 'bichu', url: BASE_URL + '/bichu', skipLocal: true }
 ].filter((p) => (ONLY_PAGES.length === 0 || ONLY_PAGES.includes(p.name)) && !(IS_LOCAL && p.skipLocal));
 
 function createReadme(outDir) {

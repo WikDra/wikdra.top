@@ -1,0 +1,38 @@
+#!/sbin/openrc-run
+# wikdra — metryki serwera i Bichu dla wikdra.top (binarka Go z server/, za nginx).
+# Ustawienia w /etc/conf.d/wikdra. Wydania: /srv/wikdra/releases/<wersja>, bieżące: /srv/wikdra/current
+# (podmienia /usr/local/sbin/wikdra-deploy).
+description="wikdra.top: /stats.php i /bichu (Go)"
+
+: "${wikdra_user:=wikdra}"
+: "${wikdra_home:=/srv/wikdra}"
+: "${wikdra_data:=/var/lib/wikdra}"
+: "${wikdra_addr:=127.0.0.1:8092}"
+: "${wikdra_memlimit:=32MiB}"
+
+supervisor="supervise-daemon"
+command="${wikdra_home}/current/wikdra"
+command_args="serve --addr ${wikdra_addr} --data-dir ${wikdra_data}"
+command_user="${wikdra_user}:${wikdra_user}"
+directory="${wikdra_data}"
+output_log="/var/log/wikdra/wikdra.log"
+error_log="/var/log/wikdra/wikdra.log"
+supervise_daemon_args="--env GOMEMLIMIT=${wikdra_memlimit} --env TZ=Europe/Warsaw"
+respawn_delay=2
+respawn_max=10
+respawn_period=300
+
+depend() {
+	after net
+	use logger
+}
+
+start_pre() {
+	checkpath -d -m 0755 -o root:root /var/log/wikdra
+	checkpath -f -m 0640 -o "${wikdra_user}:${wikdra_user}" "${output_log}"
+	checkpath -d -m 0750 -o "${wikdra_user}:${wikdra_user}" "${wikdra_data}"
+	if [ ! -x "${command}" ]; then
+		eerror "Brak ${command} — najpierw wdróż wydanie (wikdra-deploy)."
+		return 1
+	fi
+}

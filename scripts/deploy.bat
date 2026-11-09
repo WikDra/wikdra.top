@@ -6,8 +6,8 @@ rem
 rem  Poprawki względem poprzedniej wersji:
 rem   * KAŻDY krok sprawdza kod wyjścia — skrypt nie kończy się już "SUCCESS",
 rem     kiedy upload albo przeniesienie plików padło,
-rem   * wysyłana jest JAWNA lista plików, a nie "*" — lokalna kopia
-rem     bichu_content.txt / bichu_attempts.json nie nadpisze danych na serwerze,
+rem   * wysyłana jest JAWNA lista plików, a nie "*" — lokalne pliki robocze
+rem     nie trafią na serwer (stats i Bichu to usługa Go: scripts\deploy-api.ps1),
 rem   * CSS jest budowany przed wysyłką (koniec z rozjechanym artefaktem),
 rem   * usuwane są pliki po starych wersjach (sw-v5/sw-v6, manifest.json, themes-v5),
 rem   * konfiguracja Nginx tylko na jawne żądanie: deploy.bat --with-nginx,
@@ -57,20 +57,14 @@ if errorlevel 1 goto :fail_conn
 
 echo [3/6] Wysylanie plikow...
 pushd "%SITE_DIR%"
-%SCP% index.html panels.html history.html 404.html offline.html bichu.php stats.php sw-v7.js manifest-solar.json robots.txt sitemap.xml %MIKRUS_USER%@%MIKRUS_HOST%:%STAGE%/
+%SCP% index.html panels.html history.html 404.html offline.html sw-v7.js manifest-solar.json robots.txt sitemap.xml %MIKRUS_USER%@%MIKRUS_HOST%:%STAGE%/
 if errorlevel 1 ( popd & goto :fail_upload )
 %SCP% -r assets %MIKRUS_USER%@%MIKRUS_HOST%:%STAGE%/
 if errorlevel 1 ( popd & goto :fail_upload )
-if exist "bichu_config.php" (
-    %SCP% bichu_config.php %MIKRUS_USER%@%MIKRUS_HOST%:%STAGE%/
-    if errorlevel 1 ( popd & goto :fail_upload )
-) else (
-    echo [WARN] Brak site\bichu_config.php — edycja Bichu na serwerze pozostanie WYLACZONA (503^).
-)
 popd
 
 echo [4/6] Instalacja plikow w katalogu WWW...
-%SSH% "echo %MIKRUS_PW% | sudo -S sh -c 'cp -r %STAGE%/. %WWW%/ && rm -f %WWW%/sw-v5.js %WWW%/sw-v6.js %WWW%/themes-v5.css %WWW%/manifest.json && chmod 644 %WWW%/*.html %WWW%/*.php %WWW%/*.js %WWW%/*.json %WWW%/*.txt %WWW%/*.xml' && rm -rf %STAGE%"
+%SSH% "echo %MIKRUS_PW% | sudo -S sh -c 'cp -r %STAGE%/. %WWW%/ && rm -f %WWW%/sw-v5.js %WWW%/sw-v6.js %WWW%/themes-v5.css %WWW%/manifest.json %WWW%/bichu.php %WWW%/stats.php %WWW%/bichu_config.php && chmod 644 %WWW%/*.html %WWW%/*.js %WWW%/*.json %WWW%/*.txt %WWW%/*.xml' && rm -rf %STAGE%"
 if errorlevel 1 goto :fail_install
 
 if "%WITH_NGINX%"=="1" (

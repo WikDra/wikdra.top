@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bichu | Wikdra.top</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/assets/icons/favicon.png" type="image/png">
+
+    <!-- Motyw: musi wykonać się przed pierwszym malowaniem (anti-FOUC) -->
+    <script src="/assets/js/theme.js"></script>
+
+    <link rel="stylesheet" href="/assets/css/app-v6.css">
+    <style>[x-cloak] { display: none !important; }</style>
+
+    <!-- Kolejność: skrypt aplikacji przed alpine.min.js (rejestruje 'alpine:init'). -->
+    <script defer src="/assets/js/bichu-app.js"></script>
+    <script defer src="/assets/js/alpine.min.js"></script>
+</head>
+<body x-data="bichuApp" class="min-h-screen p-4 md:p-8 relative">
+
+    <!-- Background decoration (CSS-controlled per theme) -->
+    <div class="bg-decoration" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="cyber-grid"></div>
+        <div class="cyber-scanlines"></div>
+        <div class="cyber-glow"></div>
+        <div class="cyber-sun"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto z-10 relative space-y-8">
+
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 w-full">
+            <div>
+                <h1>
+                    <a href="/" class="page-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        <span>Bichu</span>
+                    </a>
+                </h1>
+            </div>
+
+            <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                <a href="/" class="theme-btn px-3 sm:px-4 text-xs sm:text-sm inline-flex items-center gap-1.5" style="text-decoration:none">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 shrink-0" style="height:0.9em;width:0.9em" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    <span>Powrót</span>
+                </a>
+
+                <!-- switcher motywu wstawia theme.js -->
+                <div data-theme-switcher></div>
+            </div>
+        </header>
+
+        <p class="status-msg" role="status" aria-live="polite" x-show="status.message"
+           :data-kind="status.kind" x-text="status.message" style="display: none;"></p>
+
+        <main class="w-full relative">
+            <!-- Treść początkowa dla JS (bez migotania i bez zbędnego zapytania na starcie); wstawia server/bichu.go -->
+            <script id="bichu-initial" type="application/json">{{INITIAL_JSON}}</script>
+
+            <!-- Widok treści (bez x-cloak: bez JS też ma być czytelny) -->
+            <div x-show="!editMode" class="panel-card p-8 min-h-[300px] relative group">
+                <h2 class="sr-only">Treść strony Bichu</h2>
+                <div class="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-base leading-relaxed"
+                     x-text="content || 'Brak treści...'">{{INITIAL_TEXT}}</div>
+
+                <!--
+                  Widoczny zawsze na urządzeniach bez hovera (telefon) i przy fokusie
+                  z klawiatury; na desktopie odsłania się po najechaniu.
+                -->
+                <button id="bichu-edit-btn" type="button" @click="openEditor()"
+                        class="absolute top-4 right-4 theme-btn px-4 py-1.5 text-xs transition-opacity duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="height:0.8em;width:0.8em;margin-right:0.4em" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Edytuj
+                </button>
+            </div>
+
+            <!-- Tryb edycji -->
+            <form x-show="editMode" x-cloak class="panel-card p-8 space-y-6 relative" @submit.prevent="save()">
+                <h2 class="sr-only">Edycja treści</h2>
+                <div class="flex flex-col gap-2">
+                    <label class="label-tiny" for="bichu-password">Hasło edycji</label>
+                    <input id="bichu-password" type="password" x-model="password" placeholder="Wpisz hasło..."
+                           class="theme-input text-sm" autocomplete="current-password" required>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="label-tiny" for="bichu-content">Treść strony</label>
+                    <textarea id="bichu-content" x-model="tempContent" rows="12" class="theme-input resize-none font-mono text-sm"></textarea>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    <button type="submit" :disabled="saving" class="theme-btn py-2.5 px-6 text-sm flex-1">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:0.9em;width:0.9em;margin-right:0.4em" :class="{ 'spin-icon': saving }" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+                        ZAPISZ ZMIANY
+                    </button>
+                    <button type="button" @click="cancelEditor()" class="theme-btn theme-btn-secondary py-2.5 px-6 text-sm">Anuluj</button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        WikdraTheme.mountSwitcher();
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+#!/bin/sh
+# wikdra-deploy — instalacja wydania binarki wikdra (server/) na serwerze. Uruchamiać jako root (sudo).
+#
+#   wikdra-deploy <sha256>   binarka spakowana gzip na stdin (scripts/deploy-api.ps1)
+#   wikdra-deploy status     bieżące wydanie, stan usługi, /healthz, lista wydań
+#
+# Kolejność: suma SHA-256 → rozpakowanie → `wikdra version` (wersja = nazwa katalogu wydania) →
+# przełączenie /srv/wikdra/current → restart usługi → /healthz zwraca nową wersję w 15 s.
+# Gdy nie zwraca: powrót do poprzedniego wydania. Zostają 3 ostatnie wydania. Dane (treść Bichu,
+# hash hasła) są w /var/lib/wikdra i wdrożenie ich nie dotyka.
+set -eu
+umask 022
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export PATH
+cd /
+# zerwane połączenie SSH nie może przerwać wdrożenia w połowie
+trap '' HUP PIPE
+
+SRV=/srv/wikdra
+REL=$SRV/releases
+SVC=wikdra
+PORT=8092
+USR=wikdra
+LOG=/var/log/wikdra/deploy.log
+MAX_BYTES=33554432 # 32 MiB skompresowanej binarki
+HEALTH_SEC=15
+KEEP=3
+
+log() {
+	line="$(date '+%Y-%m-%dT%H:%M:%S%z') $*"
+	printf '%s\n' "$line" 2>/dev/null || true
+	printf '%s\n' "$line" >>"$LOG" 2>/dev/null || true
+}
+die() {
+	log "BŁĄD: $*"
+	exit 1
+}
+
+current_release() {
+	t=$(readlink "$SRV/current" 2>/dev/null || true)
+	if [ -n "$t" ]; then basename "$t"; fi
+}
+
+valid_version() {
+	case "$1" in "" | *[!A-Za-z0-9._-]*) return 1 ;; esac
+	[ ${#1} -le 64 ]
+}
+
+health() {
+	i=0
+	while [ "$i" -lt "$HEALTH_SEC" ]; do
+		case "$(wget -q -T 2 -O - "http://127.0.0.1:$PORT/healthz" 2>/dev/null || true)" in
+		*"\"version\":\"$1\""*) return 0 ;;
+		esac
+		i=$((i + 1))
+		sleep 1
+	done
+	return 1
+}
+
+# po serii awarii supervise-daemon zostawia stan „crashed”, z którego start się nie uda — wtedy zap
+svc_stop() {
+	rc-service "$SVC" stop >/dev/null 2>&1 || true
+	if ! rc-service "$SVC" status 2>&1 | grep -q stopped; then rc-service "$SVC" zap >/dev/null 2>&1 || true; fi
+}
+# 9>&- : demon nie może odziedziczyć deskryptora blokady wdrożeń; o sukcesie decyduje health
+svc_start() { rc-service "$SVC" start >/dev/null 2>&1 9>&- || true; }
+
+if [ "${1:-}" = status ]; then
+	echo "wydanie: $(current_release)"
+	rc-service "$SVC" status 2>&1 | tail -n 1 || true
+	echo "healthz: $(wget -q -T 2 -O - "http://127.0.0.1:$PORT/healthz" 2>/dev/null || echo 'nie odpowiada')"
+	ls -1t "$REL" 2>/dev/null | sed 's/^/  /' || true
+	exit 0
+fi
+
+[ "$(id -u)" = 0 ] || {
+	echo "BŁĄD: wikdra-deploy działa jako root (sudo)" >&2
+	exit 1
+}
+SHA=${1:-}
+[ ${#SHA} -eq 64 ] || die "użycie: wikdra-deploy <sha256 paczki gzip> < paczka   albo   wikdra-deploy status"
+case "$SHA" in *[!0-9a-f]*) die "oczekiwana suma SHA-256 (64 znaki hex)" ;; esac
+
+mkdir -p /var/log/wikdra "$REL" /run/lock
+exec 9>/run/lock/wikdra-deploy.lock
+flock -n 9 || die "inne wdrożenie jeszcze trwa"
+find "$REL" -maxdepth 1 -name '.incoming.*' -mmin +60 -exec rm -rf {} \; 2>/dev/null || true
+PREV=$(current_release)
+
+work=$(mktemp -d "$REL/.incoming.XXXXXX")
+trap 'rm -rf "$work"' EXIT
+head -c $((MAX_BYTES + 1)) >"$work/wikdra.gz"
+size=$(wc -c <"$work/wikdra.gz")
+[ "$size" -gt 0 ] || die "pusta paczka (stdin)"
+[ "$size" -le "$MAX_BYTES" ] || die "paczka większa niż $MAX_BYTES B"
+got=$(sha256sum "$work/wikdra.gz" | cut -d' ' -f1)
+[ "$got" = "$SHA" ] || die "suma SHA-256 się nie zgadza (przyszło $got)"
+gunzip -c "$work/wikdra.gz" >"$work/wikdra" 2>/dev/null || die "uszkodzona paczka (gzip)"
+rm -f "$work/wikdra.gz"
+chown root:root "$work/wikdra"
+chmod 0755 "$work" "$work/wikdra"
+out=$(timeout 10 su -s /bin/sh "$USR" -c "exec '$work/wikdra' version" 2>&1 9>&-) || die "nowa binarka się nie uruchamia: $(printf '%s' "$out" | head -c 300)"
+VER=$(printf '%s\n' "$out" | awk 'NR == 1 && $1 == "wikdra" { print $2 }')
+valid_version "$VER" || die "nieprawidłowa wersja binarki: $(printf '%s\n' "$out" | head -n 1 | head -c 200)"
+
+if [ "$PREV" = "$VER" ]; then
+	cmp -s "$work/wikdra" "$REL/$VER/wikdra" || die "wersja $VER jest już wdrożona, a to inna binarka — zbuduj z inną wersją"
+	log "wydanie $VER już jest bieżące — sprawdzam tylko usługę"
+	rc-service "$SVC" status >/dev/null 2>&1 || svc_start
+	health "$VER" || die "usługa nie odpowiada wersją $VER"
+	log "OK: $VER (bez zmian)"
+	exit 0
+fi
+
+NEW=$REL/$VER
+rm -rf "$NEW"
+mkdir -m 0755 "$NEW"
+mv "$work/wikdra" "$NEW/wikdra"
+log "wdrażam $VER (poprzednie: ${PREV:-brak})"
+
+svc_stop
+ln -sfn "releases/$VER" "$SRV/current"
+svc_start
+if health "$VER"; then
+	n=0
+	# nazwy wydań są sprawdzone (valid_version), kolejność po czasie
+	# shellcheck disable=SC2045
+	for d in $(ls -1t "$REL" 2>/dev/null); do
+		n=$((n + 1))
+		if [ "$d" = "$VER" ] || [ "$d" = "$PREV" ] || [ "$n" -le "$KEEP" ]; then continue; fi
+		rm -rf "${REL:?}/$d"
+		log "usunięto stare wydanie $d"
+	done
+	log "OK: $VER"
+	exit 0
+fi
+
+log "wydanie $VER nie odpowiada w $HEALTH_SEC s — wracam do ${PREV:-(brak)}"
+tail -n 10 /var/log/wikdra/wikdra.log 2>/dev/null | sed 's/^/  | /' || true
+svc_stop
+if [ -n "$PREV" ] && [ -x "$REL/$PREV/wikdra" ]; then
+	ln -sfn "releases/$PREV" "$SRV/current"
+	rm -rf "$NEW"
+	svc_start
+	health "$PREV" || die "wdrożenie $VER nieudane, a poprzednie $PREV też nie odpowiada — sprawdź /var/log/wikdra/wikdra.log"
+	die "wdrożenie $VER nieudane, przywrócono $PREV"
+fi
+rm -f "$SRV/current"
+rm -rf "$NEW"
+die "wdrożenie $VER nieudane (brak poprzedniego wydania) — usługa zatrzymana"

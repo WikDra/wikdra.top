@@ -5,7 +5,7 @@
 (function (global) {
     'use strict';
 
-    var MAX_CONTENT_BYTES = 65536; // musi zgadzać się z limitem w bichu.php
+    var MAX_CONTENT_BYTES = 65536; // musi zgadzać się z bichuMaxBytes w server/bichu.go
 
     function component() {
         var app = {

@@ -1,6 +1,10 @@
 # Deployment na Mikrus
 
 Serwer: Alpine Linux + Nginx na VPS Mikrus. Katalog WWW: `/var/lib/nginx/html/`.
+Strona to pliki statyczne z `site/` (wgrywa `scripts\deploy.bat`). Dwie dynamiczne trasy,
+`/stats.php` (metryki serwera) i `/bichu` (edytor treści), obsługuje usługa Go `wikdra`
+z katalogu `server/` (wgrywa `scripts/deploy-api.ps1`, opis niżej w „Usługa Go”). PHP strona
+już nie używa.
 
 ## Konfiguracja lokalna (raz)
 
@@ -15,24 +19,9 @@ Serwer: Alpine Linux + Nginx na VPS Mikrus. Katalog WWW: `/var/lib/nginx/html/`.
    wyłącznie w `config.bat` oraz w lokalnych, ignorowanych przez Gita plikach
    (`*.local.*`, np. `AGENTS.local.md`).
 
-2. **`site/bichu_config.php` jest WYMAGANY, jeśli edycja Bichu ma działać.**
-   Bez niego `bichu.php` odpowiada `503` i nie zapisuje niczego (fail-closed) —
-   wcześniej brak tego pliku oznaczał, że zapis przechodził z pustym hasłem.
-
-   Zalecana forma (hash, nie hasło jawne):
-   ```php
-   <?php
-   // wygeneruj: php -r "echo password_hash('twoje_haslo', PASSWORD_DEFAULT), PHP_EOL;"
-   $admin_password_hash = '$2y$10$....';
-   ```
-   Forma zgodna wstecz (odradzana, hasło leży jawnie na dysku):
-   ```php
-   <?php
-   $admin_password = 'twoje_haslo';
-   ```
-   Plik jest w `.gitignore`, a Nginx zwraca dla niego `404`.
-
-3. Wymagane narzędzia: `pscp` i `plink` (PuTTY) w PATH oraz Node ≥ 20 (`npm ci`).
+2. Wymagane narzędzia: `pscp` i `plink` (PuTTY) w PATH, Node ≥ 20 (`npm ci`),
+   PowerShell 7 (`pwsh`), do wdrożeń usługi Go także `gh` (GitHub CLI, zalogowany),
+   a do lokalnego buildu Go 1.27.
 
 ## Wdrożenie
 
@@ -44,37 +33,123 @@ scripts\deploy.bat
 `deploy.bat` po kolei:
 1. buduje CSS (`npm run build:css`) — bez tego artefakt mógłby się rozjechać ze źródłem,
 2. wysyła **jawną listę** plików z `site/` do katalogu tymczasowego na serwerze
-   (celowo NIE `*`: lokalna kopia `bichu_content.txt` / `bichu_attempts.json`
-   nie nadpisze danych produkcyjnych),
+   (celowo NIE `*`: lokalne pliki robocze nie trafią na serwer),
 3. kopiuje je do `/var/lib/nginx/html/` i usuwa pliki po starych wersjach
-   (`sw-v5.js`, `sw-v6.js`, `themes-v5.css`, `manifest.json`),
+   (`sw-v5.js`, `sw-v6.js`, `themes-v5.css`, `manifest.json`, dawne `bichu.php`,
+   `stats.php`, `bichu_config.php`),
 4. opcjonalnie (`deploy.bat --with-nginx`) aktualizuje konfigurację Nginx:
    kopia zapasowa → `nginx -t` → `reload`; przy błędzie testu wraca do kopii,
 5. wykonuje smoke test: strona główna, panele, favicon, `stats.php`
    oraz kontrola, że `GET /bichu_config.php` zwraca `404`.
 
 Każdy krok kontroluje kod wyjścia — komunikat `[SUCCESS]` pojawia się tylko
-wtedy, gdy wszystko przeszło.
+wtedy, gdy wszystko przeszło. `deploy.bat` nie dotyka usługi Go.
+
+## Usługa Go (`server/`): `/stats.php` i `/bichu`
+
+Jedna binarka bez zależności (`server/`, Go 1.27, jedyny moduł spoza biblioteki
+standardowej to `golang.org/x/crypto/bcrypt`). Na serwerze:
+
+| Co | Gdzie |
+|---|---|
+| usługa OpenRC (supervise-daemon, restart po awarii) | `/etc/init.d/wikdra`, ustawienia `/etc/conf.d/wikdra` |
+| adres (tylko lokalnie, przed nią nginx) | `127.0.0.1:8092` |
+| użytkownik (bez hasła i powłoki) | `wikdra` |
+| wydania, bieżące | `/srv/wikdra/releases/<wersja>/wikdra`, `/srv/wikdra/current` |
+| dane: treść Bichu, hash hasła (bcrypt) | `/var/lib/wikdra/bichu.txt`, `/var/lib/wikdra/bichu.hash` |
+| logi usługi i wdrożeń | `/var/log/wikdra/wikdra.log`, `/var/log/wikdra/deploy.log` |
+| skrypt wdrożeń (root) | `/usr/local/sbin/wikdra-deploy` |
+
+Zachowanie jak w dawnych `stats.php` i `bichu.php` (te same adresy, JSON i komunikaty), z dwiema
+różnicami: zapis Bichu i limit prób działają (w PHP od 2026-08-05 kończyły się błędem 500, bo
+php-fpm nie mógł pisać w katalogu strony), a liczniki prób są w pamięci, więc restart usługi
+(np. wdrożenie) je zeruje. Limity: treść 64 kB, żądanie 256 kB, 5 złych haseł w 15 min → 5 min
+blokady dla adresu, 40 złych haseł w 15 min od wszystkich → zapis zablokowany dla każdego. Bez
+pliku `bichu.hash` zapis zawsze kończy się `503` (fail-closed).
+
+### Wdrożenie nowej wersji
+
+```powershell
+git push                                 # CI: testy, test na Alpine, artefakt wikdra-linux-amd64
+pwsh scripts/deploy-api.ps1              # binarka z zielonego CI dla HEAD
+pwsh scripts/deploy-api.ps1 -Status      # bieżące wydanie, stan usługi, /healthz
+```
+
+`deploy-api.ps1` szuka przebiegu CI dla bieżącego commita (`gh run list -c <sha>`), pobiera
+artefakt i sprawdza jego sumę. **Fallback:** gdy nie ma `gh`, GitHub nie odpowiada albo commit
+nie ma przebiegu CI (np. nie jest wypchnięty), buduje lokalnie po `go vet` i `go test`
+(wersja `<gałąź>-<sha7>[-dirty]-local-<czas>`). Czerwone albo trwające CI to błąd, nie
+fallback; świadomie można wymusić build lokalny przez `-Local`.
+
+Na serwerze `wikdra-deploy` sprawdza sumę paczki, uruchamia `wikdra version`, przełącza
+`current`, restartuje usługę i czeka do 15 s, aż `/healthz` zwróci nową wersję. Jeśli nie zwróci,
+wraca do poprzedniego wydania. Zostają 3 ostatnie wydania. Wdrożenie trwa kilka sekund;
+w tym czasie `/stats.php` i `/bichu` dają 502.
+
+### Instalacja od zera (raz)
+
+```powershell
+pwsh scripts/deploy-api.ps1 -Install -Plan   # lista zmian, nic nie zmienia
+pwsh scripts/deploy-api.ps1 -Install         # server/deploy/install.sh (idempotentny)
+pwsh scripts/deploy-api.ps1                  # pierwsza binarka
+pwsh scripts/deploy-api.ps1 -ImportPhp       # treść i hasło z dawnej wersji PHP (jeśli pliki są)
+pwsh scripts/deploy-api.ps1 -Nginx           # nginx/default.conf: kopia, nginx -t, reload, kontrola
+```
+
+`-ImportPhp` kopiuje `bichu_content.txt` i zamienia hasło z `bichu_config.php` na hash bcrypt
+(to samo hasło; idzie potokiem `php83` → `wikdra hash-password`, nie jest nigdzie wypisywane).
+Istniejących danych usługi nie nadpisuje (`-Force` nadpisuje).
+
+`-Nginx` robi kopię `default.conf` (w `/root/default.conf.<data>` i obok jako `.bak`), sprawdza
+`nginx -t`, przeładowuje i kontroluje stronę główną (także tytuł), panele, `/stats.php`,
+`/bichu`, 404 dla `/bichu_config.php` i proj.wikdra.top. Przy błędzie wraca do kopii.
+
+### Zmiana hasła edycji Bichu
+
+Na serwerze (hasło wpisujesz bez echa, kończysz Enterem; nie trafia do historii ani logów):
+
+```sh
+sudo sh -c 'stty -echo; printf "Nowe hasło: "; read -r p; stty echo; echo;
+  printf "%s" "$p" | su -s /bin/sh wikdra -c "/srv/wikdra/current/wikdra hash-password --data-dir=/var/lib/wikdra"'
+```
+
+Działa od razu, bez restartu (hash jest czytany przy każdym zapisie).
+
+### Praca lokalna
+
+```powershell
+cd server; go test ./...; go run . serve --data-dir ../.dev-wikdra   # http://127.0.0.1:8092
+"haslo" | go run . hash-password --data-dir ../.dev-wikdra             # hasło do lokalnych testów
+$env:WIKDRA_API = 'http://127.0.0.1:8092'; npm run serve               # strona z /bichu i /stats.php z Go
+```
+
+`npm run smoke` uruchamia też test Bichu w Chrome na binarce z `server/.build/wikdra.exe`
+(albo `WIKDRA_BIN`): `cd server; go build -o .build/wikdra.exe .`.
 
 ## Konfiguracja Nginx
 
 W repo jest **jeden** szablon: `nginx/default.conf` (jeden blok `server`
 obsługujący `wikdra.top`, `www.wikdra.top` i `panele.wikdra.top`; stronę startową
-wybiera `map $host $root_page`).
+wybiera `map $host $root_page`). Wgrywa go `pwsh scripts/deploy-api.ps1 -Nginx`
+(albo `scripts\deploy.bat --with-nginx`); ręcznie:
 
 ```sh
 sudo cp nginx/default.conf /etc/nginx/http.d/default.conf
 sudo nginx -t && sudo rc-service nginx reload
 ```
 
-Zawiera: nagłówki bezpieczeństwa, blokadę `bichu_config.php` / `bichu_content.txt`
-/ `bichu_attempts.json` / plików kropkowych, wąskie `location` dla PHP (tylko
-`bichu.php` i `stats.php`), `limit_req` 5 r/s, `fastcgi_hide_header X-Powered-By`.
+Zawiera: nagłówki bezpieczeństwa, prawdziwy adres klienta zza Cloudflare
+(`set_real_ip_from` + `CF-Connecting-IP`, lista jak w proj.conf; bez tego limity liczyłyby
+serwery Cloudflare), `proxy_pass` do usługi Go dla `location = /stats.php` i `location ^~ /bichu`
+(`^~` sprawia, że także pozostałości po PHP, np. `bichu_config.php`, idą do Go, które zwraca 404),
+`limit_req` 5 r/s (burst 10) na tych trasach, 300 kB limitu żądania dla Bichu, 404 dla każdego
+innego `.php` i plików kropkowych.
 
 **Nagłówki i cache w jednym miejscu.** W nginksie `add_header` w bloku `location`
 unieważnia wszystkie `add_header` z `server` — dlatego Cache-Control jest liczony
 mapą `map $uri $cache_control`, a nie ustawiany per location. Inaczej strony HTML
-traciły nagłówki bezpieczeństwa (potwierdzone testem na produkcji).
+traciły nagłówki bezpieczeństwa (potwierdzone testem na produkcji). Z tego samego
+powodu lokalizacje z `proxy_pass` nie mają własnych `add_header`.
 
 Polityka cache:
 
@@ -82,12 +157,10 @@ Polityka cache:
 |---|---|---|
 | fonty `.woff2` | `public, max-age=31536000, immutable` | nigdy się nie zmieniają pod tą samą nazwą |
 | CSS, JS, ikony, HTML, JSON | `no-cache` (waliduj przed użyciem) | przy `max-age` Cloudflare podawał starą wersję `app-v6.css` po wdrożeniu (origin 92001 B, CDN 91972 B, `CF-Cache-Status: HIT`). Koszt to tanie 304, a szybkość i offline zapewnia Service Worker trzymający te pliki w Cache Storage |
-| `.php` | `no-store` (ustawia sam skrypt) | odpowiedzi API nie mają czego cache'ować |
+| `/stats.php`, `/bichu*` | `no-store` (ustawia usługa Go) | odpowiedzi dynamiczne; mapa zwraca pustą wartość, żeby nie było dwóch nagłówków |
 
 Dzięki temu **purge Cloudflare nie jest potrzebny po zwykłym wdrożeniu**. Wyjątek:
 podmiana fontu pod tą samą nazwą.
-
-Dodatkowo w `php.ini` warto ustawić `expose_php = Off`.
 
 ## Aktualizacje systemu (`apk upgrade`)
 
@@ -132,13 +205,18 @@ Cała witryna jest w Gicie, więc odtworzenie poprzedniej wersji to:
 ```cmd
 git checkout <poprzedni_hash>
 scripts\deploy.bat
-git checkout modernize
+git checkout main
 ```
 
+Usługa Go: `wikdra-deploy` sam wraca do poprzedniego wydania, gdy nowe nie odpowiada.
+Świadomy powrót do starszej wersji: `pwsh scripts/deploy-api.ps1 -RunId <przebieg CI>` albo na
+serwerze `sudo ln -sfn releases/<wersja> /srv/wikdra/current && sudo rc-service wikdra restart`
+(lista: `ls -t /srv/wikdra/releases`).
+
 Dane użytkownika (historia prognoz) siedzą w `localStorage` przeglądarki i nie
-zależą od wdrożenia. Treść Bichu jest w `/var/lib/nginx/html/bichu_content.txt`
-na serwerze — warto zrobić kopię przed większymi zmianami:
-`plink ... "cat /var/lib/nginx/html/bichu_content.txt" > backup.txt`.
+zależą od wdrożenia. Treść Bichu jest w `/var/lib/wikdra/bichu.txt` na serwerze
+(wdrożenia jej nie ruszają); kopia przed większymi zmianami:
+`sudo cp -p /var/lib/wikdra/bichu.txt /root/bichu.txt.$(date +%Y%m%d)`.
 
 ## Ikony i zrzuty ekranu
 
@@ -159,5 +237,5 @@ zachowując istniejący crontab i tworząc jego kopię w `/tmp`. Nie używaj
 
 - Połączenie: `ssh -p YOUR_PORT YOUR_USER@YOUR_HOST` (wartości z `config.bat`).
 - **Znane ograniczenie:** hasło SSH trafia do argumentów procesu (`plink -pw`,
-  `echo … | sudo -S`). Docelowo klucz SSH (`plink -i`) + `sudoers` z `NOPASSWD`
-  dla `cp`/`rc-service`.
+  `echo … | sudo -S`; tak samo w `scripts/remote.ps1` używanym przez `deploy-api.ps1`).
+  Docelowo klucz SSH (`plink -i`) + `sudoers` z `NOPASSWD` dla `cp`/`rc-service`.

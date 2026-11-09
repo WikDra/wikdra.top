@@ -7,13 +7,16 @@
  *   • sprawdza montaż switchera motywów i jego dostępność (aria-expanded, Escape),
  *   • weryfikuje obliczenia solarne (clipping, energia, limit per dzień),
  *   • weryfikuje magazyn: migrację v1→v2, walidację importu, round-trip eksportu,
- *   • sprawdza render metryk, gdy stats.php zwraca ram = null.
+ *   • sprawdza render metryk, gdy stats.php zwraca ram = null,
+ *   • Bichu na binarce Go (server/): treść, zła i dobra próba zapisu, trwałość po odświeżeniu.
  *
  * Uruchomienie: npm run smoke
  */
 const http = require('http');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
+const { spawn, spawnSync } = require('child_process');
 const puppeteer = require('puppeteer-core');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -21,6 +24,14 @@ const SITE = path.join(ROOT, 'site');
 const CHROME_PATH = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const PORT = 8791;
 const BASE = 'http://127.0.0.1:' + PORT;
+
+// Bichu renderuje usługa Go (server/). Test [13] uruchamia binarkę (WIKDRA_BIN albo
+// server/.build/wikdra[.exe]) i kieruje do niej /bichu* z lokalnego serwera. W CI brak binarki = błąd.
+const WIKDRA_BIN = process.env.WIKDRA_BIN || path.join(ROOT, 'server', '.build', process.platform === 'win32' ? 'wikdra.exe' : 'wikdra');
+const API_PORT = 8792;
+const BICHU_PASSWORD = 'smoke-haslo-123';
+const BICHU_START = 'Treść startowa </script><b>nie pogrubiaj</b> & "cytat"';
+let api = null;
 
 const MIME = {
     '.html': 'text/html; charset=utf-8',
@@ -51,6 +62,13 @@ async function freshPage(browser) {
 function startServer() {
     const server = http.createServer((req, res) => {
         const url = new URL(req.url, BASE);
+        if (api && url.pathname.startsWith('/bichu')) {
+            const up = http.request({ host: '127.0.0.1', port: API_PORT, method: req.method, path: req.url, headers: req.headers },
+                (r) => { res.writeHead(r.statusCode, r.headers); r.pipe(res); });
+            up.on('error', (e) => { res.writeHead(502); res.end(String(e)); });
+            req.pipe(up);
+            return;
+        }
         if (url.pathname === '/stats.php') {
             // celowo ram = null — front musi pokazać „—", nie liczbę
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -92,6 +110,33 @@ function stopServer(server) {
         server.close(() => { clearTimeout(timer); finish(); });
         if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
     });
+}
+
+// ——— usługa Go (Bichu) ———
+async function startApi() {
+    if (!fs.existsSync(WIKDRA_BIN)) return null;
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wikdra-smoke-'));
+    fs.writeFileSync(path.join(dir, 'bichu.txt'), BICHU_START);
+    const hp = spawnSync(WIKDRA_BIN, ['hash-password', '--data-dir', dir], { input: BICHU_PASSWORD + '\n', encoding: 'utf8' });
+    if (hp.status !== 0) throw new Error('wikdra hash-password: ' + hp.stderr);
+    const proc = spawn(WIKDRA_BIN, ['serve', '--addr', '127.0.0.1:' + API_PORT, '--data-dir', dir], { stdio: ['ignore', 'ignore', 'pipe'] });
+    let log = '';
+    proc.stderr.on('data', (d) => { log += d; });
+    for (let i = 0; i < 50; i++) {
+        try {
+            const r = await fetch('http://127.0.0.1:' + API_PORT + '/healthz');
+            if (r.ok) return { proc, dir };
+        } catch (e) { /* jeszcze nie słucha */ }
+        await new Promise((r) => setTimeout(r, 100));
+    }
+    proc.kill();
+    throw new Error('wikdra serve nie wystartowal: ' + log);
+}
+
+function stopApi(a) {
+    if (!a) return;
+    a.proc.kill();
+    try { fs.rmSync(a.dir, { recursive: true, force: true }); } catch (e) { /* Windows: proces jeszcze trzyma plik */ }
 }
 
 // ——— deterministyczna odpowiedź forecast.solar ———
@@ -150,6 +195,7 @@ const watchdog = setTimeout(() => {
 }, WATCHDOG_MS);
 
 (async () => {
+    api = await startApi();
     let server = await startServer();
     const browser = await puppeteer.launch({
         executablePath: CHROME_PATH,
@@ -703,9 +749,53 @@ const watchdog = setTimeout(() => {
             await page.close();
         }
 
+        // ============ 13. Bichu z usługi Go ============
+        section('[13] Bichu (strona i zapis z uslugi Go)');
+        if (!api) {
+            if (process.env.CI) assert(false, 'binarka wikdra dostepna (WIKDRA_BIN)', WIKDRA_BIN);
+            else console.warn('  ! pominieto: brak ' + WIKDRA_BIN + ' (zbuduj: cd server && go build -o .build/wikdra.exe .)');
+        } else {
+            const page = await freshPage(browser);
+            const errors = [];
+            attachRouting(page, errors);
+            const view = () => page.evaluate(() => {
+                const el = document.querySelector('[x-text^="content"]');
+                return { text: el ? el.innerText : null, bold: !!(el && el.querySelector('b')) };
+            });
+            await page.goto(BASE + '/bichu', { waitUntil: 'networkidle2' });
+            const first = await view();
+            assert(first.text === BICHU_START, 'tresc z serwera pokazana doslownie', first);
+            assert(!first.bold, 'HTML z tresci nie jest interpretowany', first);
+
+            await page.click('#bichu-edit-btn');
+            await new Promise((r) => setTimeout(r, 200));
+            const focused = await page.evaluate(() => document.activeElement && document.activeElement.id);
+            assert(focused === 'bichu-password', 'edycja: fokus na polu hasla', focused);
+            assert(await page.$eval('#bichu-content', (el) => el.value) === BICHU_START, 'edycja: tresc w polu tekstowym');
+
+            await page.type('#bichu-password', 'zle-haslo');
+            await page.click('form button[type=submit]');
+            await page.waitForFunction(() => /Błędne hasło/.test(document.body.innerText), { timeout: 8000 });
+            assert(await page.$eval('#bichu-password', (el) => el.value) === '', 'zle haslo: komunikat i wyczyszczone pole');
+
+            const next = 'Nowa treść z testu ✓';
+            await page.type('#bichu-password', BICHU_PASSWORD);
+            await page.$eval('#bichu-content', (el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); }, next);
+            await page.click('form button[type=submit]');
+            await page.waitForFunction(() => /Zapisano/.test(document.body.innerText), { timeout: 10000 });
+            assert((await view()).text === next, 'po zapisie widok pokazuje nowa tresc');
+
+            await page.reload({ waitUntil: 'networkidle2' });
+            assert((await view()).text === next, 'tresc zapisana na serwerze (po odswiezeniu)');
+            const unexpected = errors.filter((e) => !/status of 403/.test(e));
+            assert(unexpected.length === 0, 'brak bledow konsoli (poza oczekiwanym 403 przy zlym hasle)', unexpected);
+            await page.close();
+        }
+
     } finally {
         await browser.close();
         await stopServer(server);
+        stopApi(api);
     }
 
     clearTimeout(watchdog);
