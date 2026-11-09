@@ -89,6 +89,42 @@ podmiana fontu pod tą samą nazwą.
 
 Dodatkowo w `php.ini` warto ustawić `expose_php = Off`.
 
+## Aktualizacje systemu (`apk upgrade`)
+
+`/var/lib/nginx/html/index.html` (strona główna) leży w pliku należącym do pakietu
+`nginx` (`apk info -L nginx` pokazuje `index.html` i `50x.html`). apk chroni przed
+nadpisaniem tylko zmienione pliki w `/etc`, więc aktualizacja nginx podmieniała
+naszą stronę na „Welcome to nginx!” (615 B). Tak stało się 2026-11-07: przez dwa dni
+wikdra.top pokazywała stronę domyślną, bo sprawdzenie po aktualizacji patrzyło tylko
+na kod HTTP 200, a nie na treść. Pozostałe pliki z `site/` nie należą do pakietu
+i zostały nietknięte.
+
+Zabezpieczenie (na serwerze od 2026-11-09), zob. `apk-protected_paths(5)`:
+
+```sh
+# /etc/apk/protected_paths.d/wikdra.list
++var/lib/nginx/html/index.html
+```
+
+Zmieniony plik jest teraz traktowany jak konfiguracja w `/etc`: apk go nie nadpisuje,
+a wersję z pakietu zapisuje obok jako `index.html.apk-new`. Sprawdzenie:
+`apk audit` wypisuje `U var/lib/nginx/html/index.html`. Cofnięcie: usunąć `wikdra.list`.
+`50x.html` nie jest chroniony, bo strona go nie używa (`error_page` wskazuje tylko `404.html`).
+
+Po każdej aktualizacji systemu:
+
+1. `find /var/lib/nginx/html -name '*.apk-new'` — usuń znalezione pliki
+   (właściwa strona to ta z repo, nie z pakietu);
+2. sprawdź treść, nie tylko kod odpowiedzi:
+   ```sh
+   curl -s -H 'Host: wikdra.top' http://127.0.0.1/ | grep -o '<title>[^<]*</title>'
+   ```
+   ma wyjść `<title>Wikdra - Oficjalna Strona i Projekty</title>`.
+
+Gdyby strona jednak została nadpisana, `scripts\deploy.bat` wgrywa całe `site/` od nowa.
+Uwaga: smoke test w `deploy.bat` też sprawdza tylko kody HTTP (`curl -f`), więc stronę
+domyślną nginx uznałby za poprawną.
+
 ## Rollback
 
 Cała witryna jest w Gicie, więc odtworzenie poprzedniej wersji to:

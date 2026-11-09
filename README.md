@@ -26,7 +26,7 @@ Bez frameworka i bez bundlera: 5 dokumentów, Alpine.js + uPlot, CSS budowany Ta
 - `src/app.css` — **źródło** design systemu (5 motywów × jasny/ciemny)
 - `nginx/default.conf` — jeden kanoniczny szablon konfiguracji
 - `scripts/` — `deploy.bat`, `check.js`, `generate_icons.js`, `generate_all_screenshots.js`, skrypty crona
-- `docs/deployment.md` — konfiguracja, wdrożenie, rollback
+- `docs/deployment.md` — konfiguracja, wdrożenie, rollback, aktualizacje systemu (`apk upgrade`)
 
 ## Praca lokalna
 
