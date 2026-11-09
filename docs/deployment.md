@@ -60,6 +60,12 @@ standardowej to `golang.org/x/crypto/bcrypt`). Na serwerze:
 | logi usługi i wdrożeń | `/var/log/wikdra/wikdra.log`, `/var/log/wikdra/deploy.log` |
 | skrypt wdrożeń (root) | `/usr/local/sbin/wikdra-deploy` |
 
+Stan od 2026-11-09: usługa działa, nginx kieruje do niej `/stats.php` i `/bichu`, pliki PHP
+strony są usunięte z `/var/lib/nginx/html` (kopia w `/root/wikdra-php-20261109.tgz`), a pula
+php-fpm `www` (nobody, 127.0.0.1:9000), której używała tylko strona, jest wyłączona
+(`/etc/php83/php-fpm.d/www.conf.disabled-wikdra`). Samo `php83` i pula `proj` zostają dla
+proj.wikdra.top. Usługa zajmuje ok. 7 MB RAM.
+
 Zachowanie jak w dawnych `stats.php` i `bichu.php` (te same adresy, JSON i komunikaty), z dwiema
 różnicami: zapis Bichu i limit prób działają (w PHP od 2026-08-05 kończyły się błędem 500, bo
 php-fpm nie mógł pisać w katalogu strony), a liczniki prób są w pamięci, więc restart usługi
@@ -212,6 +218,22 @@ Usługa Go: `wikdra-deploy` sam wraca do poprzedniego wydania, gdy nowe nie odpo
 Świadomy powrót do starszej wersji: `pwsh scripts/deploy-api.ps1 -RunId <przebieg CI>` albo na
 serwerze `sudo ln -sfn releases/<wersja> /srv/wikdra/current && sudo rc-service wikdra restart`
 (lista: `ls -t /srv/wikdra/releases`).
+
+Powrót do dawnej wersji PHP (przełączenie było 2026-11-09; kopia w
+`/root/wikdra-php-20261109.tgz`: `html/` z `bichu.php`, `stats.php`, `bichu_config.php`,
+`bichu_content.txt`, `php-fpm.d/www.conf` i `nginx/default.conf.php`; konfiguracja nginx sprzed
+przełączenia także w `/root/default.conf.20261109-193641`):
+
+```sh
+cd /tmp && sudo tar -xzf /root/wikdra-php-20261109.tgz
+sudo cp -p /tmp/html/* /var/lib/nginx/html/
+sudo mv /etc/php83/php-fpm.d/www.conf.disabled-wikdra /etc/php83/php-fpm.d/www.conf
+sudo php-fpm83 -t && sudo rc-service php-fpm83 restart
+sudo cp /root/default.conf.20261109-193641 /etc/nginx/http.d/default.conf
+sudo nginx -t && sudo rc-service nginx reload
+```
+
+(Zapis w PHP i tak nie działał — patrz „Usługa Go”.)
 
 Dane użytkownika (historia prognoz) siedzą w `localStorage` przeglądarki i nie
 zależą od wdrożenia. Treść Bichu jest w `/var/lib/wikdra/bichu.txt` na serwerze
