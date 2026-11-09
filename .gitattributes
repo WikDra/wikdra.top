@@ -1,0 +1,8 @@
+# Pliki na serwer i do buildów zawsze z LF, także w kopii roboczej na Windowsie (core.autocrlf=true
+# dawało CRLF: `npm run check` zgłaszał różnicę artefaktu CSS, a deploy.bat wysłałby pliki z CRLF).
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.png binary
+*.woff2 binary
+*.ico binary
