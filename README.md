@@ -2,12 +2,12 @@
 
 Statyczna strona **wikdra.top** / **panele.wikdra.top** na VPS-ie Mikrus (Alpine Linux + Nginx).
 Bez frameworka i bez bundlera: 5 dokumentów, Alpine.js + uPlot, CSS budowany Tailwindem.
-Dwie dynamiczne trasy (metryki serwera i edytor Bichu) obsługuje mała usługa Go z `server/`.
+Dwie dynamiczne trasy (metryki serwera i edytor Bichu) obsługuje mała usługa Go z `server/`. Strona nie używa PHP.
 
 ## Struktura
 
 - `site/` — wszystko, co serwuje Nginx z dysku:
-  - `index.html` — portfolio (metryki VPS z `/stats.php`)
+  - `index.html` — portfolio (metryki VPS z usługi Go)
   - `panels.html` — dashboard prognozy PV (forecast.solar + uPlot)
   - `history.html` — archiwum zapisanych dni, statystyki, eksport/import JSON
   - `404.html`, `offline.html` — strona błędu i strona offline (PWA)
@@ -23,10 +23,11 @@ Dwie dynamiczne trasy (metryki serwera i edytor Bichu) obsługuje mała usługa 
   - `assets/css/app-v6.css` — artefakt builda (nie edytować ręcznie)
   - `assets/fonts/`, `assets/icons/`
 - `server/` — usługa Go `wikdra` (127.0.0.1:8092 za nginx):
-  - `/stats.php` — metryki kontenera (CPU/RAM/dysk), wynik trzymany 10 s
-  - `/bichu` (też `/bichu.php`) — strona `bichu.html` i API `?api=1`: jedno hasło (bcrypt),
-    fail-closed, limit prób, zapis atomowy
-  - `deploy/` — usługa OpenRC, `wikdra-deploy` (wdrożenie z powrotem), instalacja, import z PHP, test na Alpine
+  - `/stats.php` — metryki kontenera (CPU/RAM/dysk), wynik trzymany 10 s; nazwa z `.php` to tylko
+    stary adres, który zostaje, żeby nie zmieniać frontu
+  - `/bichu` — strona `bichu.html` i API `?api=1`: jedno hasło (bcrypt), fail-closed, limit prób,
+    zapis atomowy; stary adres `/bichu.php` też działa
+  - `deploy/` — usługa OpenRC, `wikdra-deploy` (wdrożenie z powrotem), instalacja, test na Alpine
 - `src/app.css` — **źródło** design systemu (5 motywów × jasny/ciemny)
 - `nginx/default.conf` — jeden kanoniczny szablon konfiguracji
 - `scripts/` — `deploy.bat` (strona), `deploy-api.ps1` (usługa Go), `check.js`, `smoke.js`,
