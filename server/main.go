@@ -70,7 +70,7 @@ func usage(w io.Writer) {
   wikdra serve [--addr 127.0.0.1:8092] [--data-dir /var/lib/wikdra]
   wikdra hash-password [--data-dir /var/lib/wikdra] [--bcrypt]
       hasło edycji Bichu ze stdin (bez echa w logach) → <data-dir>/bichu.hash;
-      --bcrypt: na stdin jest już gotowy hash bcrypt (np. $2y$… z PHP)
+      --bcrypt: na stdin jest już gotowy hash bcrypt ($2a$/$2b$/$2y$)
   wikdra version
 Zmienne: WIKDRA_DATA_DIR, WIKDRA_ADDR, GOMEMLIMIT (domyślnie 32MiB).
 `)

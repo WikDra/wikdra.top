@@ -8,8 +8,8 @@
 #
 # Zakłada: użytkownik systemowy wikdra (bez hasła i powłoki), /srv/wikdra/releases (root),
 # /var/lib/wikdra (wikdra, 0750), /var/log/wikdra, /etc/init.d/wikdra, /etc/conf.d/wikdra,
-# /usr/local/sbin/wikdra-deploy, /usr/local/lib/wikdra/import-php.sh, usługa w runlevelu default.
-# Nie rusza nginx ani PHP — przełączenie nginx to osobny krok (deploy-api.ps1 -Nginx).
+# /usr/local/sbin/wikdra-deploy, usługa w runlevelu default.
+# Nie rusza nginx — przełączenie nginx to osobny krok (deploy-api.ps1 -Nginx).
 set -eu
 umask 022
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
@@ -69,7 +69,6 @@ ensure_file() { # ensure_file <źródło> <cel> <tryb>
 ensure_file "$HERE/wikdra.initd" /etc/init.d/wikdra 0755
 ensure_file "$HERE/wikdra.confd" /etc/conf.d/wikdra 0644
 ensure_file "$HERE/wikdra-deploy" /usr/local/sbin/wikdra-deploy 0755
-ensure_file "$HERE/import-php.sh" /usr/local/lib/wikdra/import-php.sh 0755
 
 if ! rc-update show default 2>/dev/null | grep -qE '^ *wikdra +[|]'; then
 	change "rc-update add wikdra default (start przy starcie systemu)"
@@ -88,5 +87,5 @@ elif [ "$PLAN" = 1 ]; then
 	echo "Plan zmian (nic nie zmieniono):$CHANGES"
 else
 	echo "Zainstalowano:$CHANGES"
-	echo "Dalej: wdrożenie binarki (wikdra-deploy), potem import danych z PHP (import-php.sh)."
+	echo "Dalej: wdrożenie binarki (wikdra-deploy), hasło edycji Bichu (wikdra hash-password), nginx (-Nginx)."
 fi

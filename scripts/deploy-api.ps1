@@ -1,5 +1,5 @@
-# deploy-api.ps1 — usługa Go `wikdra` (server/): instalacja na serwerze, wdrożenie binarki, import
-# danych z PHP i przełączenie nginx. Dane dostępowe z config.bat (jak deploy.bat), sudo przez remote.ps1.
+# deploy-api.ps1 — usługa Go `wikdra` (server/): instalacja na serwerze, wdrożenie binarki
+# i przełączenie nginx. Dane dostępowe z config.bat (jak deploy.bat), sudo przez remote.ps1.
 #
 #   pwsh scripts/deploy-api.ps1                  binarka z zielonego CI dla bieżącego commita (HEAD);
 #                                               gdy CI/GitHub niedostępne → build lokalny (fallback)
@@ -8,7 +8,6 @@
 #   pwsh scripts/deploy-api.ps1 -Status         bieżące wydanie i stan usługi
 #   pwsh scripts/deploy-api.ps1 -Install -Plan  lista zmian na serwerze (nic nie zmienia)
 #   pwsh scripts/deploy-api.ps1 -Install        instalacja usługi (server/deploy/install.sh)
-#   pwsh scripts/deploy-api.ps1 -ImportPhp      treść i hasło Bichu z wersji PHP (server/deploy/import-php.sh)
 #   pwsh scripts/deploy-api.ps1 -Nginx          nginx/default.conf: kopia, nginx -t, reload, kontrola, powrót
 # Szczegóły: docs/deployment.md, „Usługa Go”.
 param(
@@ -17,8 +16,6 @@ param(
     [switch]$Status,
     [switch]$Install,
     [switch]$Plan,
-    [switch]$ImportPhp,
-    [switch]$Force,
     [switch]$Nginx
 )
 
@@ -105,12 +102,6 @@ try {
         Send-Stage $tgz 'deploy.tgz'
         $arg = if ($Plan) { '--plan' } else { '' }
         Invoke-Remote -Sudo "cd $stage && tar -xzf deploy.tgz && sh deploy/install.sh $arg; rc=`$?; rm -rf $stage; exit `$rc" | ForEach-Object { "  $_" }
-        return
-    }
-
-    if ($ImportPhp) {
-        $arg = if ($Force) { '--force' } else { '' }
-        Invoke-Remote -Sudo "/usr/local/lib/wikdra/import-php.sh $arg" | ForEach-Object { "  $_" }
         return
     }
 

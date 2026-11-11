@@ -35,8 +35,7 @@ scripts\deploy.bat
 2. wysyła **jawną listę** plików z `site/` do katalogu tymczasowego na serwerze
    (celowo NIE `*`: lokalne pliki robocze nie trafią na serwer),
 3. kopiuje je do `/var/lib/nginx/html/` i usuwa pliki po starych wersjach
-   (`sw-v5.js`, `sw-v6.js`, `themes-v5.css`, `manifest.json`, dawne `bichu.php`,
-   `stats.php`, `bichu_config.php`),
+   (`sw-v5.js`, `sw-v6.js`, `themes-v5.css`, `manifest.json`),
 4. opcjonalnie (`deploy.bat --with-nginx`) aktualizuje konfigurację Nginx:
    kopia zapasowa → `nginx -t` → `reload`; przy błędzie testu wraca do kopii,
 5. wykonuje smoke test: strona główna, panele, favicon, `stats.php`
@@ -60,11 +59,11 @@ standardowej to `golang.org/x/crypto/bcrypt`). Na serwerze:
 | logi usługi i wdrożeń | `/var/log/wikdra/wikdra.log`, `/var/log/wikdra/deploy.log` |
 | skrypt wdrożeń (root) | `/usr/local/sbin/wikdra-deploy` |
 
-Stan od 2026-11-09: usługa działa, nginx kieruje do niej `/stats.php` i `/bichu`, pliki PHP
-strony są usunięte z `/var/lib/nginx/html` (kopia w `/root/wikdra-php-20261109.tgz`), a pula
-php-fpm `www` (nobody, 127.0.0.1:9000), której używała tylko strona, jest wyłączona
-(`/etc/php83/php-fpm.d/www.conf.disabled-wikdra`). Samo `php83` i pula `proj` zostają dla
-proj.wikdra.top. Usługa zajmuje ok. 7 MB RAM.
+Stan od 2026-11-09: usługa działa, nginx kieruje do niej `/stats.php` i `/bichu`. Od 2026-11-11
+na serwerze nie ma PHP (pakiety `php83` usunięte razem z fazą 9 proj.wikdra.top; dawne pliki PHP
+strony, bez `bichu_config.php` z jawnym hasłem, są w archiwum `/root/proj-php-20261111.tgz`,
+katalog `root/wikdra-php-20261109/`). Nazwy `/stats.php` i `/bichu.php` to tylko stare adresy,
+zostawione dla frontu i starych linków. Usługa zajmuje ok. 7 MB RAM.
 
 Zachowanie jak w dawnych `stats.php` i `bichu.php` (te same adresy, JSON i komunikaty), z dwiema
 różnicami: zapis Bichu i limit prób działają (w PHP od 2026-08-05 kończyły się błędem 500, bo
@@ -98,13 +97,11 @@ w tym czasie `/stats.php` i `/bichu` dają 502.
 pwsh scripts/deploy-api.ps1 -Install -Plan   # lista zmian, nic nie zmienia
 pwsh scripts/deploy-api.ps1 -Install         # server/deploy/install.sh (idempotentny)
 pwsh scripts/deploy-api.ps1                  # pierwsza binarka
-pwsh scripts/deploy-api.ps1 -ImportPhp       # treść i hasło z dawnej wersji PHP (jeśli pliki są)
 pwsh scripts/deploy-api.ps1 -Nginx           # nginx/default.conf: kopia, nginx -t, reload, kontrola
 ```
 
-`-ImportPhp` kopiuje `bichu_content.txt` i zamienia hasło z `bichu_config.php` na hash bcrypt
-(to samo hasło; idzie potokiem `php83` → `wikdra hash-password`, nie jest nigdzie wypisywane).
-Istniejących danych usługi nie nadpisuje (`-Force` nadpisuje).
+Potem hasło edycji Bichu (polecenie niżej, „Zmiana hasła edycji Bichu”); bez niego zapis zwraca `503`.
+Treść zaczyna się pusta.
 
 `-Nginx` robi kopię `default.conf` (w `/root/default.conf.<data>` i obok jako `.bak`), sprawdza
 `nginx -t`, przeładowuje i kontroluje stronę główną (także tytuł), panele, `/stats.php`,
@@ -218,22 +215,6 @@ Usługa Go: `wikdra-deploy` sam wraca do poprzedniego wydania, gdy nowe nie odpo
 Świadomy powrót do starszej wersji: `pwsh scripts/deploy-api.ps1 -RunId <przebieg CI>` albo na
 serwerze `sudo ln -sfn releases/<wersja> /srv/wikdra/current && sudo rc-service wikdra restart`
 (lista: `ls -t /srv/wikdra/releases`).
-
-Powrót do dawnej wersji PHP (przełączenie było 2026-11-09; kopia w
-`/root/wikdra-php-20261109.tgz`: `html/` z `bichu.php`, `stats.php`, `bichu_config.php`,
-`bichu_content.txt`, `php-fpm.d/www.conf` i `nginx/default.conf.php`; konfiguracja nginx sprzed
-przełączenia także w `/root/default.conf.20261109-193641`):
-
-```sh
-cd /tmp && sudo tar -xzf /root/wikdra-php-20261109.tgz
-sudo cp -p /tmp/html/* /var/lib/nginx/html/
-sudo mv /etc/php83/php-fpm.d/www.conf.disabled-wikdra /etc/php83/php-fpm.d/www.conf
-sudo php-fpm83 -t && sudo rc-service php-fpm83 restart
-sudo cp /root/default.conf.20261109-193641 /etc/nginx/http.d/default.conf
-sudo nginx -t && sudo rc-service nginx reload
-```
-
-(Zapis w PHP i tak nie działał — patrz „Usługa Go”.)
 
 Dane użytkownika (historia prognoz) siedzą w `localStorage` przeglądarki i nie
 zależą od wdrożenia. Treść Bichu jest w `/var/lib/wikdra/bichu.txt` na serwerze

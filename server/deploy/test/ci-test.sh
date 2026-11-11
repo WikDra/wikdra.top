@@ -1,6 +1,6 @@
 #!/bin/sh
 # Test usługi wikdra na prawdziwym Alpine z OpenRC i nginx (CI, job „serwer Go”; lokalnie przez Docker):
-# instalacja, wdrożenia z powrotem po zepsutym wydaniu, import z PHP, nginx/default.conf z repo
+# instalacja, wdrożenia z powrotem po zepsutym wydaniu, hasło Bichu, nginx/default.conf z repo
 # (proxy do Go, nagłówki, blokady), zapis Bichu przez nginx, limit prób z prawdziwym adresem klienta.
 #
 #   docker run --rm -v "$PWD:/src:ro" -v "$WORK:/work" alpine:3.23 sh /src/server/deploy/test/ci-test.sh
@@ -28,22 +28,18 @@ printf '#!/bin/sh\nsleep 0.25\nexec curl -s -H "Host: wikdra.top" "$@"\n' >/usr/
 printf '#!/bin/sh\nexec /usr/local/sbin/wikdra-deploy "$1" <"$2"\n' >/usr/local/bin/deploy
 chmod +x /usr/local/bin/web /usr/local/bin/deploy
 
-echo "[1] System jak na serwerze (openrc, nginx, php83 do importu)"
-apk add -q --no-progress openrc nginx curl php83 >/dev/null
+echo "[1] System jak na serwerze (openrc, nginx; bez PHP)"
+apk add -q --no-progress openrc nginx curl >/dev/null
 printf 'rc_sys="docker"\nrc_provide="loopback net"\nrc_controller_cgroups="NO"\n' >>/etc/rc.conf
 mkdir -p /run/openrc /run/lock
 touch /run/openrc/softlevel
-# strona statyczna i pliki dawnej wersji PHP (jak na serwerze przed przełączeniem)
+# strona statyczna; plik .php podrzucony w katalogu strony nie może wyjść ani jako kod, ani jako tekst
 H=/var/lib/nginx/html
 mkdir -p "$H/assets/css"
 printf '<!doctype html><title>Wikdra - test</title><h1>wikdra</h1>' >"$H/index.html"
 printf '<!doctype html><title>404</title><h1>404</h1>' >"$H/404.html"
 printf 'body{}' >"$H/assets/css/app-v6.css"
-printf "<?php\n\$admin_password = '%s';\n" "$PW" >"$H/bichu_config.php"
-printf 'Treść z PHP: zażółć' >"$H/bichu_content.txt"
-printf '<?php echo "kod PHP";' >"$H/bichu.php"
-cp "$H/bichu.php" "$H/stats.php"
-chown -R nobody:nobody "$H/bichu_content.txt"
+printf "<?php \$tajne = '%s';\n" "$PW" >"$H/cokolwiek.php"
 
 echo "[2] Instalacja"
 check "plan bez zmian w systemie" sh -c 'sh /src/server/deploy/install.sh --plan > /tmp/plan; cat /tmp/plan; grep -q "Plan zmian" /tmp/plan && grep -q "/etc/init.d/wikdra" /tmp/plan && ! id wikdra'
@@ -63,17 +59,11 @@ check "proces jako wikdra pod supervise-daemon" sh -c 'ps -o user,args | grep -E
 check "bez hasła zapis wyłączony (503)" sh -c '[ "$(curl -s -o /dev/null -w %{http_code} -d "{\"password\":\"x\",\"content\":\"x\"}" "http://127.0.0.1:8092/bichu?api=1")" = 503 ]'
 check "status" sh -c '/usr/local/sbin/wikdra-deploy status | grep -q "wydanie: ci-1"'
 
-echo "[4] Import z PHP"
-check "import treści i hasła" sh -c '/usr/local/lib/wikdra/import-php.sh | tee /tmp/imp; grep -q "treść: skopiowano" /tmp/imp && grep -q "jawne hasło" /tmp/imp && grep -q "OK: wikdra 600" /tmp/imp'
-check "hasło nie wypisane" sh -c "! grep -q '$PW' /tmp/imp"
-check "drugi import: pomija" sh -c '/usr/local/lib/wikdra/import-php.sh | grep -c pomijam | grep -qx 2'
-check "treść z PHP w usłudze" sh -c 'wget -q -O - "http://127.0.0.1:8092/bichu?api=1" | grep -q "Treść z PHP"'
-h=$(php83 -r 'echo password_hash("z-hasha-php", PASSWORD_DEFAULT);')
-printf "<?php\n\$admin_password_hash = '%s';\n" "$h" >"$H/bichu_config.php"
-check "hash: przez --force z hashem PHP" sh -c '/usr/local/lib/wikdra/import-php.sh --force | grep -q "przeniesiono hash"'
-check "hasło z hashem PHP działa" sh -c '[ "$(curl -s -o /dev/null -w %{http_code} -d "{\"password\":\"z-hasha-php\",\"content\":\"z hasha\"}" "http://127.0.0.1:8092/bichu?api=1")" = 200 ]'
-printf "<?php\n\$admin_password = '%s';\n" "$PW" >"$H/bichu_config.php"
-check "z powrotem jawne hasło (--force)" sh -c '/usr/local/lib/wikdra/import-php.sh --force | grep -q "jawne hasło"'
+echo "[4] Hasło edycji i pierwsza treść"
+check "hash-password jako wikdra (bcrypt, 0600)" sh -c "printf '%s' '$PW' | su -s /bin/sh wikdra -c '/srv/wikdra/current/wikdra hash-password --data-dir=/var/lib/wikdra' > /tmp/hp 2>&1; ! grep -q '$PW' /tmp/hp && [ \"\$(stat -c '%U %a' /var/lib/wikdra/bichu.hash)\" = 'wikdra 600' ] && grep -q '^\\\$2' /var/lib/wikdra/bichu.hash"
+check "złe hasło: 403" sh -c '[ "$(curl -s -o /dev/null -w %{http_code} -d "{\"password\":\"zle\",\"content\":\"x\"}" "http://127.0.0.1:8092/bichu?api=1")" = 403 ]'
+check "zapis pierwszej treści: 200" sh -c "[ \"\$(curl -s -o /dev/null -w %{http_code} -d '{\"password\":\"$PW\",\"content\":\"Treść startowa: zażółć\"}' 'http://127.0.0.1:8092/bichu?api=1')\" = 200 ]"
+check "treść w usłudze" sh -c 'wget -q -O - "http://127.0.0.1:8092/bichu?api=1" | grep -q "Treść startowa"'
 
 echo "[5] nginx/default.conf z repo"
 cp /src/nginx/default.conf /etc/nginx/http.d/default.conf
@@ -83,10 +73,10 @@ check "strona statyczna" sh -c 'web http://127.0.0.1/ | grep -q "Wikdra - test"'
 check "/stats.php z Go (JSON, no-store raz)" sh -c 'web -D /tmp/h -o /tmp/b http://127.0.0.1/stats.php; grep -q "\"cpu\":" /tmp/b && grep -q "\"age\":" /tmp/b && [ "$(grep -ci "^cache-control:" /tmp/h)" = 1 ] && grep -qi "^cache-control: no-store" /tmp/h'
 check "/stats.php: nagłówki bezpieczeństwa z nginx" sh -c 'web -D - -o /dev/null http://127.0.0.1/stats.php | grep -qi "^x-frame-options: SAMEORIGIN"'
 for p in /bichu /bichu/ /bichu.php; do
-	check "$p: strona z treścią, jeden Cache-Control" sh -c "web -D /tmp/h -o /tmp/b http://127.0.0.1$p; grep -q 'Treść z PHP' /tmp/b && grep -q 'id=\"bichu-initial\"' /tmp/b && [ \"\$(grep -ci '^cache-control:' /tmp/h)\" = 1 ] && grep -qi '^x-robots-tag: noindex' /tmp/h && grep -qi '^referrer-policy:' /tmp/h"
+	check "$p: strona z treścią, jeden Cache-Control" sh -c "web -D /tmp/h -o /tmp/b http://127.0.0.1$p; grep -q 'Treść startowa' /tmp/b && grep -q 'id=\"bichu-initial\"' /tmp/b && [ \"\$(grep -ci '^cache-control:' /tmp/h)\" = 1 ] && grep -qi '^x-robots-tag: noindex' /tmp/h && grep -qi '^referrer-policy:' /tmp/h"
 done
 for p in /bichu_config.php /bichu_content.txt /bichu_attempts.json /stats.php.bak /cokolwiek.php /bichu/x /.git/config; do
-	check "$p: 404, bez kodu PHP i hasła" sh -c "[ \"\$(web -o /tmp/b -w %{http_code} http://127.0.0.1$p)\" = 404 ] && ! grep -q -e '<?php' -e '$PW' /tmp/b"
+	check "$p: 404, bez kodu i hasła" sh -c "[ \"\$(web -o /tmp/b -w %{http_code} http://127.0.0.1$p)\" = 404 ] && ! grep -q -e '<?php' -e '$PW' /tmp/b"
 done
 check "zły POST przez nginx: 403" sh -c "[ \"\$(web -o /dev/null -w %{http_code} -d '{\"password\":\"zle\",\"content\":\"x\"}' 'http://127.0.0.1/bichu?api=1')\" = 403 ]"
 check "zapis przez nginx: 200 i treść na stronie" sh -c "[ \"\$(web -o /dev/null -w %{http_code} -H 'Content-Type: application/json' -d '{\"password\":\"$PW\",\"content\":\"Zapis przez nginx <b>\"}' 'http://127.0.0.1/bichu.php?api=1')\" = 200 ] && web http://127.0.0.1/bichu | grep -q 'Zapis przez nginx &lt;b&gt;'"

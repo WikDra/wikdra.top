@@ -63,10 +63,10 @@ jobs:
 
       - name: shellcheck
         working-directory: server/deploy
-        run: shellcheck -s sh -S warning wikdra-deploy install.sh import-php.sh test/ci-test.sh
+        run: shellcheck -s sh -S warning wikdra-deploy install.sh test/ci-test.sh
 
-      # Ten sam system co na serwerze: instalacja, wdrożenia z powrotem, import z PHP, nginx/default.conf z repo.
-      - name: Test na Alpine (OpenRC, nginx, wdrożenia, import z PHP)
+      # Ten sam system co na serwerze: instalacja, wdrożenia z powrotem, hasło Bichu, nginx/default.conf z repo.
+      - name: Test na Alpine (OpenRC, nginx, wdrożenia)
         env:
           CGO_ENABLED: '0'
         run: |

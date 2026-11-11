@@ -64,7 +64,7 @@ if errorlevel 1 ( popd & goto :fail_upload )
 popd
 
 echo [4/6] Instalacja plikow w katalogu WWW...
-%SSH% "echo %MIKRUS_PW% | sudo -S sh -c 'cp -r %STAGE%/. %WWW%/ && rm -f %WWW%/sw-v5.js %WWW%/sw-v6.js %WWW%/themes-v5.css %WWW%/manifest.json %WWW%/bichu.php %WWW%/stats.php %WWW%/bichu_config.php && chmod 644 %WWW%/*.html %WWW%/*.js %WWW%/*.json %WWW%/*.txt %WWW%/*.xml' && rm -rf %STAGE%"
+%SSH% "echo %MIKRUS_PW% | sudo -S sh -c 'cp -r %STAGE%/. %WWW%/ && rm -f %WWW%/sw-v5.js %WWW%/sw-v6.js %WWW%/themes-v5.css %WWW%/manifest.json && chmod 644 %WWW%/*.html %WWW%/*.js %WWW%/*.json %WWW%/*.txt %WWW%/*.xml' && rm -rf %STAGE%"
 if errorlevel 1 goto :fail_install
 
 if "%WITH_NGINX%"=="1" (
